@@ -1,0 +1,15 @@
+{
+  "label": "channel_confirm",
+  "rx": 0.5013888888888889,
+  "ry": 0.6987654320987654,
+  "x": 1449,
+  "y": 1171,
+  "rect": [
+    5,
+    39,
+    2885,
+    1659
+  ],
+  "recorded_at": "2026-06-17T21:34:38",
+  "source": "last point from channel_click_sequence calibration"
+}

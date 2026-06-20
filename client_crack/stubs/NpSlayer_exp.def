@@ -1,0 +1,6 @@
+LIBRARY NpSlayer
+EXPORTS
+    NpsInit
+    NpsSetVars
+    NpsReport
+    NpsSetMode

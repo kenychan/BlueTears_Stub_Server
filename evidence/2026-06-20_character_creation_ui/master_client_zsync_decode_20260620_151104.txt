@@ -1,0 +1,63 @@
+# Master client zlib-sync decode - 2026-06-20 15:11:04 run
+
+Run:
+`Res/run_master_ladder.py --mode ordered-b4-b5-empty-select --observe-seconds 45 --leave-running-on-result`
+
+Server log:
+`Res/RE_findings/master_ladder_20260620_151104_ordered-b4-b5-empty-select.stderr.log`
+
+NpSlayer slice:
+`Res/RE_findings/npslayer_profile78_charselect_milestone_20260620_151104.log`
+
+Result:
+- The runner held the master socket open instead of closing after the first
+  post-batch client packet.
+- NClient reached `updateCharacter_HasNoCharacter` and remained alive long
+  enough for user-visible character creation UI.
+- After the user typed a name and attempted creation, the client sent
+  client->server master packets. These are type-4 frames, but the compressed
+  payloads are a continuous zlib stream using sync-flush chunks; standalone
+  `zlib.decompress()` on each chunk fails.
+
+Decoded stream chunks:
+
+1. First post-batch packet
+   - wire after XOR clear:
+     `2f 00 00 00 21 00 00 00 78 01 ... 00 00 ff ff`
+   - zlib-sync output length: 47
+   - lower packet: opcode `0x0006`, body length `0x1f`
+   - body:
+     `ea 03 00 00 00 00 00 00 ea 03 00 00 e0 74 2c db 03 dc 7b e3 00 00 01 00 00 00 00 00 00 00 00`
+
+2. Later keepalive/UI packet
+   - zlib-sync output length: 56
+   - lower packet: opcode `0x0006`, body length `0x28`
+   - body starts:
+     `ea 03 00 00 00 00 00 00 01 00 00 00 10 89 2c 5d 39 ee ec 75 ...`
+
+3. Character name packet
+   - zlib-sync output length: 46
+   - lower packet: opcode `0x0006`, body length `0x1e`
+   - body:
+     `ea 03 00 00 00 00 00 00 ea 03 00 00 92 c6 12 6c 8d e2 2c b7 00 00 04 00 00 00 6b 65 6e 79`
+   - This is a CharacterManager RPC carrying the typed name `keny`.
+
+4. Create-player-info packet
+   - zlib-sync output length: 388
+   - lower packet: opcode `0x0006`, body length `0x174`
+   - body starts:
+     `ea 03 00 00 00 00 00 00 ea 03 00 00 92 c6 12 6c 12 b8 2b d7 ...`
+   - decoded strings include:
+     `TTemplateEyem13`, `THairMNaturalLayer`, `TTemplateMouthGag02`,
+     `TTemplateEyebrowm13`, `keny`, `CreatePlayerInfo`,
+     `T00PlayerColor02Base`, `THandWCustomizeN01`,
+     `TPantsMSCustomizeN02`, `Default_Nose`,
+     `TFootMCustomizeN03`, `TShirtMSCustomizeN02`.
+
+Interpretation:
+- The char-select/login wall is broken. The client is now asking the local
+  server to create a character.
+- Next protocol target is the server response to the CharacterManager
+  create-character RPC, not another login/LoadList field tweak.
+- Stub logging now has `ZlibSyncFrameDecoder` so future runs can decode this
+  client->server stream directly.

@@ -1,0 +1,25 @@
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+
+# Runtime DB and fresh probe logs generated after installing/running from mirror.
+server/Res/live/
+server/Res/RE_findings/*.log
+server/Res/RE_findings/*summary*.log
+server/Res/RE_findings/master_ladder_*
+server/Res/RE_findings/master_ordered_*
+
+# Build intermediates; milestone DLLs in client_crack/bin are intentionally tracked.
+*.obj
+*.exp
+*.lib
+*.pdb
+
+# Never mirror original game client payloads here.
+/TW/
+/Bin/
+/Res/Model/
+/Res/Texture/
+/Res/Sound/
+/Res/Animation/
