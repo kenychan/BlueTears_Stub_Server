@@ -526,9 +526,11 @@ static void install_hooks(void)
 #define VA_QUEUE_PRODUCER       0x01158950u  /* decoded packet queue producer    */
 #define VA_QUEUE_CONSUMER       0x0115b0b0u  /* per-tick receive queue drain     */
 #define VA_SESSION_DISPATCH     0x00ca4540u  /* CL_NetSession validator/dispatch */
+#define VA_CONSTRUCT_WALKER     0x00ca47e0u  /* object-tree walker fed by ca4540 -> bff990 */
 #define VA_KEY02_THUNK          0x00c10650u  /* ClientWorld key 0x02 thunk       */
 #define VA_KEY03_NEWOBJECT      0x00bff990u  /* ClientWorld key 0x03 receiver    */
 #define VA_NEWOBJ_PID_STORED    0x00bffafdu  /* after NewObject writes obj+0x3c  */
+#define VA_GATE_RESULT          0x00bbf785u  /* bbf750: after CALL bbf100 -- EDI=pid, EAX=slot/NULL (gate hit/miss) */
 #define VA_KEY6_THUNK           0x00c10610u  /* ClientWorld key 0x06 thunk       */
 #define VA_KEY6_RECEIVER        0x00c009a0u  /* ClientWorld key 0x06 receiver    */
 #define VA_KEY6_SKIP_EXEC_JZ    0x00c00a85u  /* JZ skip before CALL 0x00bee460   */
@@ -537,6 +539,13 @@ static void install_hooks(void)
 #define VA_BB2580_BC5860_RET    0x00bb25eau  /* after 0x00bc5860; EAX=result     */
 #define VA_BB2580_BB5F40_CALL   0x00bb25f3u  /* resolver calls 0x00bb5f40        */
 #define VA_BB2580_BB5F40_RET    0x00bb25f8u  /* after 0x00bb5f40; EAX=result     */
+#define VA_BB5F40_ENTRY         0x00bb5f40u  /* bb5f40 type-materializer entry: ECX=className std::string* */
+#define VA_BEF688_TAG7_CLASSNAME 0x00bef688u /* bef480 tag-0x07 path, ret-addr right after the +0x1b reader
+                                              * that decodes the object-value className into local_30.
+                                              * EAX = &std::string (MSVC NRVO out-ptr). Reads what className
+                                              * our wire object-value actually decoded to -- BEFORE the
+                                              * 005e5650 registry lookup (which misses for unrealized types).
+                                              * Resolves (2 body-right/type-not-realized) vs (3 body-wrong). */
 #define VA_OBJPTR_MAT_ENTRY     0x00c537d0u  /* ObjectPtr materializer entry     */
 #define VA_OBJPTR_BB2580_CALL   0x00c5380du  /* ObjectPtr calls 0x00bb2580       */
 #define VA_OBJPTR_BB2580_RET    0x00c53812u  /* after 0x00bb2580; EAX=object     */
@@ -717,6 +726,9 @@ static void install_hooks(void)
 #define VA_VARIANT_TAG0B_BA9200_RET 0x00bef790u /* after push-object helper           */
 #define VA_VARIANT_TAG0B_NIL_OBJ 0x00bef7a4u  /* materializer produced NULL object     */
 #define VA_UPDATE_AFTER_GETALL   0x010b211bu  /* after getAllPlayers vector return     */
+#define VA_UPDATE_ROWGATE2       0x010b227fu  /* test edi,edi -- 2nd bd3660 row-gate result */
+#define VA_UPDATE_ADDGATE        0x010b232fu  /* cmp [esi+0x74],0 -- AddCharacter pre-gate */
+#define VA_UPDATE_RESOLVE        0x010b23beu  /* after call bc5860 (resolve via value-registry 0x184a2b0) -> EAX */
 #define VA_UPDATE_ADDCHAR        0x010b2435u  /* FUser::updateCharacter AddCharacter   */
 #define VA_UPDATE_HASNOCHAR      0x010b25acu  /* FUser::updateCharacter HasNoCharacter */
 #define VA_UPDATE_SELECTCHAR     0x010b26d0u  /* FUser::updateCharacter SelectCharacter*/
@@ -734,9 +746,13 @@ static void install_hooks(void)
 #define VA_TAG1_COMP_REGISTER    0x00c33cc0u  /* Computer construct+register marker    */
 #define VA_TAG1_COMP_INSERT_CALL 0x00c33e06u  /* pre-CALL 00647860 object-id insert     */
 #define VA_FUSER_CONNECT         0x010b0c20u  /* FUser::connect after GSS SCS_OK        */
+#define VA_FUSER_CONNECT_SIGNIN  0x010b0c20u  /* signin processor "FUser::connect" -- FUSERCONNECT probe seat (same VA as VA_FUSER_CONNECT) */
 #define VA_FCLIENTWORLD_CONNECT  0x01081e50u  /* FClientWorld::Connect master edge      */
 #define VA_MASTER_ATTACH_BFE230  0x00bfe230u  /* ClientWorld master Computer attach     */
 #define VA_CLIENTCOMPUTER_ATTACH 0x00c33720u  /* tag1 ClientComputer attach helper      */
+#define VA_SERVERCOMPUTER_ATTACH 0x00c33210u  /* tag1 ServerComputer attach (flag1 lane: builds vtable 0x01558658 + registers c35140) -- D1 reach-probe */
+#define VA_C5A880_CTRLOBJ_CONSTRUCT 0x00c5a880u /* TClient slot-23: constructs control object via c48760 + 18x bd2cd0 obj+0x18 -- M1 trigger probe */
+#define VA_ONSIG_SETCONTROL_DISPATCH 0x01097270u /* FClientWorld::OnSigSetControlObject: dispatch by control class {TClient,TAccount,TCharacter,TPlayer} -- M1 */
 #define VA_CONTROL_DESC_STORAGE  0x0183ef78u  /* DAT_0183ef78, m_ControlObj desc       */
 #define VA_ADD_COMPONENT_BCF510  0x00bcf510u  /* base NObject AddComponent handler      */
 #define VA_LOGINRESULT_DOWNCALL  0x00a6ec40u  /* Session DownCall logInServerResult     */
@@ -803,6 +819,11 @@ static void install_hooks(void)
 #define VA_GOLUA_CREATEOBJECT    0x00c48010u  /* goLua_CreateObject native wrapper       */
 #define VA_GOLUA_ADDCOMP         0x00c483d0u  /* goLua_AddComponent native wrapper       */
 #define VA_GOLUA_ADDCOMP_BD2CD0  0x00c484b1u  /* callsite to FUN_00bd2cd0 in wrapper     */
+#define VA_CTORDIAG_C48760       0x00c48760u  /* deferred-template construction helper    */
+#define VA_D2_CREATELOCAL_RET    0x00bff767u  /* return after c48760 construct; EAX=new Object* (D2) */
+#define VA_TAG1_KEY03            0x00c35140u  /* tag-1 master key03 NewObject (full-construct TPlayer) */
+#define VA_C74ED0_FACTORY        0x00c74ed0u  /* LATE-86 table-B key3 construct handler -> bb5f40 type-factory + bd4b20 (char lane?) */
+#define VA_C5C770_LINK           0x00c5c770u  /* LATE-86 table-C key5 construct/link handler (bc6020 map-insert) */
 #define VA_GOLUA_REGISTOBJECT    0x00c48520u  /* goLua_RegistObject native wrapper       */
 #define VA_GOLUA_UNPACKFIXED     0x00bb8220u  /* goLua_UnpackFixed native wrapper         */
 #define VA_LUA_DISPATCH_CBDA80   0x00cbda80u  /* generic Lua call-vector dispatcher      */
@@ -834,6 +855,63 @@ static void install_hooks(void)
 #if EXP_TARGET_PROFILE == 68 || EXP_TARGET_PROFILE == 69 || EXP_TARGET_PROFILE == 75 || EXP_TARGET_PROFILE == 76 || EXP_TARGET_PROFILE == 77 || EXP_TARGET_PROFILE == 78
 static volatile DWORD g_last_charmgr = 0;
 static volatile DWORD g_last_charmgr_owner = 0;
+#if EXP_TARGET_PROFILE == 78
+/* D2 (constructed-char-row probe, server/docs/derisk/D2-constructed-char-row.md):
+ * construct a real CreateLocalObject('TPlayerDummy') (obj+0x18 populated, proven by
+ * LATE-8b) and raw-push_back it into CharacterManager+0x28 -- bypassing both the
+ * errored Lua cm:LoadList AND GWorld residency -- then let getAllPlayers walk it.
+ * Decides whether the row-loader needs GWorld residency or just +0x28 + obj+0x18. */
+static volatile DWORD g_d2_char     = 0;   /* the CreateLocalObject char Object*        */
+static volatile int   g_d2_arm      = 0;   /* capture window around the trigger chunk   */
+static volatile int   g_d2_injected = 0;   /* one-shot inject guard                     */
+static volatile int   g_force_ui_done = 0;  /* OPTION 2: one-shot force-row UI guard     */
+static volatile int   g_clientlog_tap_done = 0; /* CLIENT-LOG TAP one-shot guard          */
+/* TEST-1 (user: "previous full char list parse again + see the trace log"): when set, gate
+ * OFF the in-client D2 dummy inject + EARLY_REALIZE so the WIRE object-value char-list parses
+ * NATURALLY (no fake char, no LogServer={} client/server flip). Keeps the CLIENTLOG tap only,
+ * so client_internal.log records the client's OWN trace of the pure wire char-list parse. */
+static volatile int   g_natural_parse_only = 1;  /* clean natural-parse baseline (tracer+fault-ctx validated on bec99a) */
+/* TEST-2 (user "real goal", LATE-109 keystone): force-realize the REAL TPlayer template
+ * (DefaultImpl) by flipping IsClient() off (Firenze.LogServer={}) before reload_file('TPlayer'),
+ * then build the client's OWN CreateLocalObject('TPlayer') and inventory whether it now has the
+ * full component graph (Player/User/CStatus/CBody/Physics) + the row-render fields.
+ * LATE-110 RESULT: NEGATIVE -- CreateLocalObject('TPlayer')=nil before+after, and IsClient()
+ * stays true after Firenze.LogServer={} (the LATE-109 flip is FALSIFIED live). Default OFF. */
+static volatile int   g_test2_construct = 0;
+/* TEST-3 (user "yes do bb2580"): probe the DEF-TABLE by-name construct bb2580(0xbb2580) for
+ * TPlayer. bb2580 resolves type from def-table 0x184a2b0 (bc5860 find -> bb5f40) -- a DIFFERENT
+ * registry than CreateLocalObject (class-registry 0x183e0e0, nil for TPlayer); the def-table
+ * HOLDS a "TPlayer" entry (LATE-97). __cdecl, arg1 = std::string*. LATE-110b RESULT: all keys
+ * (incl. def-table controls CharacterManager/QuestManager) returned obj=NULL, NO crash -> the
+ * std::string ABI is unvalidated (find consistently misses); INCONCLUSIVE, not a real answer.
+ * LATE-110d SETTLED: the live MATERIALIZE seat proved bb2580's arg is a 32-bit NID (not a
+ * std::string*) -- TEST-3 passed the wrong ARG TYPE. Probe corrected to pass native_nid(name).
+ * ENABLED this run to settle whether bb2580(native_nid("TPlayer")) builds a real TPlayer.
+ * LATE-110e: DISABLED again (settled NULL); this run captures the LATE-107 arg3-crash engine log. */
+static volatile int   g_bb2580_probe = 0;
+/* OPTION-3 (user "force into game + trace"): build the only locally-constructable char
+ * (CreateLocalObject('TPlayerDummy') + full data incl User.m_PlayerName), insert into
+ * UIIntro.characters, then drive the real enter-game trigger User:selectCharacter(name,frame)
+ * (UIIntro:OnCharacterSelected -> UIIntro.lua:692). The CLIENTLOG tap catches whatever the
+ * enter-game path complains about -- errors are where the info is.
+ * LATE-110c RESULT: selectCharacter ran NO-error but no row (native HasNoCharacter authority);
+ * user's manual create -> stub answers with dead wire-className NewObject(TPlayer) -> World_Disconnected.
+ * Convergence: all paths need bff990 construct from a real replication msg. Default OFF. */
+static volatile int   g_enter_game_force = 0;
+/* TEST-5 (user-directed 2026-06-30, LUA_QUICKREF §1): the CORRECTED template realize. LATE-110
+ * TEST2's Firenze.LogServer flip is FALSIFIED (IsClient() is native-bound). The faithful lever is
+ * the engine's OWN force-load: Template.lua:126-147 takes DefaultImpl (full CreateCom + AddComponent
+ * + goLua_RegistObject -- the register EmptyImpl SKIPS) when the hierarchy is force-loaded. TEST2
+ * used bare reload_file (never set the force flag) -> re-hit EmptyImpl. TEST5: (1) install GAP-LOG
+ * wrappers on the C<->Lua boundary fns (Template/CreateDeferedTemplate/CreateCom/goLua_RegistObject)
+ * to make the silent realize branch + every crossing VISIBLE (validates the user's "Lua runs on C's
+ * signal, calls back into C" theory); (2) _Template('TActor',..,true,true) to set GoTemplateForceLoading;
+ * (3) reload_file('TPlayer') -> now DeferedImpl; (4) CreateDeferedTemplate('TPlayer') -> DefaultImpl;
+ * (5) CreateLocalObject('TPlayer') -> real component-bearing char, or nil? Decides faithful-vs-architectural. */
+static volatile int   g_test5_forceload = 1;
+static DWORD g_d2_node[16] = { 0 };         /* hand-built MSVC std::map _Tree node: _Left@0,_Parent@4,_Right@8, key@0xc, Object*@0x10, _Color/_Isnil bytes @0x14/0x15 */
+#define KEY_TPLAYERDUMMY_CLS38 0x35c6b710u /* *(obj+0x38) for a TPlayerDummy (CTORDIAG)  */
+#endif
 #if EXP_TARGET_PROFILE == 69 || EXP_TARGET_PROFILE == 75 || EXP_TARGET_PROFILE == 76 || EXP_TARGET_PROFILE == 77 || EXP_TARGET_PROFILE == 78
 static volatile DWORD g_last_slot7_comp = 0;
 static volatile DWORD g_last_slot7_key = 0;
@@ -2701,6 +2779,19 @@ static const DWORD g_targets[] = {
     VA_COMP_MAP_WRITE,
     VA_OBJ18_REG_BD2CD0,
     VA_OBJ18_WRITE_BD2D4D,
+#if EXP_TARGET_PROFILE == 78
+    VA_CTORDIAG_C48760,
+    VA_TAG1_KEY03,
+    VA_BB5F40_ENTRY,
+    VA_BEF688_TAG7_CLASSNAME,
+    VA_CHARMGR_GETALL,        /* D2: inject the constructed char into +0x28 at getAllPlayers entry */
+    VA_D2_CREATELOCAL_RET,    /* D2: capture the CreateLocalObject char Object* (EAX at construct ret) */
+    VA_SESSION_DISPATCH,      /* ca4540 lower dispatcher: log u16 opcode per packet */
+    VA_CONSTRUCT_WALKER,      /* ca47e0 object-tree walker: log ret to see if ca4540 packet-drove it */
+    VA_QUEUE_PRODUCER,        /* LATE-77 probe: transport/queue-producer 01158950 -- log every decoded packet's opcode (does the master-BATCH's 2/3/6/9 reach the dispatch layer, and via which path) */
+    VA_C74ED0_FACTORY,        /* LATE-86: table-B factory construct -- does it fire live during login->char-select + from which dispatcher (ret) */
+    VA_C5C770_LINK,           /* LATE-86: table-C link construct -- liveness + caller */
+#endif
     VA_KEY6_RECEIVER,
     VA_KEY6_LOOKUP_NULL_JZ,
     VA_KEY6_RESOLVED_TEST,
@@ -2735,6 +2826,9 @@ static const DWORD g_targets[] = {
     VA_FCLIENTWORLD_CONNECT,
     VA_MASTER_ATTACH_BFE230,
     VA_CLIENTCOMPUTER_ATTACH,
+    VA_SERVERCOMPUTER_ATTACH,
+    VA_C5A880_CTRLOBJ_CONSTRUCT,
+    VA_ONSIG_SETCONTROL_DISPATCH,
     VA_CONN_CONNECT_BASE,
     VA_CONN_OPEN_IMPL,
     VA_CONN_CONNECT_IMPL,
@@ -2750,7 +2844,13 @@ static const DWORD g_targets[] = {
     VA_FUSER_FINISH_SCS_OK,
     VA_FUSER_FINISH_EVENT,
     VA_FUSER_FINISH_NOTIFY,
+    VA_NEWOBJ_PID_STORED, /* B4: log each constructed NewObject pid (which objects reach bff990) */
+    VA_GATE_RESULT,       /* B4/LATE-52: gate find (bbf100) result per NewObject -- pid + hit/miss */
     VA_UPDATE_AFTER_GETALL,
+    VA_UPDATE_ROWGATE2,   /* D2: 2nd bd3660 row-gate result (EDI) -- is the char accepted? */
+    VA_UPDATE_ADDGATE,    /* D2: AddCharacter pre-gate cmp [esi+0x74],0 */
+    VA_UPDATE_RESOLVE,    /* D2: bc5860 value-registry resolve result (EAX) -- is char in 0x184a2b0? */
+    VA_UPDATE_ADDCHAR,    /* D2: the actual AddCharacter row-add (was NOT seated in p78!) */
     VA_UPDATE_HASNOCHAR,
 
     /* Transition-disconnect decision points. */
@@ -2814,6 +2914,22 @@ static const DWORD g_targets[] = {
 #define EXP_GUARD_LOADLIST_UPDATECOUNT 1
 #define EXP_CAPTURE_LOADLIST_ESI_CHARMGR 1
 #define EXP_GUARD_FUSER84_CHARMGR 1
+/* 2026-06-27 (Claude): Gate-2 fix attempt. getAllPlayers resolves each +0x28
+ * row via FUN_00bd3660(*(obj+0x18)); our char has obj+0x18 EMPTY -> skipped ->
+ * HasNoCharacter. Re-enable the B4OBJ18 bridge (calls bd2cd0(obj,component) for
+ * Session/Player/CStatusPlayer/User at the comp-map-write hook) so the char's
+ * components self-register into its obj+0x18. The bridge logs B4OBJ18
+ * candidate/before/after (obj+component+key) so we can verify obj == the char.
+ * s54/s55-proven mechanism; skip-if-present guarded. */
+#define EXP_INJECT_B4_COMPONENT_OBJ18 1
+/* Stage-A "can the client construct char objects" probe: one-shot in-client-Lua
+ * CreateDeferedTemplate('TPlayerDummy') test, fired from the FUSER_UI hook
+ * (VA_FUSER_UI_UPDATE_HELPER 0x010b0490, reached via exp_log_post_finish_ui). */
+#define EXP_B_DEFER_PROBE 1
+/* Faithful-construction diagnostic: log c48760 (deferred-template construct
+ * helper) entry + template name, and bd2cd0 (obj+0x18 writer) entry + obj.
+ * Logging only, no behavior change. */
+#define EXP_CTOR_DIAG 1
 #endif
 #if EXP_TARGET_PROFILE == 71
 #define EXP_IGNORE_CXX_EH_SPAM 1
@@ -3410,7 +3526,7 @@ static void exp_scan_map_for_key(const char *tag, DWORD map, DWORD wanted)
     exp_log(buf);
 }
 
-#ifdef EXP_INJECT_SESSION_OBJ18
+#if defined(EXP_INJECT_SESSION_OBJ18) || defined(EXP_INJECT_B4_COMPONENT_OBJ18)
 static DWORD exp_find_map_value_by_key(DWORD map, DWORD wanted, DWORD *node_out)
 {
     DWORD myhead, root, node;
@@ -3856,6 +3972,75 @@ static void exp_inject_b4_component_obj18(DWORD object, DWORD component, DWORD k
               node18, after, component);
     exp_log(buf);
 }
+
+/* GATE 2: getAllPlayers (FUN_00a5fdf0) walks CharacterManager+0x28 (std::list of
+ * char Object*) and FUN_00bd3660 EXCLUDES any row whose *(obj+0x18) self/RPC map
+ * misses.  Our replicated char has obj+0x14 (component container) populated but
+ * obj+0x18 EMPTY -> row skipped -> updateCharacter_HasNoCharacter.  Fix: for each
+ * char in the list, look up the player components in obj+0x14 and explicitly
+ * register them into obj+0x18 via the engine's own writer FUN_00bd2cd0, BEFORE
+ * getAllPlayers runs. MSVC std::list: *(charmgr+0x28) is the list OBJECT (a
+ * POINTER, matching exp_log_charmgr_container); list-obj+0 = sentinel/_Myhead,
+ * +8 = _Mysize. node {+0 _Next,+4 _Prev,+8 Object*}; head->_Next = first
+ * element, head is its own _Next/_Prev when the list is empty. */
+static void exp_register_charlist_obj18(DWORD charmgr)
+{
+    static const DWORD player_keys[3] = {
+        KEY_PLAYER_NID, KEY_CSTATUSPLAYER_NID, KEY_USER_NID
+    };
+    DWORD list28, head, node, char_obj, map14;
+    int it, ki;
+    char buf[256];
+    if (!charmgr) { exp_log("GATE2REG charmgr=NULL skip"); return; }
+    list28 = exp2_read_safe(charmgr + 0x28);  /* +0x28 holds a POINTER to list */
+    if (!list28) { exp_log("GATE2REG list28=NULL skip"); return; }
+    head = exp2_read_safe(list28 + 0);        /* _Myhead sentinel node */
+    if (!head) { exp_log("GATE2REG list head=NULL skip"); return; }
+    wsprintfA(buf, "GATE2REG begin charmgr=0x%08x list28=0x%08x head=0x%08x size=0x%08x",
+              charmgr, list28, head, exp2_read_safe(list28 + 8));
+    exp_log(buf);
+    if (exp2_read_safe(list28 + 8) == 0) {   /* _Mysize==0 -> empty, nothing to do */
+        exp_log("GATE2REG list empty (size=0); no char rows to register");
+        return;
+    }
+    node = exp2_read_safe(head + 0);        /* first element = head->_Next */
+    for (it = 0; it < 8 && node && node != head; ++it) {
+        char_obj = exp2_read_safe(node + 8);
+        if (char_obj) {
+            map14 = exp2_read_safe(char_obj + 0x14);
+            wsprintfA(buf, "GATE2REG fields obj=0x%08x dc=0x%08x d0=0x%08x d4=0x%08x",
+                      char_obj,
+                      exp2_read_safe(char_obj + 0xDC),
+                      exp2_read_safe(char_obj + 0xD0),
+                      exp2_read_safe(char_obj + 0xD4));
+            exp_log(buf);
+            for (ki = 0; ki < 3; ++ki) {
+                DWORD key = player_keys[ki];
+                DWORD n = 0;
+                DWORD comp = exp_find_map_value_by_key(map14, key, &n);
+                DWORD p18before, p18after, na = 0, nb = 0;
+                if (!comp) continue;
+                p18before = exp_find_map_value_by_key(
+                    exp2_read_safe(char_obj + 0x18), key, &nb);
+                wsprintfA(buf, "GATE2REG obj=0x%08x key=0x%08x comp=0x%08x p18before=0x%08x",
+                          char_obj, key, comp, p18before);
+                exp_log(buf);
+                __try {
+                    ((Obj18ComponentRegisterFn)(DWORD_PTR)VA_OBJ18_REG_BD2CD0)(
+                        char_obj, comp);
+                } __except(1) {
+                    exp_log("GATE2REG exception during FUN_00bd2cd0 call");
+                }
+                p18after = exp_find_map_value_by_key(
+                    exp2_read_safe(char_obj + 0x18), key, &na);
+                exp_logf("GATE2REG obj=0x%08x key=0x%08x p18after=0x%08x",
+                         char_obj, key, p18after);
+            }
+        }
+        node = exp2_read_safe(node + 0);    /* node->_Next */
+    }
+    exp_logf("GATE2REG end iterated=%d", it, 0, 0);
+}
 #endif
 
 #ifdef EXP_DUMP_OBJ18_WRITERS
@@ -4290,6 +4475,15 @@ static void exp_log_fuser_state(DWORD addr, PCONTEXT c)
         "FUSER_ARGS addr=0x%08x a1=0x%08x a2=0x%08x a3=0x%08x a4=0x%08x esp=0x%08x ebp=0x%08x",
         addr, a1, a2, a3, a4, esp, c->Ebp);
     exp_log(buf);
+    if (addr == VA_FUSER_FINISH_NOTIFY) {
+        DWORD p74 = exp2_read_safe(c->Esi + 0x74);
+        DWORD p84 = exp2_read_safe(c->Esi + 0x84);
+        DWORD count = exp2_read_safe(esp + 0x2c);
+        wsprintfA(buf,
+            "FINISH_NOTIFY_FIELDS esi=0x%08x p74=0x%08x p84=0x%08x count=0x%08x",
+            c->Esi, p74, p84, count);
+        exp_log(buf);
+    }
     if (addr == VA_FUSER_STATE1_WRITE_8C)
         exp_log("FUSER_PENDING state1 will write [ESI+0x8c]=1");
     if (addr == VA_FUSER_STATE1_WRITE_74)
@@ -4477,6 +4671,9 @@ static const char *exp_post_finish_ui_name(DWORD addr)
     case VA_ONLOAD_AFTER_LOADLIST: return "onLoadPlayers_after_LoadList";
     case VA_SERVER_FINISH_SEND: return "Server_FinishLoadingCharacter_sender";
     case VA_UPDATE_AFTER_GETALL: return "updateCharacter_after_getAllPlayers";
+    case VA_UPDATE_ROWGATE2: return "updateCharacter_rowgate2_edi";
+    case VA_UPDATE_ADDGATE: return "updateCharacter_addgate_esi74";
+    case VA_UPDATE_RESOLVE: return "updateCharacter_resolve_bc5860";
     case VA_UPDATE_ADDCHAR: return "updateCharacter_AddCharacter";
     case VA_UPDATE_HASNOCHAR: return "updateCharacter_HasNoCharacter";
     case VA_UPDATE_SELECTCHAR: return "updateCharacter_SelectCharacter";
@@ -4534,6 +4731,188 @@ static void exp_log_uievent_user_fields(const char *tag, DWORD evt)
 }
 #endif
 
+#ifdef EXP_B_DEFER_PROBE
+/* ------------------------------------------------------------------ *
+ * Stage-A "can the client construct char objects" probe.
+ * Runs an arbitrary Lua chunk in the client's own VM, then reads back
+ * result globals natively. Mechanism: recipe in
+ * ghidraRE/output/claude_lua_eval_string_recipe.md.
+ *   L                 = *(void**)0x01825da8     (engine global lua_State)
+ *   push _G[name]     = FUN_00c7d380(L, 0xffffd8ee, name)
+ *   push fmt string   = FUN_00c7d1f0(L=ECX, fmt, ...)   (register-passing)
+ *   pcall(nargs,nres) = FUN_00cbda80(L, nargs, nres)    (NON-ZERO == SUCCESS)
+ * ------------------------------------------------------------------ */
+#define BDEFER_L_SLOT   0x01825da8u
+#define BDEFER_GLOBALS  0xffffd8eeu   /* LUA_GLOBALSINDEX (-0x2712) */
+#define BDEFER_C7D380   0x00c7d380u   /* push table[name] by C-string */
+#define BDEFER_C7D1F0   0x00c7d1f0    /* lua_pushvfstring (ECX=L); no 'u' (used in __asm) */
+#define BDEFER_CBDA80   0x00cbda80u   /* lua_pcall (nonzero low byte = ERROR) */
+
+/* "%s" format passed to FUN_00c7d1f0; kept as a real data object so the thunk
+ * references a stable address (not an inline code-path data label). */
+static const char exp_bdefer_fmt[3] = { '%', 's', 0 };
+
+/* tiny thunk: call FUN_00c7d1f0(L, "%s", src) with ECX=L, cdecl-style varargs
+ * pushed (src, then fmt), CALL, caller-cleans 2 dwords. Replicates be82a0. */
+static void exp_bdefer_push_src(void *L, const char *src)
+{
+    const char *fmt = exp_bdefer_fmt;
+    __asm {
+        mov  ecx, L            /* ECX = L (fastcall-ish first arg)         */
+        mov  eax, src
+        push eax               /* vararg: the source string                */
+        mov  eax, fmt
+        push eax               /* fmt = "%s"                               */
+        mov  eax, BDEFER_C7D1F0
+        call eax
+        add  esp, 8            /* caller cleans the 2 pushed dwords        */
+    }
+}
+
+/* run src as a full Lua chunk in the client VM. returns the cbda80 status
+ * byte of the RUN pcall (0 == success per recipe; nonzero low byte == error). */
+static int exp_b_lua_run(const char *src)
+{
+    void *L;
+    int load_status = -1;
+    int run_status = -1;
+    L = (void*)(*(DWORD*)(DWORD_PTR)BDEFER_L_SLOT);
+    if (!L) {
+        exp_log("B_DEFER seat L=NULL (no lua_State)");
+        return -2;
+    }
+    __try {
+        /* push _G.loadstring */
+        ((void(__cdecl*)(void*,int,const char*))(DWORD_PTR)BDEFER_C7D380)(
+            L, (int)BDEFER_GLOBALS, "loadstring");
+        /* push src verbatim as a chunk (NO outer "return") */
+        exp_bdefer_push_src(L, src);
+        /* pcall loadstring(src) -> compiled fn (1 arg, 1 result) */
+        load_status = (int)(unsigned char)
+            ((char(__cdecl*)(void*,int,int))(DWORD_PTR)BDEFER_CBDA80)(L, 1, 1);
+        /* pcall the compiled fn (0 args, 0 results) */
+        run_status = (int)(unsigned char)
+            ((char(__cdecl*)(void*,int,int))(DWORD_PTR)BDEFER_CBDA80)(L, 0, 0);
+    } __except(1) {
+        exp_log("B_DEFER seat EXCEPTION (last-step marker)");
+        return -3;
+    }
+    exp_logf("B_DEFER seat ran load_status=%d run_status=%d (0=ok)",
+             (DWORD)load_status, (DWORD)run_status, 0);
+    return run_status;
+}
+
+/* Read back one numeric result global by name. Returns the integer value
+ * (truncated double), or fills *found. The value sits as a TValue on L's
+ * stack top after pushing the global: value@+0, tt@+8 (tt==3 => number,
+ * an 8-byte double at +0). We pop it afterwards via cbda80? No -- simplest:
+ * use the in-Lua summary string instead. This native reader is a fallback. */
+static int exp_bdefer_read_num(void *L, const char *name, int *found)
+{
+    double dv = 0.0;
+    DWORD topbefore = 0, top = 0, tt = 0;
+    int val = 0;
+    if (found) *found = 0;
+    if (!L) return 0;
+    __try {
+        /* L+0x8 = stack top pointer (per recipe). capture, push, read, restore */
+        topbefore = *(DWORD*)(DWORD_PTR)((DWORD)L + 0x8);
+        ((void(__cdecl*)(void*,int,const char*))(DWORD_PTR)BDEFER_C7D380)(
+            L, (int)BDEFER_GLOBALS, name);
+        top = *(DWORD*)(DWORD_PTR)((DWORD)L + 0x8);
+        if (top >= 0x10) {
+            DWORD tv = top - 0x10;          /* TValue is 0x10 wide (value8+tt) */
+            tt = *(DWORD*)(DWORD_PTR)(tv + 0x8);
+            if (tt == 3) {                  /* LUA_TNUMBER */
+                dv = *(double*)(DWORD_PTR)(tv + 0x0);
+                val = (int)dv;
+                if (found) *found = 1;
+            }
+        }
+        /* restore stack top so we don't leak pushed values */
+        *(DWORD*)(DWORD_PTR)((DWORD)L + 0x8) = topbefore;
+    } __except(1) {
+        if (found) *found = 0;
+        return 0;
+    }
+    return val;
+}
+
+static void exp_bdefer_probe(void)
+{
+    /* LATE-8 ACTIVE TEST (Option A): feed a CreateLocalObject TPlayerDummy through
+     * the REAL native Session::onLoadPlayersCacheResult -> CharacterManager+0x28 ->
+     * native updateCharacter/getAllPlayers/AddCharacter -> faithful char ROW.
+     * Defensive (pcall everything), numeric readback globals T_*. */
+    /* LATE-8 TEST v5 (cm handle FIXED): GameLogic_GetAccount.lua proves the real
+     * Lua path to the live CharacterManager is `GetNObject('User').m_character_manager`
+     * (v4 tried GetCharacterManager/.CharacterManager/GetComponent/GetNObject - all the
+     * WRONG field name -> cm=nil -> false "in-client exhausted"). With the real cm:
+     * CreateLocalObject(TPlayerDummy) [proven construct] -> cm:LoadList({d}) [the RE'd
+     * faithful insert, gates on Player comp which the dummy has] -> getAllPlayers
+     * count>0 -> UIIntro:UpdateCharacter -> native getAllPlayers/AddCharacter -> ROW.
+     * T_ACC = cm:GetOwner() (the TAccount, confirms cm is the real manager);
+     * T_C1 = count right after LoadList (localize LoadList vs onLoad). */
+    /* LATE-8 v7 DIAGNOSTIC (late seat): cm is now reachable (v6 T_CM/T_ACC=1) but every
+     * cm method call errored. Pin WHY + gate the wire-by-ref path:
+     *  T_HASGAP/T_HASLL/T_HASOL = which cm methods are Lua-bound (type==function);
+     *  T_N    = real roster count via ipairs(cm:getAllPlayers()) (not # which errors on the C++ vector);
+     *  T_GW   = GWorld:FindObject(oid) ~= nil  (is the CreateLocalObject dummy resolvable by OID for wire by-ref);
+     *  T_CWFIND = ClientWorld:FindObject(oid)  (registered in ClientWorld);
+     *  T_GWCW = GWorld == ClientWorld. */
+    /* LATE-8 v8: GWorld:CreateObject is the NON-local construct (server-side usage in
+     * CMapObjectManager/FZone/LuaClone) that registers INTO GWorld (vs CreateLocalObject
+     * which only registers in the local DAT_0184a90c registrar -> v7 T_GW=0). If it works
+     * on the CLIENT and lands in GWorld:FindObject, that's a GWorld-resident Player-bearing
+     * object the native LoadList can resolve and the wire onLoadPlayers can reference by OID. */
+    static const char *chunk =
+        "local function P(k,b) _G[k]= b and 1 or 0 end\n"
+        "local oldLS=Firenze.LogServer; Firenze.LogServer={}\n"
+        "pcall(reload_file,'TActor'); pcall(reload_file,'TPlayerDummy'); pcall(reload_file,'TPlayer')\n"
+        "Firenze.LogServer=oldLS\n"
+        "local co; pcall(function() co=GWorld:CreateObject('TPlayerDummy') end)\n"
+        "P('T_CO', co~=nil)\n"
+        "local coid=-1; if co then pcall(function() coid=co:GetID() end) end; _G['T_COID']=coid\n"
+        "local cogw=0; if coid and coid>0 then pcall(function() if GWorld:FindObject(coid)~=nil then cogw=1 end end) end; _G['T_COGW']=cogw\n"
+        "local cop=0; if co then pcall(function() if co:GetComponent('Player')~=nil then cop=1 end end) end; _G['T_COPLAYER']=cop\n"
+        "local cp; pcall(function() cp=GWorld:CreateObject('TPlayer') end)\n"
+        "P('T_CP', cp~=nil)\n"
+        "local cpid=-1; if cp then pcall(function() cpid=cp:GetID() end) end; _G['T_CPID']=cpid\n"
+        "local cpgw=0; if cpid and cpid>0 then pcall(function() if GWorld:FindObject(cpid)~=nil then cpgw=1 end end) end; _G['T_CPGW']=cpgw\n"
+        "_G['T_DONE']=1\n";
+    int seat;
+    void *L;
+    int f[16];
+    int v[16];
+    static const char *names[16] = {
+        "T_CO","T_COID","T_COGW","T_COPLAYER",
+        "T_CP","T_CPID","T_CPGW","T_DONE",
+        0,0,0,0,
+        0,0,0,0
+    };
+    int i;
+    char buf[768];
+
+    exp_log("LATE8v8 DIAG START (late seat; GWorld:CreateObject TPlayerDummy/TPlayer -> GWorld-resident + Player comp?)");
+    seat = exp_b_lua_run(chunk);
+
+    L = (void*)(*(DWORD*)(DWORD_PTR)BDEFER_L_SLOT);
+    for (i = 0; i < 8; ++i) {
+        f[i] = 0;
+        v[i] = exp_bdefer_read_num(L, names[i], &f[i]);
+    }
+    wsprintfA(buf,
+        "LATE8v8 seat_run=%d T_CO=%d(f%d) T_COID=%d(f%d) T_COGW=%d(f%d) T_COPLAYER=%d(f%d)",
+        seat, v[0], f[0], v[1], f[1], v[2], f[2], v[3], f[3]);
+    exp_log(buf);
+    wsprintfA(buf,
+        "LATE8v8 T_CP=%d(f%d) T_CPID=%d(f%d) T_CPGW=%d(f%d) T_DONE=%d(f%d)",
+        v[4], f[4], v[5], f[5], v[6], f[6], v[7], f[7]);
+    exp_log(buf);
+    exp_log("LATE8v8 DIAG END");
+}
+#endif /* EXP_B_DEFER_PROBE */
+
 static void exp_log_post_finish_ui(DWORD addr, PCONTEXT c)
 {
     DWORD esp, a1, a2, a3, a4;
@@ -4562,6 +4941,187 @@ static void exp_log_post_finish_ui(DWORD addr, PCONTEXT c)
         exp2_read_safe(c->Ecx + 0x8c), exp2_read_safe(c->Esi + 0x74),
         exp2_read_safe(c->Esi + 0x84), exp2_read_safe(c->Esi + 0x8c));
     exp_log(buf);
+#ifdef EXP_B_DEFER_PROBE
+#if EXP_TARGET_PROFILE == 78
+    /* CLIENT-LOG TAP (user-directed, always-on): the game's own logging
+     * (log()->RunLogLn_Service("LUALOG"), error logs w/ debug.traceback(), print) routes
+     * to the absent network LogServer -> silent. Override RunLogLn_Service/print/InspectorAdd
+     * in the Lua VM + IS_DEBUG=true, teeing every internal log/traceback to a kept-open,
+     * flushed file TW/Bin/client_internal.log so we read the client's OWN diagnostics LIVE.
+     * One-shot, earliest Lua seat (before EARLY_REALIZE / onLoadPlayers). */
+    if (addr == VA_FUSER_UI_UPDATE_HELPER && !g_clientlog_tap_done) {
+        static const char *tapchunk =
+            "IS_DEBUG=true\n"
+            "_G['TAP_HAS_IO']=(io and io.open) and 1 or 0\n"
+            "if not _CLIENTLOG_HOOKED then\n"
+            "  _CLIENTLOG_HOOKED=true\n"
+            "  _CLIENTLOG_PATH='C:/Users/keny-/Downloads/qqxj/TW/Bin/client_internal.log'\n"
+            "  _CLIENTLOG_F=nil\n"
+            "  pcall(function() _CLIENTLOG_F=io.open(_CLIENTLOG_PATH,'w') end)\n"
+            "  if _CLIENTLOG_F then _CLIENTLOG_F:write('=== CLIENT INTERNAL LOG TAP ===\\n'); _CLIENTLOG_F:flush() end\n"
+            "  local function sink(tag,a,b,c,d,e)\n"
+            "    _CLIENTLOG_N=(_CLIENTLOG_N or 0)+1\n"
+            "    local s='['..tostring(tag)..'] '..tostring(a)\n"
+            "    if b~=nil then s=s..' | '..tostring(b) end\n"
+            "    if c~=nil then s=s..' | '..tostring(c) end\n"
+            "    if d~=nil then s=s..' | '..tostring(d) end\n"
+            "    if e~=nil then s=s..' | '..tostring(e) end\n"
+            "    if _CLIENTLOG_F then pcall(function() _CLIENTLOG_F:write(s..'\\n'); _CLIENTLOG_F:flush() end) end\n"
+            "  end\n"
+            "  _CLIENTLOG_SINK=sink\n"
+            "  RunLogLn_Service=function(cat,a,b,c,d,e) sink(cat,a,b,c,d,e) end\n"
+            "  print=function(a,b,c,d,e) sink('PRINT',a,b,c,d,e) end\n"
+            "  InspectorAdd=function(m,i) sink('INSPECT',m,i) end\n"
+            "end\n";
+        void *Lt; int fio = 0, fnc = 0; int hio, ncl; char tb[176];
+        g_clientlog_tap_done = 1;
+        exp_log("CLIENTLOG_TAP install: override RunLogLn_Service/print/InspectorAdd + IS_DEBUG -> TW/Bin/client_internal.log");
+        exp_b_lua_run(tapchunk);
+        Lt = (void*)(*(DWORD*)(DWORD_PTR)BDEFER_L_SLOT);
+        hio = exp_bdefer_read_num(Lt, "TAP_HAS_IO", &fio);
+        ncl = exp_bdefer_read_num(Lt, "_CLIENTLOG_N", &fnc);
+        wsprintfA(tb, "CLIENTLOG_TAP done TAP_HAS_IO=%d(f%d) N=%d(f%d)", hio, fio, ncl, fnc);
+        exp_log(tb);
+    }
+#endif
+    /* LATE-22 (Claude): realize the char TYPES EARLY -- one-shot at 0x010b0490,
+     * which fires BEFORE onLoadPlayers decodes the tag-0x07 char element. Test #3
+     * proved (TAG7_CLASSNAME @0xbef688) the body decodes className "TPlayerDummy"
+     * byte-perfect, but 005e5650 MISSED because the only realization (the LATE8v8
+     * probe) ran at the LATE seat 0x010b211b -- AFTER the char was decoded+nil'd.
+     * If realizing TActor/TPlayerDummy/TPlayer here populates the type registry
+     * DAT_01825258 that 005e5650 consults, the wire decode's lookup will HIT ->
+     * bb5f40 constructs TPlayerDummy from the wire body (0x35c6b710). One-shot.
+     * (This tests the WIRE lane, not the known-dead GWorld:CreateObject path.) */
+    if (addr == VA_FUSER_UI_UPDATE_HELPER && !g_natural_parse_only) {
+        static int early_realize_done = 0;
+        if (!early_realize_done) {
+            /* LATE-22b: do NOT restore Firenze.LogServer. Test #4 showed the type
+             * was constructible DURING the chunk (8x bd2cd0 35c6b710 while
+             * LogServer={}) but the wire 005e5650 MISSED at decode time -- which is
+             * AFTER the chunk restored oldLS. Hypothesis: the client-mode
+             * registration (005e5650-visible) is gated on LogServer={} and reverts
+             * on restore. Leave LogServer={} so the realized type stays visible to
+             * the wire deserializer through onLoadPlayers. */
+            static const char *rchunk =
+                "Firenze.LogServer={}\n"
+                "pcall(reload_file,'TActor'); pcall(reload_file,'TPlayerDummy'); pcall(reload_file,'TPlayer')\n"
+                "_G['T_EREALIZE']=1\n";
+            void *L2; int f2 = 0; int v2; int rseat;
+            early_realize_done = 1;
+            exp_log("EARLY_REALIZE start: reload_file TActor/TPlayerDummy/TPlayer @0x010b0490 (before onLoadPlayers)");
+            rseat = exp_b_lua_run(rchunk);
+            L2 = (void*)(*(DWORD*)(DWORD_PTR)BDEFER_L_SLOT);
+            v2 = exp_bdefer_read_num(L2, "T_EREALIZE", &f2);
+            wsprintfA(buf, "EARLY_REALIZE done seat_run=%d T_EREALIZE=%d(f%d)", rseat, v2, f2);
+            exp_log(buf);
+        }
+    }
+#if EXP_TARGET_PROFILE == 78
+    /* OPTION 2 (user-directed eyes-on demo): after the +0x28 splice (g_d2_injected set
+     * at the getAllPlayers seat -> our data-bearing char is in CharacterManager+0x28),
+     * FORCE the char-select row to paint. The natural OnAfterShowScreen(2) calls
+     * UpdateCharacter() BEFORE ShowDialog (UIIntro.lua:385/388), so AddCharacter fires
+     * with no dialog instance -> no live paint; and the screen decision had picked the
+     * Creation dialog on the (then-empty) roster (LATE-104). Here we ShowDialog FIRST so
+     * the dialog instance exists, THEN UIIntro:UpdateCharacter() -> native walks
+     * CharacterManager+0x28 (now holding our char) -> fires AddCharacter -> the handler
+     * at UIIntro.lua:93 finds uiinst -> Update -> ROW. One-shot, fired at the
+     * VA_UPDATE_AFTER_GETALL seat (0x010b211b, post-splice). The FUSER_UI seat fired
+     * BEFORE the splice so the g_d2_injected guard never triggered there (LATE-108 fix).
+     * Eyes-on proof that the row mechanism builds a row from a data-bearing char; the
+     * char itself is the fake preview (NpSlayer test-only), not the faithful product. */
+    if (addr == VA_UPDATE_AFTER_GETALL && g_d2_injected && !g_force_ui_done) {
+        /* LATE-108 step 3: DIRECT populate (no UpdateCharacter re-entrancy). The natural
+         * AddCharacter never populated UIIntro.characters, so manually mirror the handler:
+         * ShowDialog, set the char's Physics/CBody like UIIntro.lua:70-72, insert D2_OBJ
+         * (our built char, a global from the d2chunk) into UIIntro.characters, then fire
+         * the dialog's Update so it repaints the roster from that list. */
+        static const char *fchunk =
+            "local function f()\n"
+            "  UI:ShowDialog('CharacterSelectionDialog')\n"
+            "  local c=D2_OBJ\n"
+            "  if c then\n"
+            "    pcall(function() c.Physics:SetPhysics(GameIntroData.SelectionPlayerPos, NiPoint3()) end)\n"
+            "    pcall(function() c.CBody:SetScale(GameIntroData.SelectionPlayerScale) end)\n"
+            "    local has=false\n"
+            "    for _,x in ipairs(UIIntro.characters or {}) do if x==c then has=true break end end\n"
+            "    if not has then table.insert(UIIntro.characters, c) end\n"
+            "  end\n"
+            "  local u=UI:GetLayoutInstance('CharacterSelectionDialog')\n"
+            "  if u then u:GetTopControl():HandleEvent(UIEvent:Create('Update')) end\n"
+            "end\n"
+            "local ok=pcall(f)\n"
+            "local hi=0; pcall(function() if UI:GetLayoutInstance('CharacterSelectionDialog') then hi=1 end end)\n"
+            "_G['FORCEUI_O1']=ok and 1 or 0\n_G['FORCEUI_O2']=0\n_G['FORCEUI_O3']=hi\n_G['FORCEUI_N']=#(UIIntro.characters or {})\n";
+        void *L3; int ff[4]; int fv[4]; int fi, frun;
+        static const char *fn[4] = {"FORCEUI_O1","FORCEUI_O2","FORCEUI_O3","FORCEUI_N"};
+        char fbuf[160];
+        g_force_ui_done = 1;
+        exp_log("FORCEUI start: ShowDialog(CharacterSelectionDialog)+UIIntro:UpdateCharacter (eyes-on row, post-splice)");
+        frun = exp_b_lua_run(fchunk);
+        L3 = (void*)(*(DWORD*)(DWORD_PTR)BDEFER_L_SLOT);
+        for (fi = 0; fi < 4; ++fi) { ff[fi] = 0; fv[fi] = exp_bdefer_read_num(L3, fn[fi], &ff[fi]); }
+        wsprintfA(fbuf, "FORCEUI done run=%d O1=%d O2=%d O3=%d NCHARS=%d", frun, fv[0], fv[1], fv[2], fv[3]);
+        exp_log(fbuf);
+    }
+    /* OPTION-3 (user "force into game + trace"): drive the real enter-game trigger with the only
+     * locally-buildable char. Fires once at the post-getAllPlayers seat (UIIntro live). Sets the
+     * char's User.m_PlayerName (the field selectCharacter keys on), inserts it into the roster,
+     * then calls User:selectCharacter -- the CLIENTLOG tap records whatever the enter-game path
+     * errors on. We send diagnostic strings through the tap sink so they land in client_internal.log. */
+    if (addr == VA_UPDATE_AFTER_GETALL && g_enter_game_force) {
+        static int eg_done = 0;
+        if (!eg_done) {
+            static const char *egchunk =
+                "local function LOG(s) if _CLIENTLOG_SINK then pcall(_CLIENTLOG_SINK,'OPT3',s) end end\n"
+                "LOG('--- OPT3 enter-game force begin ---')\n"
+                "local oldLS=Firenze.LogServer\n"
+                "pcall(function() Firenze.LogServer={} end)\n"   /* realize the template (mirror the working D2 path) */
+                "pcall(reload_file,'TActor'); pcall(reload_file,'TPlayerDummy')\n"
+                "local w=GetEnvironment():GetNObject('ClientWorld')\n"
+                "local c=(w and w:CreateLocalObject('TPlayerDummy')) or nil\n"
+                "pcall(function() Firenze.LogServer=oldLS end)\n" /* restore client mode for enter-game */
+                "LOG('built char='..tostring(c))\n"
+                "if c then\n"
+                "  pcall(function() c.Player.m_name='TestHero777' end)\n"
+                "  pcall(function() c.User.m_PlayerName='TestHero777' end)\n"
+                "  local st; pcall(function() st=c:GetCom(CStatus) end)\n"
+                "  pcall(function() st.Level=50 end)\n"
+                "  pcall(function() st.ClassLevel=1 end)\n"
+                "  pcall(function() st:SetJobClass(0) end)\n"
+                "  local un; pcall(function() un=c.User and c.User.m_PlayerName end); LOG('User.m_PlayerName='..tostring(un))\n"
+                "  pcall(function() table.insert(UIIntro.characters, c) end)\n"
+                "  pcall(function() UIIntro.login_character='TestHero777' end)\n"
+                "  local idx; pcall(function() idx=UIIntro:GetSelectedCharacterIndex() end); LOG('selected idx='..tostring(idx))\n"
+                "  local u=GetEnvironment():GetNObject('User')\n"
+                "  LOG('User obj='..tostring(u)..' UIIntro.frame='..tostring(UIIntro.frame))\n"
+                "  local ok,err=pcall(function() return u:selectCharacter('TestHero777', UIIntro.frame) end)\n"
+                "  LOG('selectCharacter pcall='..tostring(ok)..' ret/err='..tostring(err))\n"
+                "  local ok2,err2=pcall(function() return UIIntro:OnCharacterSelected(idx or 1) end)\n"
+                "  LOG('OnCharacterSelected pcall='..tostring(ok2)..' ret/err='..tostring(err2))\n"
+                "end\n"
+                "LOG('--- OPT3 enter-game force end ---')\n";
+            eg_done = 1;
+            exp_log("OPT3 enter-game force: build TPlayerDummy + User.m_PlayerName -> selectCharacter (trace via tap)");
+            exp_b_lua_run(egchunk);
+            exp_log("OPT3 enter-game force chunk returned");
+        }
+    }
+#endif
+    /* LATE-8 v6: fire on the LATE seat 0x010b211b (updateCharacter AFTER getAllPlayers),
+     * which runs AFTER the stub's onLoadPlayers->LoadList->getAllPlayers chain. v5 fired
+     * at 0x010b0490 (before onLoadPlayers) -> User.m_character_manager was nil. This seat
+     * tests whether the cm binding completes by the post-onLoadPlayers point, and if so
+     * inserts the constructed dummy via the real cm:LoadList -> count -> ROW. One-shot. */
+    if (addr == VA_UPDATE_AFTER_GETALL) {
+        static int b_defer_done = 0;
+        if (!b_defer_done) {
+            b_defer_done = 1;
+            exp_bdefer_probe();
+        }
+    }
+#endif
     if (addr == VA_UPDATE_AFTER_GETALL) {
         DWORD slot50 = exp2_read_safe(esp + 0x50);
         DWORD begin = exp2_read_safe(esp + 0x54);
@@ -5143,6 +5703,250 @@ static void exp_log_loadlist_probe(DWORD addr, PCONTEXT c)
         exp_dump_bytes("LOADLIST_ARG1", a1, 64);
         exp_dump_bytes("LOADLIST_ARG2", a2, 64);
         exp_dump_bytes("LOADLIST_ARG3", a3, 64);
+#if EXP_TARGET_PROFILE == 78
+        /* D2 TRIGGER (one-shot): construct CreateLocalObject('TPlayerDummy') here --
+         * BEFORE getAllPlayers, with the CharacterManager already live -- and capture
+         * the new Object* via the armed CTORDIAG bd2cd0 (cls38==TPlayerDummy) seat.
+         * The actual +0x28 inject happens at getAllPlayers entry. EARLY_REALIZE has
+         * already realized the TPlayerDummy template, so CreateLocalObject can clone it. */
+        {
+            static int d2_trig_done = 0;
+            /* D2 INJECT RE-ENABLED (LATE-104, user-directed "Test A to a visible row"):
+             * construct the client's OWN CreateLocalObject('TPlayerDummy') + RB-splice it
+             * into CharacterManager+0x28 (both proven to reach AddCharacter, D2 Run 4) on
+             * the now-healthy baseline (LATE-103). Goal = a VISIBLE char row. This is an
+             * in-client TEST/assist (NpSlayer test-only), NOT the faithful product. */
+            if (!d2_trig_done && !g_d2_char && !g_natural_parse_only) {
+                static const char *d2chunk =
+                    "Firenze.LogServer={}\n"
+                    "pcall(reload_file,'TActor'); pcall(reload_file,'TPlayerDummy')\n"
+                    "local w=GetEnvironment():GetNObject('ClientWorld')\n"
+                    "D2_OBJ = (w and w:CreateLocalObject('TPlayerDummy')) or nil\n"
+                    "D2_OID = (D2_OBJ and D2_OBJ:GetID()) or -1\n"
+                    "D2_HASP = (D2_OBJ and D2_OBJ:GetComponent('Player')~=nil) and 1 or 0\n"
+                    /* LATE-105 (user-directed): inject FULL template character DATA into the
+                     * constructed char (NOT a blank dummy), then read it back to PROVE the row
+                     * is built from real char data. Render irrelevant; the DATA must be there. */
+                    "local function N(k,v) _G[k]=(type(v)=='number' and v) or -999 end\n"
+                    "local d=D2_OBJ\n"
+                    "local st; pcall(function() st=d:GetCom(CStatus) end)\n"
+                    "pcall(function() d.Player.m_name='TestHero777' end)\n"
+                    "pcall(function() st.Level=50 end)\n"
+                    "pcall(function() st.ClassLevel=1 end)\n"
+                    "pcall(function() st.Exp=12345 end)\n"
+                    "pcall(function() st:SetJobClass(0) end)\n"
+                    "pcall(function() st:SetAttributeValue('Level',50) end)\n"
+                    "pcall(function() st:SetValue('Level',50) end)\n"
+                    "D2_NAMEOK=(d.Player and d.Player.m_name=='TestHero777') and 1 or 0\n"
+                    "local a; pcall(function() a=st.Level end); N('D2_RB_LEVEL',a)\n"
+                    "local b; pcall(function() b=st.ClassLevel end); N('D2_RB_CLVL',b)\n"
+                    "local c; pcall(function() c=st:GetAttributeValue('Level') end); N('D2_RB_GAV',c)\n"
+                    "local e; pcall(function() e=st:GetJobClass() end); N('D2_RB_JOB',e)\n";
+                void *L2; int fo = 0, fp = 0; int oid, hasp; char d2b[176];
+                int dg[6]; int dgf[6]; int gi;
+                static const char *dgn[6] = {"D2_NAMEOK","D2_RB_LEVEL","D2_RB_CLVL","D2_RB_GAV","D2_RB_JOB","D2_HASP"};
+                d2_trig_done = 1;
+                g_d2_arm = 1;
+                exp_log("D2 trigger: CreateLocalObject('TPlayerDummy') @LoadList (CTORDIAG capture armed)");
+                exp_b_lua_run(d2chunk);
+                g_d2_arm = 0;
+                L2 = (void*)(*(DWORD*)(DWORD_PTR)BDEFER_L_SLOT);
+                oid = exp_bdefer_read_num(L2, "D2_OID", &fo);
+                hasp = exp_bdefer_read_num(L2, "D2_HASP", &fp);
+                wsprintfA(d2b, "D2 trigger done D2_OID=%d(f%d) D2_HASP=%d g_d2_char=0x%08x",
+                          (DWORD)oid, (DWORD)fo, (DWORD)hasp, (DWORD)g_d2_char);
+                exp_log(d2b);
+                for (gi = 0; gi < 6; ++gi) { dgf[gi] = 0; dg[gi] = exp_bdefer_read_num(L2, dgn[gi], &dgf[gi]); }
+                wsprintfA(d2b, "D2 CHARDATA NAMEOK=%d(f%d) RB_LEVEL=%d RB_CLVL=%d GAVLEVEL=%d JOBCLS=%d",
+                          (DWORD)dg[0], (DWORD)dgf[0], (DWORD)dg[1], (DWORD)dg[2], (DWORD)dg[3], (DWORD)dg[4]);
+                exp_log(d2b);
+                /* LATE-107 (user-directed "let CharacterManager PARSE the list"): inject the
+                 * full-data char into LoadList's arg3 std::list (a3) so the manager parses it
+                 * via its OWN path (a60f00 resolve -> bd3660 Player-gate -> insert), NOT the
+                 * +0x28 force-splice. arg3 is an EMPTY std::list (sentinel self-pointing); add
+                 * one node {_Next,_Prev,_Myval@+8}. Disable +0x28 (g_d2_injected=1) to isolate. */
+                if (0 /*LATE-107/110e: arg3 raw-char splice CRASHES at 0x00bec99a (NULL+0x28), DIAGNOSTIC-SILENT on BOTH channels; element needs a proper wrapper; disabled*/
+                    && g_d2_char && a3 && exp2_read_safe(a3) == a3) {
+                    DWORD head = a3;
+                    DWORD nodeN = (DWORD)(DWORD_PTR)&g_d2_node[0];
+                    __try {
+                        g_d2_node[0] = head;                 /* node->_Next = head */
+                        g_d2_node[1] = head;                 /* node->_Prev = head */
+                        g_d2_node[2] = (DWORD)g_d2_char;      /* node->_Myval @+8 = char */
+                        *(DWORD*)(DWORD_PTR)(head + 0) = nodeN;   /* head->_Next = node */
+                        *(DWORD*)(DWORD_PTR)(head + 4) = nodeN;   /* head->_Prev = node */
+                        g_d2_injected = 1;                   /* skip the +0x28 force-splice */
+                        wsprintfA(d2b, "D2 ARG3SPLICE head=0x%08x node=0x%08x char=0x%08x (natural LoadList parse)",
+                                  head, nodeN, (DWORD)g_d2_char);
+                        exp_log(d2b);
+                    } __except(1) { exp_log("D2 ARG3SPLICE exception"); }
+                } else {
+                    wsprintfA(d2b, "D2 ARG3SPLICE skip a3=0x%08x next=0x%08x char=0x%08x",
+                              a3, a3 ? exp2_read_safe(a3) : 0, (DWORD)g_d2_char);
+                    exp_log(d2b);
+                }
+            }
+        }
+        /* TEST-2 (user "real goal", LATE-109): force-realize the REAL TPlayer template then
+         * build it via the client's OWN CreateLocalObject('TPlayer'). If the un-stubbed template
+         * (DefaultImpl) gives the local build a full component graph + a valid User.m_PlayerName,
+         * the faithful path is "un-stub the template + drive the construct" -- not a wire forge.
+         * Independent of the dummy inject (gated only by g_test2_construct). One-shot. */
+        if (g_test2_construct) {
+            static int t2_done = 0;
+            if (!t2_done) {
+                static const char *t2chunk =
+                    "local function LOG(s) if _CLIENTLOG_SINK then pcall(_CLIENTLOG_SINK,'TEST2',s) end end\n"
+                    "LOG('--- TEST2 begin ---')\n"
+                    "LOG('IsClient(before)='..tostring(IsClient and IsClient()))\n"
+                    /* baseline: does CreateLocalObject('TPlayer') work WITHOUT the realize? */
+                    "local w0=GetEnvironment():GetNObject('ClientWorld')\n"
+                    "local b0,b0r=pcall(function() return w0 and w0:CreateLocalObject('TPlayer') end)\n"
+                    "LOG('PRE-realize CreateLocalObject TPlayer pcall='..tostring(b0)..' ret='..tostring(b0r))\n"
+                    "Firenze.LogServer={}\n"                  /* IsClient() -> false (LATE-109 gate) */
+                    "LOG('IsClient(after LS={})='..tostring(IsClient and IsClient()))\n"
+                    "local ra,rae=pcall(reload_file,'TActor')\n"
+                    "LOG('reload TActor ok='..tostring(ra)..' err='..tostring(rae))\n"
+                    "local rb,rbe=pcall(reload_file,'TPlayer')\n"   /* re-run Template() NON-client -> DefaultImpl */
+                    "LOG('reload TPlayer ok='..tostring(rb)..' err='..tostring(rbe))\n"
+                    "local w=GetEnvironment():GetNObject('ClientWorld')\n"
+                    "LOG('ClientWorld='..tostring(w))\n"
+                    "local co,cor=pcall(function() return w:CreateLocalObject('TPlayer') end)\n"
+                    "LOG('POST-realize CreateLocalObject TPlayer pcall='..tostring(co)..' ret/err='..tostring(cor))\n"
+                    "T2_OBJ=(co and cor) or nil\n"
+                    "T2_OID=(T2_OBJ and T2_OBJ:GetID()) or -1\n"
+                    "T2_BUILT=(T2_OBJ~=nil) and 1 or 0\n"
+                    "local function H(c) local r; pcall(function() r=(T2_OBJ:GetComponent(c)~=nil) end); return (r and 1) or 0 end\n"
+                    "T2_HAS_PLAYER=H('Player')\n"
+                    "T2_HAS_USER=H('User')\n"
+                    "T2_HAS_CSTATUS=H('CStatus')\n"
+                    "T2_HAS_CBODY=H('CBody')\n"
+                    "T2_HAS_PHYS=H('Physics')\n"
+                    "local u; pcall(function() u=T2_OBJ.User end); T2_USER_OK=(u~=nil) and 1 or 0\n"
+                    "local pn; pcall(function() pn=T2_OBJ.User.m_PlayerName end); T2_PNAME_OK=(pn~=nil) and 1 or 0\n"
+                    "local st; pcall(function() st=T2_OBJ:GetCom(CStatus) end); T2_GETCOM=(st~=nil) and 1 or 0\n"
+                    "LOG('INVENTORY built='..tostring(T2_BUILT)..' oid='..tostring(T2_OID)..' player='..tostring(T2_HAS_PLAYER)..' user='..tostring(T2_HAS_USER)..' cstatus='..tostring(T2_HAS_CSTATUS)..' cbody='..tostring(T2_HAS_CBODY)..' phys='..tostring(T2_HAS_PHYS)..' userok='..tostring(T2_USER_OK)..' pnameok='..tostring(T2_PNAME_OK))\n"
+                    "LOG('--- TEST2 end ---')\n";
+                void *L2; int i; char tb[256];
+                static const char *tn[10] = {"T2_BUILT","T2_OID","T2_HAS_PLAYER","T2_HAS_USER","T2_HAS_CSTATUS","T2_HAS_CBODY","T2_HAS_PHYS","T2_USER_OK","T2_PNAME_OK","T2_GETCOM"};
+                int tv[10], tf[10];
+                t2_done = 1;
+                exp_log("TEST2 start: Firenze.LogServer={}; reload_file TPlayer (DefaultImpl); CreateLocalObject('TPlayer')");
+                exp_b_lua_run(t2chunk);
+                L2 = (void*)(*(DWORD*)(DWORD_PTR)BDEFER_L_SLOT);
+                for (i=0;i<10;++i){ tf[i]=0; tv[i]=exp_bdefer_read_num(L2, tn[i], &tf[i]); }
+                wsprintfA(tb, "TEST2 BUILT=%d OID=%d PLAYER=%d USER=%d CSTATUS=%d CBODY=%d PHYS=%d USEROK=%d PNAMEOK=%d GETCOM=%d",
+                          tv[0],tv[1],tv[2],tv[3],tv[4],tv[5],tv[6],tv[7],tv[8],tv[9]);
+                exp_log(tb);
+            }
+        }
+        /* TEST-5 (user-directed): the CORRECTED force-load realize + C<->Lua GAP-LOG. One-shot. */
+        if (g_test5_forceload) {
+            static int t5_done = 0;
+            if (!t5_done) {
+                static const char *t5chunk =
+                    "local function GLOG(s) if _CLIENTLOG_SINK then pcall(_CLIENTLOG_SINK,'GAP',s) end end\n"
+                    "GLOG('--- TEST5 forceload begin ---')\n"
+                    "GLOG('Firenze.TestMode='..tostring(Firenze and Firenze.TestMode)..' IsClient='..tostring(IsClient and IsClient()))\n"
+                    /* install GAP-LOG wrappers on the C<->Lua boundary fns (validate the user's theory) */
+                    "local _Template=Template\n"
+                    "Template=function(o,p,f,fc)\n"
+                    "  local t=_Template(o,p,f,fc)\n"
+                    "  local br='Empty(no comps,no regist)'\n"
+                    "  if t then if t.Object~=nil then br='Default(+Object,+regist)' elseif t.ParentName~=nil then br='Defered' end end\n"
+                    "  GLOG('C->LUA Template('..tostring(o)..','..tostring(p)..',force='..tostring(f)..') => '..br)\n"
+                    "  return t\n"
+                    "end\n"
+                    "local _CDT=CreateDeferedTemplate\n"
+                    "CreateDeferedTemplate=function(n) GLOG('C->LUA CreateDeferedTemplate('..tostring(n)..') ENTER'); local r=_CDT(n); GLOG('   CreateDeferedTemplate('..tostring(n)..') RETURN'); return r end\n"
+                    "local _CC=CreateCom\n"
+                    "CreateCom=function(nm) local c=_CC(nm); GLOG('   LUA->C CreateCom('..tostring(nm)..') => '..(c and 'ok' or 'NIL')); return c end\n"
+                    "local _RG=goLua_RegistObject\n"
+                    "if _RG then goLua_RegistObject=function(o,p) GLOG('   LUA->C goLua_RegistObject(parent='..tostring(p)..')'); return _RG(o,p) end end\n"
+                    /* (A) baseline construct BEFORE force-realize */
+                    "local w=GetEnvironment():GetNObject('ClientWorld')\n"
+                    "local b0,b0r=pcall(function() return w and w:CreateLocalObject('TPlayer') end)\n"
+                    "GLOG('PRE  CreateLocalObject(TPlayer) pcall='..tostring(b0)..' ret='..tostring(b0r))\n"
+                    /* (B) engine's OWN force-load of the actor hierarchy -> sets GoTemplateForceLoading[TActor] */
+                    "local oldTM=Firenze and Firenze.TestMode; if Firenze then Firenze.TestMode=nil end\n"
+                    "local fa,fae=pcall(_Template,'TActor','TNetObject',true,true)\n"
+                    "GLOG('FORCE _Template(TActor,force=true) ok='..tostring(fa)..' err='..tostring(fae))\n"
+                    /* (C) re-realize TPlayer -> with force active it should take Defered, not Empty */
+                    "local rb,rbe=pcall(reload_file,'TPlayer')\n"
+                    "GLOG('reload_file(TPlayer) ok='..tostring(rb)..' err='..tostring(rbe))\n"
+                    /* (D) realize via DefaultImpl = CreateCom x N + AddComponent + goLua_RegistObject */
+                    "local cd,cde=pcall(CreateDeferedTemplate,'TPlayer')\n"
+                    "GLOG('CreateDeferedTemplate(TPlayer) ok='..tostring(cd)..' err='..tostring(cde))\n"
+                    /* (E) now construct the client's OWN object -- real char or still nil? */
+                    "local co,cor=pcall(function() return w:CreateLocalObject('TPlayer') end)\n"
+                    "GLOG('POST CreateLocalObject(TPlayer) pcall='..tostring(co)..' ret/err='..tostring(cor))\n"
+                    "T5_OBJ=(co and cor) or nil\n"
+                    "T5_BUILT=(T5_OBJ~=nil) and 1 or 0\n"
+                    "T5_OID=(T5_OBJ and T5_OBJ.GetID and T5_OBJ:GetID()) or -1\n"
+                    "local function H(c) local r; pcall(function() r=(T5_OBJ:GetComponent(c)~=nil) end); return (r and 1) or 0 end\n"
+                    "T5_PLAYER=H('Player'); T5_USER=H('User'); T5_CSTATUS=H('CStatusPlayer'); T5_CBODY=H('CBody'); T5_PHYS=H('Physics'); T5_INV=H('CInventory'); T5_EQUIP=H('CEquipment')\n"
+                    "T5_TMPL=(GoObjectTemplates and GoObjectTemplates['TPlayer']~=nil) and 1 or 0\n"
+                    "T5_DEFER=(GoDeferedTemplates and GoDeferedTemplates['TPlayer']~=nil) and 1 or 0\n"
+                    "GLOG('INVENTORY built='..tostring(T5_BUILT)..' oid='..tostring(T5_OID)..' player='..tostring(T5_PLAYER)..' user='..tostring(T5_USER)..' cstatus='..tostring(T5_CSTATUS)..' cbody='..tostring(T5_CBODY)..' phys='..tostring(T5_PHYS)..' inv='..tostring(T5_INV)..' equip='..tostring(T5_EQUIP)..' tmpl='..tostring(T5_TMPL)..' defer='..tostring(T5_DEFER))\n"
+                    /* restore the boundary fns + TestMode */
+                    "Template=_Template; CreateDeferedTemplate=_CDT; CreateCom=_CC; if _RG then goLua_RegistObject=_RG end\n"
+                    "if Firenze then Firenze.TestMode=oldTM end\n"
+                    "GLOG('--- TEST5 forceload end ---')\n";
+                void *L5; int i; char tb[300];
+                static const char *tn[11] = {"T5_BUILT","T5_OID","T5_PLAYER","T5_USER","T5_CSTATUS","T5_CBODY","T5_PHYS","T5_INV","T5_EQUIP","T5_TMPL","T5_DEFER"};
+                int tv[11], tf[11];
+                t5_done = 1;
+                exp_log("TEST5 start: force-load realize (Template TActor force=true; reload TPlayer->Defered; CreateDeferedTemplate->DefaultImpl; CreateLocalObject)");
+                exp_b_lua_run(t5chunk);
+                L5 = (void*)(*(DWORD*)(DWORD_PTR)BDEFER_L_SLOT);
+                for (i=0;i<11;++i){ tf[i]=0; tv[i]=exp_bdefer_read_num(L5, tn[i], &tf[i]); }
+                wsprintfA(tb, "TEST5 BUILT=%d OID=%d PLAYER=%d USER=%d CSTATUS=%d CBODY=%d PHYS=%d INV=%d EQUIP=%d TMPL=%d DEFER=%d",
+                          tv[0],tv[1],tv[2],tv[3],tv[4],tv[5],tv[6],tv[7],tv[8],tv[9],tv[10]);
+                exp_log(tb);
+            }
+        }
+        /* TEST-3 (user "yes do bb2580"): DEF-TABLE by-name construct probe. Build a short MSVC
+         * VS2005 std::string key (0x1c bytes: buf[16] | _Mysize@0x10 | _Myres@0x14, SSO cap=15),
+         * __cdecl-call bb2580(&key), inventory the result Object*. TPlayerDummy = ABI control
+         * (CreateLocalObject builds it -> bb2580 should too if the string layout is right).
+         * comp14=component container, obj18=RPC-route map (full construct), cls38=type key,
+         * oid=obj+0x3c. SEH-guarded; a bad ABI crashes -> logged, not fatal. One-shot. */
+        if (g_bb2580_probe) {
+            static int t3_done = 0;
+            if (!t3_done) {
+                /* LATE-110d CORRECTION (live MATERIALIZE seat, this run): bb2580's arg1 is a
+                 * 32-bit NID hash, NOT a std::string* -- a1 values were native_nid()s (Physics
+                 * 0x72247545, CBody 0xa31bb7c7, validated). TEST-3 passed the wrong ARG TYPE ->
+                 * consistent miss incl. controls; INCONCLUSIVE, not a real negative. Corrected:
+                 * pass native_nid(name) as the single __cdecl stack arg. Controls = CharacterManager
+                 * (game builds it by-NID on login) + TPlayerDummy (CreateLocalObject builds it). */
+                static const char *names[4] = {"CharacterManager","TPlayerDummy","TPlayer","TActor"};
+                static const DWORD nids[4]  = {0x6c12c692u, 0x35c6b710u, 0x9f4a5bcdu, 0x3ec199bau};
+                int ni;
+                t3_done = 1;
+                exp_log("BB2580_PROBE start: by-NID construct (arg=native_nid; CharacterManager/TPlayerDummy=controls, TPlayer, TActor)");
+                for (ni = 0; ni < 4; ++ni) {
+                    DWORD obj = 0; int crashed = 0;
+                    char lb[256];
+                    __try {
+                        DWORD (__cdecl *fn)(DWORD) = (DWORD (__cdecl *)(DWORD))0x00bb2580u;
+                        obj = fn(nids[ni]);
+                    } __except(1) { crashed = 1; }
+                    if (crashed) {
+                        wsprintfA(lb, "BB2580_PROBE '%s' nid=0x%08x EXCEPTION", names[ni], nids[ni]);
+                    } else if (obj) {
+                        wsprintfA(lb, "BB2580_PROBE '%s' nid=0x%08x obj=0x%08x comp14=0x%08x obj18=0x%08x cls38=0x%08x oid=0x%08x",
+                                  names[ni], nids[ni], obj, exp2_read_safe(obj + 0x14), exp2_read_safe(obj + 0x18),
+                                  exp2_read_safe(obj + 0x38), exp2_read_safe(obj + 0x3c));
+                    } else {
+                        wsprintfA(lb, "BB2580_PROBE '%s' nid=0x%08x obj=NULL (def miss / not constructable)", names[ni], nids[ni]);
+                    }
+                    exp_log(lb);
+                }
+                exp_log("BB2580_PROBE end");
+            }
+        }
+#endif
     } else if (addr == VA_ONLOAD_AFTER_LOADLIST) {
 #ifdef EXP_CAPTURE_LOADLIST_ESI_CHARMGR
         DWORD esi_list28 = c->Esi ? exp2_read_safe(c->Esi + 0x28) : 0;
@@ -5161,6 +5965,11 @@ static void exp_log_loadlist_probe(DWORD addr, PCONTEXT c)
         exp_log_charmgr_container("LOADLIST_AFTER_CAPTURED", (DWORD)g_last_charmgr);
         exp_log_charmgr_container("LOADLIST_AFTER_ESI", c->Esi);
         exp_dump_bytes("LOADLIST_AFTER_STACK", esp, 64);
+#ifdef EXP_INJECT_B4_COMPONENT_OBJ18
+        /* GATE 2: register each char's components into obj+0x18 BEFORE
+         * getAllPlayers walks +0x28 and excludes obj+0x18-empty rows. */
+        exp_register_charlist_obj18((DWORD)g_last_charmgr);
+#endif
     } else if (addr == VA_SERVER_FINISH_SEND) {
         exp_log("SERVER_FINISH_SEND entry reached");
         exp_log_charmgr_container("SERVER_FINISH_CAPTURED", (DWORD)g_last_charmgr);
@@ -5307,6 +6116,82 @@ static const char *exp_transition_name(DWORD addr)
     }
 }
 
+/* Native stack-scan tracer (FPO-robust call-chain recovery). The ebp_chain below
+ * fails when EBP=0 (frame-pointer-omitted, e.g. the 0x00bec99a crash). This scans up
+ * to `nwords` dwords from esp; any dword landing in the client .text range AND
+ * preceded by a CALL (E8 rel32, or FF /2|/3 r/m) is a return address -> logged as a
+ * STACKCHAIN entry (innermost first). Offline `Res/stubs/resolve_stackscan.py` maps
+ * each to its Ghidra function -> the live call tree (LoadList -> bec960 -> ...). */
+#define EXP_TEXT_LO 0x00401000u
+#define EXP_TEXT_HI 0x01400000u
+static int exp_is_retaddr(DWORD v)
+{
+    int k;
+    if ((BYTE)(exp2_read_safe(v - 5) & 0xff) == 0xE8) return 1;       /* call rel32 (E8) */
+    for (k = 2; k <= 7; ++k) {                                        /* call r/m32 (FF /2|/3) */
+        if ((BYTE)(exp2_read_safe(v - k) & 0xff) == 0xFF) {
+            BYTE reg = (BYTE)((exp2_read_safe(v - k + 1) >> 3) & 7);
+            if (reg == 2 || reg == 3) return 1;
+        }
+    }
+    return 0;
+}
+static void exp_stack_scan(const char *tag, DWORD esp, DWORD nwords)
+{
+    char buf[640];
+    char *w = buf;
+    DWORD i, depth = 0;
+    if (!esp) return;
+    if (nwords > 2048) nwords = 2048;
+    w += wsprintfA(w, "%s STACKCHAIN esp=0x%08x:", tag, esp);
+    for (i = 0; i < nwords; ++i) {
+        DWORD v = exp2_read_safe(esp + i * 4);
+        if (v >= EXP_TEXT_LO && v < EXP_TEXT_HI && exp_is_retaddr(v)) {
+            w += wsprintfA(w, " %08x", v);
+            if (++depth >= 40) break;
+            if ((DWORD)(w - buf) > 580) { exp_log(buf); w = buf; w += wsprintfA(w, "%s STACKCHAIN+:", tag); }
+        }
+    }
+    if (depth == 0) w += wsprintfA(w, " (none)");
+    exp_log(buf);
+}
+
+/* Dump the bytes a pointer points to (SEH-guarded; skips null-page / kernel-ish).
+ * Captures the MALFORMED native object/buffer at a fault -- "the C/C++ format". */
+static void exp_dump_ptr_mem(const char *tag, const char *name, DWORD p, DWORD n)
+{
+    char buf[300]; char *w; DWORD i;
+    if (p < 0x10000u || p >= 0xfff00000u) return;   /* null page / kernel-ish -> skip */
+    if (n > 64) n = 64;
+    w = buf; w += wsprintfA(w, "%s %s=0x%08x ->", tag, name, p);
+    for (i = 0; i < n; ++i)
+        w += wsprintfA(w, " %02x", (BYTE)(exp2_read_safe(p + (i & ~3u)) >> ((i & 3u) * 8)));
+    exp_log(buf);
+}
+/* Native fault context (AV only): the access kind/addr + the bytes every GP register
+ * and the top stack slots point to -> the malformed object/format at the crash.
+ * "we can't let go of any details" -- this is the per-fault native C/C++ detail dump. */
+static void exp_dump_fault_context(const char *tag, PCONTEXT c, DWORD info0, DWORD info1)
+{
+    DWORD i;
+    char b[160];
+    const char *kind;
+    if (!c) return;
+    kind = (info0 == 0) ? "READ" : (info0 == 1) ? "WRITE" : (info0 == 8) ? "DEP/EXEC" : "?";
+    wsprintfA(b, "%s ACCESS=%s fault_addr=0x%08x (=[base+0x%x] if base was NULL)", tag, kind, info1, info1);
+    exp_log(b);
+    exp_dump_ptr_mem(tag, "EAX", c->Eax, 48);
+    exp_dump_ptr_mem(tag, "EBX", c->Ebx, 48);
+    exp_dump_ptr_mem(tag, "ECX", c->Ecx, 48);
+    exp_dump_ptr_mem(tag, "EDX", c->Edx, 48);
+    exp_dump_ptr_mem(tag, "ESI", c->Esi, 48);
+    exp_dump_ptr_mem(tag, "EDI", c->Edi, 48);
+    for (i = 0; i < 6; ++i) {
+        char nm[16]; wsprintfA(nm, "stk+%02x", (DWORD)(i * 4));
+        exp_dump_ptr_mem(tag, nm, exp2_read_safe(c->Esp + i * 4), 48);
+    }
+}
+
 static void exp_log_transition_stack(const char *tag, PCONTEXT c)
 {
     char buf[768];
@@ -5341,6 +6226,8 @@ static void exp_log_transition_stack(const char *tag, PCONTEXT c)
             break;
         cur = next;
     }
+    /* FPO-robust call tree (works when ebp_chain above stalls at EBP=0). */
+    exp_stack_scan(tag, esp, 600);
 }
 
 static void exp_log_transition_teardown(DWORD addr, PCONTEXT c)
@@ -5486,7 +6373,7 @@ static void exp_log_proactor_exception(DWORD addr, PCONTEXT c)
 #endif
 
 #ifdef EXP_LOG_ALL_EXCEPTIONS
-static volatile LONG g_all_exception_budget = 32;
+static volatile LONG g_all_exception_budget = 160;
 static volatile LONG g_exception_log_active = 0;
 
 static void exp_log_any_exception(PEXCEPTION_POINTERS ei)
@@ -5525,6 +6412,25 @@ static void exp_log_any_exception(PEXCEPTION_POINTERS ei)
         "TRANSITION_EXCEPTION code=0x%08x addr=0x%08x info0=0x%08x info1=0x%08x left=%d",
         code, exaddr, info0, info1, left);
     exp_log(buf);
+    /* FORK-A (user: "isn't the engine's error log the traceback?"): code 0x40010006 =
+     * DBG_PRINTEXCEPTION_C, raised by OutputDebugStringA. info1 = char* of the engine's OWN
+     * debug message, info0 = length. We were logging that the exception fired but DISCARDING
+     * the text -- capture it now. This is the native engine log; it may name the dropped
+     * NewObject / disconnect reason. (0x4001000a would be the wide variant.) */
+    if ((code == 0x40010006u || code == 0x4001000au) && info1) {
+        char dbg[260]; DWORD n = info0; DWORD k = 0; char out[300];
+        if (n == 0 || n > 255) n = 255;
+        __try {
+            for (k = 0; k < n; ++k) {
+                char ch = *((const char*)(DWORD_PTR)(info1 + (code == 0x4001000au ? k * 2 : k)));
+                if (ch == 0) break;
+                dbg[k] = (ch >= 32 && (unsigned char)ch < 127) ? ch : '.';
+            }
+        } __except(1) { k = 0; }
+        dbg[k] = 0;
+        wsprintfA(out, "TRANSITION_DBGSTR n=%u: %s", info0, dbg);
+        exp_log(out);
+    }
     exp_log_addr_region("TRANSITION_EXCEPTION_EIP_REGION", exaddr);
     exp_log_addr_region("TRANSITION_EXCEPTION_INFO1_REGION", info1);
     if (c) {
@@ -5534,6 +6440,9 @@ static void exp_log_any_exception(PEXCEPTION_POINTERS ei)
                             exp2_read_safe(c->Ebp + 4));
         exp_log_addr_region("TRANSITION_EXCEPTION_ECX_REGION", c->Ecx);
         exp_log_transition_stack("TRANSITION_EXCEPTION", c);
+        /* AV only: dump the malformed native object/format the fault touched. */
+        if (code == 0xc0000005u)
+            exp_dump_fault_context("TRANSITION_EXCEPTION", c, info0, info1);
     }
     InterlockedExchange(&g_exception_log_active, 0);
 }
@@ -6865,6 +7774,508 @@ static LONG CALLBACK exp_veh(PEXCEPTION_POINTERS ei)
             }
 #endif
 #endif
+#ifdef EXP_CTOR_DIAG
+            /* Faithful-construction diagnostic (logging only, no behavior change). */
+            if (addr == VA_CTORDIAG_C48760) {
+                PCONTEXT c = ei->ContextRecord;
+                DWORD ecx = c->Ecx;
+                DWORD ctx0 = exp2_read_safe(ecx);          /* [ECX]   */
+                DWORD ctx4 = exp2_read_safe(ecx + 4);      /* [ECX+4] */
+                DWORD esp = c->Esp;
+                DWORD ret = exp2_read_safe(esp);
+                DWORD a1 = exp2_read_safe(esp + 4);
+                DWORD glob_ee9c = exp2_read_safe(0x0183ee9cu);
+                char nm_ecx[96];
+                char nm_ctx0[96];
+                char nm_a1[96];
+                nm_ecx[0] = nm_ctx0[0] = nm_a1[0] = 0;
+                /* The realized template name lives in the engine's template
+                 * context; capture the likely holders + try a guarded C-string
+                 * from each candidate. */
+                exp_read_cstr_safe(ecx, nm_ecx, sizeof(nm_ecx));
+                exp_read_cstr_safe(ctx0, nm_ctx0, sizeof(nm_ctx0));
+                exp_read_cstr_safe(a1, nm_a1, sizeof(nm_a1));
+                exp_logf("CTORDIAG c48760 ECX=0x%08x [ECX]=0x%08x [ECX+4]=0x%08x",
+                         ecx, ctx0, ctx4);
+                exp_logf("CTORDIAG c48760 ret=0x%08x a1=0x%08x ee9c=0x%08x",
+                         ret, a1, glob_ee9c);
+                {
+                    char buf[384];
+                    wsprintfA(buf,
+                        "CTORDIAG c48760 name_ecx='%s' name_[ecx]='%s' name_a1='%s'",
+                        nm_ecx, nm_ctx0, nm_a1);
+                    exp_log(buf);
+                }
+            }
+#if EXP_TARGET_PROFILE == 78
+            /* D2 CAPTURE: the construct return (after c48760). While armed (right after
+             * the D2 trigger ran CreateLocalObject), EAX = the new TPlayerDummy Object*.
+             * cls38 keying failed (instance +0x38 != class key 0x35c6b710), so capture
+             * the construct's return value directly. */
+            if (addr == VA_D2_CREATELOCAL_RET && g_d2_arm && !g_d2_char) {
+                PCONTEXT c = ei->ContextRecord;
+                DWORD eax = c->Eax;             /* = c48760 arg1 = stack out-param  */
+                DWORD deref = exp2_read_safe(eax);          /* *out = heap Object*  */
+                DWORD obj18 = deref ? exp2_read_safe(deref + 0x18) : 0;
+                char d2c[224];
+                /* accept the deref'd heap object (a real Object* is a heap addr with a
+                 * populated obj+0x18 self/RPC map); EAX itself is a stack temp. */
+                if (deref >= 0x01000000u && deref < 0x80000000u && obj18) {
+                    g_d2_char = deref;
+                    g_d2_arm = 0;
+                }
+                wsprintfA(d2c,
+                    "D2CAP ret=bff767 EAX=0x%08x *EAX=0x%08x *EAX+18=0x%08x captured=0x%08x",
+                    eax, deref, obj18, (DWORD)g_d2_char);
+                exp_log(d2c);
+            }
+#endif
+            if (addr == VA_OBJ18_REG_BD2CD0) {
+                PCONTEXT c = ei->ContextRecord;
+                DWORD esp = c->Esp;
+                DWORD obj = exp2_read_safe(esp + 4);       /* arg1 = object   */
+                DWORD desc = exp2_read_safe(esp + 8);      /* arg2 = desc     */
+                exp_logf("CTORDIAG bd2cd0 obj=0x%08x cls38=0x%08x desc=0x%08x",
+                         obj, exp2_read_safe(obj + 0x38), desc);
+#if EXP_TARGET_PROFILE == 78
+                /* D2 CAPTURE: while armed (right after the D2 trigger ran
+                 * CreateLocalObject), grab the first TPlayerDummy char object. Its
+                 * obj+0x18 is populated by this very bd2cd0 pass -> resolvable. */
+                if (g_d2_arm && !g_d2_char &&
+                    exp2_read_safe(obj + 0x38) == KEY_TPLAYERDUMMY_CLS38) {
+                    g_d2_char = obj;
+                    g_d2_arm = 0;
+                    exp_logf("D2CAP captured char obj=0x%08x cls38=0x%08x obj18=0x%08x",
+                             obj, exp2_read_safe(obj + 0x38),
+                             exp2_read_safe(obj + 0x18));
+                }
+#endif
+            }
+#if EXP_TARGET_PROFILE == 78
+            /* D2 INJECT (one-shot): at getAllPlayers entry, ECX = the CharacterManager.
+             * CORRECTED MODEL (LATE-47): charmgr+0x28 is *std::map<int,Object*>* (a
+             * red-black _Tree), NOT a std::list -- proven by the crash at 0x646e12 =
+             * std::_Tree::_Inc (_Isnil@+0x15, _Right@+8) + the a69920 walker
+             * (lea eax,[ebx+edi+0xc], ebx=4 -> value @ node+0x10). The identical
+             * {_Myproxy,_Myhead,_Mysize} outer header masked list-vs-tree.
+             *   container = *(charmgr+0x28); _Myhead(sentinel)=*(container+4); _Mysize=*(container+8).
+             *   node = {_Left@0,_Parent@4,_Right@8, key@0xc, Object*@0x10, _Color@0x14, _Isnil@0x15}.
+             * Single-node insert: N = root = leftmost = rightmost; sentinel S points all
+             * three child links at N; N's three links point back at S (nil). */
+            if (addr == VA_CHARMGR_GETALL && g_d2_char && !g_d2_injected) {
+                PCONTEXT c = ei->ContextRecord;
+                DWORD charmgr = c->Ecx;
+                DWORD cont = charmgr ? exp2_read_safe(charmgr + 0x28) : 0;
+                DWORD S    = cont ? exp2_read_safe(cont + 4) : 0;   /* _Myhead = nil sentinel */
+                DWORD size = cont ? exp2_read_safe(cont + 8) : 0;
+                char d2j[192];
+                g_d2_injected = 1;
+                wsprintfA(d2j, "D2INJECT begin charmgr=0x%08x cont=0x%08x _Myhead=0x%08x size=0x%08x",
+                          charmgr, cont, S, size);
+                exp_log(d2j);
+                if (cont && S && size == 0) {        /* only splice into a genuinely empty map */
+                    DWORD N = (DWORD)(DWORD_PTR)&g_d2_node[0];
+                    __try {
+                        /* N: a single black root whose children are both the nil sentinel */
+                        g_d2_node[0] = S;                 /* N._Left   = nil   */
+                        g_d2_node[1] = S;                 /* N._Parent = nil (root's parent = _Myhead) */
+                        g_d2_node[2] = S;                 /* N._Right  = nil   */
+                        g_d2_node[3] = 0x3ebu;            /* N._Myval.first  = key (pid 1003) */
+                        g_d2_node[4] = (DWORD)g_d2_char;  /* N._Myval.second = Object* (char) @+0x10 */
+                        g_d2_node[5] = 0x00000001u;       /* byte +0x14 _Color=1(black), +0x15 _Isnil=0 */
+                        /* sentinel S now references N as root/leftmost/rightmost */
+                        *(DWORD*)(DWORD_PTR)(S + 0) = N;          /* _Myhead._Left   = leftmost = N */
+                        *(DWORD*)(DWORD_PTR)(S + 4) = N;          /* _Myhead._Parent = root     = N */
+                        *(DWORD*)(DWORD_PTR)(S + 8) = N;          /* _Myhead._Right  = rightmost= N */
+                        *(DWORD*)(DWORD_PTR)(cont + 8) = 1;       /* _Mysize = 1 */
+                        wsprintfA(d2j, "D2INJECT rb-spliced N=0x%08x char=0x%08x key=0x3eb newsize=1",
+                                  N, (DWORD)g_d2_char);
+                        exp_log(d2j);
+                        wsprintfA(d2j, "D2INJECT char fields obj18=0x%08x dc=0x%08x d0=0x%08x d4=0x%08x",
+                                  exp2_read_safe((DWORD)g_d2_char + 0x18),
+                                  exp2_read_safe((DWORD)g_d2_char + 0xDC),
+                                  exp2_read_safe((DWORD)g_d2_char + 0xD0),
+                                  exp2_read_safe((DWORD)g_d2_char + 0xD4));
+                        exp_log(d2j);
+                    } __except(1) {
+                        exp_log("D2INJECT exception during rb splice");
+                    }
+                } else {
+                    exp_logf("D2INJECT skip cont=0x%08x S=0x%08x size=0x%08x", cont, S, size);
+                }
+            }
+#endif
+            /* SPIKE 2026-06-28: tag-1 key03 (c35140) entry. Does our master-lane
+             * char NewObject reach the FULL-CONSTRUCT handler (tag-1) at all?
+             * bff990 (tag-2 bare) is logged separately (NEWOBJ_ID). Log entry
+             * registers + stack args + try the class-string from candidates so we
+             * can correlate against the char pid (b4_char_pid). */
+            if (addr == VA_TAG1_KEY03) {
+                PCONTEXT c = ei->ContextRecord;
+                DWORD esp = c->Esp;
+                DWORD a1 = exp2_read_safe(esp + 4);
+                DWORD a2 = exp2_read_safe(esp + 8);
+                DWORD a3 = exp2_read_safe(esp + 0xc);
+                char nm_ecx[96]; char nm_a1[96]; char nm_a2[96];
+                nm_ecx[0] = nm_a1[0] = nm_a2[0] = 0;
+                exp_read_cstr_safe(c->Ecx, nm_ecx, sizeof(nm_ecx));
+                exp_read_cstr_safe(a1, nm_a1, sizeof(nm_a1));
+                exp_read_cstr_safe(a2, nm_a2, sizeof(nm_a2));
+                exp_logf("TAG1_KEY03 c35140 REACHED ECX=0x%08x EDX=0x%08x ESI=0x%08x",
+                         c->Ecx, c->Edx, c->Esi);
+                {
+                    char buf[384];
+                    wsprintfA(buf,
+                        "TAG1_KEY03 c35140 EDI=0x%08x a1=0x%08x a2=0x%08x a3=0x%08x",
+                        c->Edi, a1, a2, a3);
+                    exp_log(buf);
+                    wsprintfA(buf,
+                        "TAG1_KEY03 c35140 name_ecx='%s' name_a1='%s' name_a2='%s'",
+                        nm_ecx, nm_a1, nm_a2);
+                    exp_log(buf);
+                }
+            }
+            /* 2026-06-28 (Claude): bb5f40 type-materializer entry. __fastcall,
+             * so ECX = param_1 = the className std::string*. The variant decoder
+             * tag-0x07 (inline object-value) path calls this to construct an
+             * object from a class name; we want to see WHICH class name. MSVC
+             * std::string stores chars inline at ecx+4 (SSO, len<=15) or at
+             * *(ecx+4) (heap). Dump 32 raw bytes from both so we can eyeball the
+             * ASCII for "TPlayerDummy" (54 50 6c 61 79 65 72 44 75 6d 6d 79)
+             * regardless of layout. Logging only, no behavior change. */
+            if (addr == VA_BB5F40_ENTRY) {
+                PCONTEXT c = ei->ContextRecord;
+                DWORD ecx = c->Ecx;
+                DWORD heap = exp2_read_safe(ecx + 4); /* heap-string ptr candidate */
+                DWORD inl[8]; DWORD hp[8];
+                char inl_hex[80]; char hp_hex[80];
+                char buf[256];
+                int k;
+                for (k = 0; k < 8; ++k) {
+                    inl[k] = exp2_read_safe(ecx + (DWORD)k * 4);
+                    hp[k]  = heap ? exp2_read_safe(heap + (DWORD)k * 4) : 0;
+                }
+                wsprintfA(inl_hex,
+                    "%08x %08x %08x %08x %08x %08x %08x %08x",
+                    inl[0], inl[1], inl[2], inl[3],
+                    inl[4], inl[5], inl[6], inl[7]);
+                wsprintfA(hp_hex,
+                    "%08x %08x %08x %08x %08x %08x %08x %08x",
+                    hp[0], hp[1], hp[2], hp[3],
+                    hp[4], hp[5], hp[6], hp[7]);
+                wsprintfA(buf,
+                    "BB5F40_ENTRY ecx=0x%08x inline=%s heap@0x%08x=%s",
+                    ecx, inl_hex, heap, hp_hex);
+                exp_log(buf);
+            }
+            /* 2026-06-28 (Claude): tag-0x07 className decode probe. At 0xbef688
+             * the +0x1b reader has just decoded the object-value className into
+             * local_30; EAX = &std::string (MSVC out-ptr). Dump EAX inline (SSO
+             * chars at EAX+0), the heap-string deref (*(EAX+0)), and a small ESP
+             * window so "TPlayerDummy" (54 50 6c 61 79 65 72 44 75 6d 6d 79) is
+             * visible regardless of where local_30 sits. Fires once per wire
+             * object-value (tag-7), low volume. Logging only. This is the seat
+             * that distinguishes (2) body-right+type-not-realized from (3)
+             * body-wrong: if our className decodes to "TPlayerDummy" here but
+             * bb5f40 never sees it, the body is correct and 005e5650 missed. */
+            if (addr == VA_BEF688_TAG7_CLASSNAME) {
+                PCONTEXT c = ei->ContextRecord;
+                DWORD eax = c->Eax;
+                DWORD esp = c->Esp;
+                DWORD heapp = exp2_read_safe(eax); /* SSO union as heap ptr */
+                DWORD inl[6]; DWORD hp[6]; DWORD st[8];
+                char inl_hex[64]; char hp_hex[64]; char st_hex[80];
+                char buf[256];
+                int k;
+                for (k = 0; k < 6; ++k) {
+                    inl[k] = exp2_read_safe(eax + (DWORD)k * 4);
+                    hp[k]  = heapp ? exp2_read_safe(heapp + (DWORD)k * 4) : 0;
+                }
+                for (k = 0; k < 8; ++k)
+                    st[k] = exp2_read_safe(esp + (DWORD)k * 4);
+                wsprintfA(inl_hex, "%08x %08x %08x %08x %08x %08x",
+                    inl[0], inl[1], inl[2], inl[3], inl[4], inl[5]);
+                wsprintfA(hp_hex, "%08x %08x %08x %08x %08x %08x",
+                    hp[0], hp[1], hp[2], hp[3], hp[4], hp[5]);
+                wsprintfA(st_hex, "%08x %08x %08x %08x %08x %08x %08x %08x",
+                    st[0], st[1], st[2], st[3], st[4], st[5], st[6], st[7]);
+                wsprintfA(buf,
+                    "TAG7_CLASSNAME eax=0x%08x inline=%s heap@0x%08x=%s esp=%s",
+                    eax, inl_hex, heapp, hp_hex, st_hex);
+                exp_log(buf);
+            }
+            /* 2026-06-29 (Claude): CL_NetSession lower dispatcher ca4540 probe.
+             * __thiscall: ECX = session; stack args param_1 @ [esp+4], param_2 @
+             * [esp+8]. The 16-bit opcode is the u16 at (*(param_2+0x10))+5, i.e.
+             * byte+5..+6 of the dword at buf+4 -> (d1>>8)&0xffff. Log opcode +
+             * the pointers/raw so the architect can sanity-check param_2 offset.
+             * Logging only, no behavior change. */
+            if (addr == VA_SESSION_DISPATCH) {
+                PCONTEXT c = ei->ContextRecord;
+                DWORD esp = c->Esp;
+                DWORD ecx = c->Ecx;
+                DWORD p1  = exp2_read_safe(esp + 4);
+                DWORD p2  = exp2_read_safe(esp + 8);
+                DWORD buf_ptr = exp2_read_safe(p2 + 0x10);
+                DWORD d1  = exp2_read_safe(buf_ptr + 4);
+                WORD  opcode = (WORD)((d1 >> 8) & 0xFFFF);
+                char b[256];
+                wsprintfA(b,
+                    "CA4540_DISPATCH ecx=0x%08x p1=0x%08x p2=0x%08x buf=0x%08x opcode=0x%04x raw=0x%08x",
+                    ecx, p1, p2, buf_ptr, opcode, d1);
+                exp_log(b);
+                /* 2026-06-29 (Claude): dump raw packet bytes + p2 header so the
+                 * architect can read the full wire format of the construct packet
+                 * (opcode 0x1001 -> pid 0x3e9). All reads via exp2_read_safe.
+                 * Logging only; no behavior change. */
+                {
+                    DWORD off, j;
+                    char line[160], hx[8];
+                    /* (1) packet buffer: 192 bytes, 32/line */
+                    for (off = 0; off < 0xC0; off += 0x20) {
+                        wsprintfA(line, "CA4540_PKT off=0x%02x :", off);
+                        for (j = 0; j < 0x20; j += 4) {
+                            DWORD d = exp2_read_safe(buf_ptr + off + j);
+                            wsprintfA(hx, " %02x", d & 0xff);        lstrcatA(line, hx);
+                            wsprintfA(hx, " %02x", (d >> 8) & 0xff);  lstrcatA(line, hx);
+                            wsprintfA(hx, " %02x", (d >> 16) & 0xff); lstrcatA(line, hx);
+                            wsprintfA(hx, " %02x", (d >> 24) & 0xff); lstrcatA(line, hx);
+                        }
+                        exp_log(line);
+                    }
+                    /* (2) message-object header: 32 bytes at p2 */
+                    for (off = 0; off < 0x20; off += 0x20) {
+                        wsprintfA(line, "CA4540_MSGOBJ off=0x%02x :", off);
+                        for (j = 0; j < 0x20; j += 4) {
+                            DWORD d = exp2_read_safe(p2 + off + j);
+                            wsprintfA(hx, " %02x", d & 0xff);        lstrcatA(line, hx);
+                            wsprintfA(hx, " %02x", (d >> 8) & 0xff);  lstrcatA(line, hx);
+                            wsprintfA(hx, " %02x", (d >> 16) & 0xff); lstrcatA(line, hx);
+                            wsprintfA(hx, " %02x", (d >> 24) & 0xff); lstrcatA(line, hx);
+                        }
+                        exp_log(line);
+                    }
+                }
+            }
+            /* 2026-06-29 (Claude): ca47e0 object-tree walker entry probe. Log the
+             * return address so we can tell whether ca4540 packet-drove it
+             * (ret ~ 0x00ca465a, inside ca4540) vs a local caller (e.g. the
+             * FUser::connect path ~0x00bfe230). Logging only. */
+            if (addr == VA_CONSTRUCT_WALKER) {
+                PCONTEXT c = ei->ContextRecord;
+                DWORD esp = c->Esp;
+                DWORD ret = exp2_read_safe(esp);
+                DWORD p1  = exp2_read_safe(esp + 4);
+                DWORD p2  = exp2_read_safe(esp + 8);
+                char b[160];
+                wsprintfA(b,
+                    "CA47E0_ENTRY ret=0x%08x p1=0x%08x p2=0x%08x",
+                    ret, p1, p2);
+                exp_log(b);
+            }
+            /* 2026-06-29 (Claude/LATE-86 probe): per-transport construct dispatch.
+             * Construct dispatch is per-network-computer: each installs its own
+             * [obj+0x640] key->handler table. Table A=FClientWorld key3->bff990
+             * (control/Connector, PROVEN live). Table B (ctor c74640) key3->
+             * c74ed0->bb5f40(type-factory)+bd4b20 = the suspected CHAR lane.
+             * Table C (ctor c59580) key5->c5c770. Seat the two UNKNOWN handlers
+             * (c74ed0, c5c770) to answer, with ground truth: do they fire at all
+             * during login->char-select, and from WHICH dispatcher (ret-addr ->
+             * which transport)? If c74ed0 fires for ANY object, table B is a live
+             * wire-driven construct lane the host can target for the char. int3 at
+             * ENTRY (pre-prologue): [esp]=ret, ECX=this(transport), [esp+4..]=args.
+             * Hit-capped to avoid flood. Logging only, no behavior change. */
+            if (addr == VA_C74ED0_FACTORY) {
+                static volatile LONG c74_hits = 0;
+                LONG n = InterlockedIncrement(&c74_hits);
+                if (n <= 300) {
+                    PCONTEXT c = ei->ContextRecord;
+                    DWORD esp = c->Esp;
+                    DWORD ret = exp2_read_safe(esp);
+                    DWORD p1  = exp2_read_safe(esp + 4);
+                    DWORD p2  = exp2_read_safe(esp + 8);
+                    char b2[160];
+                    wsprintfA(b2,
+                        "C74ED0_ENTRY n=%ld ret=0x%08x ecx=0x%08x p1=0x%08x p2=0x%08x",
+                        n, ret, c->Ecx, p1, p2);
+                    exp_log(b2);
+                }
+            }
+            if (addr == VA_C5C770_LINK) {
+                static volatile LONG c5c_hits = 0;
+                LONG n = InterlockedIncrement(&c5c_hits);
+                if (n <= 300) {
+                    PCONTEXT c = ei->ContextRecord;
+                    DWORD esp = c->Esp;
+                    DWORD ret = exp2_read_safe(esp);
+                    DWORD p1  = exp2_read_safe(esp + 4);
+                    DWORD p2  = exp2_read_safe(esp + 8);
+                    char b2[160];
+                    wsprintfA(b2,
+                        "C5C770_ENTRY n=%ld ret=0x%08x ecx=0x%08x p1=0x%08x p2=0x%08x",
+                        n, ret, c->Ecx, p1, p2);
+                    exp_log(b2);
+                }
+            }
+            /* 2026-06-29 (Claude/LATE-77 probe): transport/queue-producer
+             * 0x01158950 entry. ca4540 saw ONLY opcode 0x1001 -- the master-
+             * BATCH's 2/3/6/9 NewObjects never reached it. Seat the producer to
+             * log every decoded packet's opcode so we can tell where the batch's
+             * opcode-3 dies relative to ca4540: (a) it reaches this dispatch
+             * layer but is routed somewhere OTHER than ca4540, or (b) it never
+             * reaches here at all. int3 fires at function ENTRY (pre-prologue):
+             * [esp]=ret, [esp+4..]=stack args, ECX/EDX=fastcall args. Read the
+             * opcode the ca4540 way (param_2 -> +0x10 -> buf -> (buf+4)>>8) AND
+             * via ECX so it's readable regardless of arg layout. Hit-capped to
+             * avoid flood (pre-game window is only dozens-hundreds of packets).
+             * Logging only, no behavior change. */
+            if (addr == VA_QUEUE_PRODUCER) {
+                static volatile LONG qprod_hits = 0;
+                LONG n = InterlockedIncrement(&qprod_hits);
+                if (n <= 400) {
+                    PCONTEXT c = ei->ContextRecord;
+                    DWORD esp = c->Esp;
+                    DWORD a1 = exp2_read_safe(esp + 4);
+                    DWORD a2 = exp2_read_safe(esp + 8);
+                    DWORD a3 = exp2_read_safe(esp + 0xc);
+                    DWORD buf_a2 = exp2_read_safe(a2 + 0x10);
+                    DWORD op_a2  = (exp2_read_safe(buf_a2 + 4) >> 8) & 0xFFFF;
+                    DWORD buf_cx = exp2_read_safe(c->Ecx + 0x10);
+                    DWORD op_cx  = (exp2_read_safe(buf_cx + 4) >> 8) & 0xFFFF;
+                    char b2[256];
+                    wsprintfA(b2,
+                        "QPROD hit=%d ecx=0x%08x edx=0x%08x a1=0x%08x a2=0x%08x a3=0x%08x op_a2=0x%04x op_cx=0x%04x",
+                        (int)n, c->Ecx, c->Edx, a1, a2, a3, op_a2, op_cx);
+                    exp_log(b2);
+                    {
+                        DWORD srcs[2]; int s; DWORD j; char line[160], hx[8];
+                        srcs[0] = buf_a2; srcs[1] = c->Ecx;
+                        for (s = 0; s < 2; ++s) {
+                            wsprintfA(line, "QPROD_DUMP hit=%d src=%d :", (int)n, s);
+                            for (j = 0; j < 0x20; j += 4) {
+                                DWORD d = exp2_read_safe(srcs[s] + j);
+                                wsprintfA(hx, " %02x", d & 0xff);        lstrcatA(line, hx);
+                                wsprintfA(hx, " %02x", (d >> 8) & 0xff);  lstrcatA(line, hx);
+                                wsprintfA(hx, " %02x", (d >> 16) & 0xff); lstrcatA(line, hx);
+                                wsprintfA(hx, " %02x", (d >> 24) & 0xff); lstrcatA(line, hx);
+                            }
+                            exp_log(line);
+                        }
+                    }
+                }
+            }
+            /* 2026-06-29 (Claude/LATE-82 connect-signal probe): four dedicated,
+             * clearly-labeled seats to pin WHERE the TClient control-object
+             * connect-signal chain dies, and capture the Connector nonce IF
+             * connect runs. Logging only; no behavior change. int3 fires at
+             * function ENTRY (pre-prologue): [esp]=ret, [esp+4..]=stack args,
+             * ECX=__thiscall this. */
+            /* (4) FUSERCONNECT -- signin processor "FUser::connect" 0x010b0c20.
+             * ECX = FUser; log FUser+0x8c (state, BEFORE) + the stored control
+             * object candidates. */
+            if (addr == VA_FUSER_CONNECT_SIGNIN) {
+                PCONTEXT c = ei->ContextRecord;
+                DWORD fuser = c->Ecx;
+                DWORD esp = c->Esp;
+                DWORD ret = exp2_read_safe(esp);
+                DWORD a1 = exp2_read_safe(esp + 4);
+                DWORD a2 = exp2_read_safe(esp + 8);
+                char b[320];
+                wsprintfA(b,
+                    "FUSERCONNECT entry fuser(ecx)=0x%08x ret=0x%08x a1=0x%08x a2=0x%08x edx=0x%08x esi=0x%08x edi=0x%08x",
+                    fuser, ret, a1, a2, c->Edx, c->Esi, c->Edi);
+                exp_log(b);
+                wsprintfA(b,
+                    "FUSERCONNECT fuser+8c(state)=0x%08x +7c(connector)=0x%08x +74=0x%08x +78=0x%08x +80=0x%08x +84=0x%08x +88=0x%08x",
+                    exp2_read_safe(fuser + 0x8c), exp2_read_safe(fuser + 0x7c),
+                    exp2_read_safe(fuser + 0x74), exp2_read_safe(fuser + 0x78),
+                    exp2_read_safe(fuser + 0x80), exp2_read_safe(fuser + 0x84),
+                    exp2_read_safe(fuser + 0x88));
+                exp_log(b);
+            }
+            /* (1) SIGCTRL -- FClientWorld::OnSigSetControlObject 0x01097270.
+             * The control object is the signalled object; it is typically in ECX
+             * (this) and/or arg1. Dump candidate objects' +0x0c(id) / +0x38(cls) /
+             * +0xf(class byte) so we can tell TClient vs TAccount vs bare Object. */
+            if (addr == VA_ONSIG_SETCONTROL) {
+                PCONTEXT c = ei->ContextRecord;
+                DWORD esp = c->Esp;
+                DWORD ret = exp2_read_safe(esp);
+                DWORD a1 = exp2_read_safe(esp + 4);
+                DWORD a2 = exp2_read_safe(esp + 8);
+                DWORD cands[4]; const char *nm[4]; int i;
+                char b[320];
+                cands[0] = c->Ecx; nm[0] = "ecx";
+                cands[1] = a1;     nm[1] = "a1";
+                cands[2] = a2;     nm[2] = "a2";
+                cands[3] = c->Esi; nm[3] = "esi";
+                wsprintfA(b,
+                    "SIGCTRL entry ecx=0x%08x a1=0x%08x a2=0x%08x ret=0x%08x edx=0x%08x esi=0x%08x edi=0x%08x",
+                    c->Ecx, a1, a2, ret, c->Edx, c->Esi, c->Edi);
+                exp_log(b);
+                for (i = 0; i < 4; ++i) {
+                    DWORD o = cands[i];
+                    DWORD vt = o ? exp2_read_safe(o) : 0;
+                    DWORD id0c = o ? exp2_read_safe(o + 0x0c) : 0;
+                    DWORD cls38 = o ? exp2_read_safe(o + 0x38) : 0;
+                    DWORD clsbyte = o ? (exp2_read_safe(o + 0x0c) >> 24) & 0xff : 0; /* +0xf = high byte of +0x0c dword */
+                    DWORD pid3c = o ? exp2_read_safe(o + 0x3c) : 0;
+                    DWORD pid7c = o ? exp2_read_safe(o + 0x7c) : 0;
+                    wsprintfA(b,
+                        "SIGCTRL cand=%s obj=0x%08x vt=0x%08x id0c=0x%08x cls38=0x%08x byte0f=0x%02x pid3c=0x%08x pid7c=0x%08x",
+                        nm[i], o, vt, id0c, cls38, clsbyte, pid3c, pid7c);
+                    exp_log(b);
+                }
+            }
+            /* (2) ONCONNREPL -- FUser::onConnectorReplicated 0x010b3530 entry.
+             * ECX = FUser. Log FUser+0x8c (state) + FUser+0x7c (connector). */
+            if (addr == VA_FUSER_ONCONNECTOR) {
+                PCONTEXT c = ei->ContextRecord;
+                DWORD fuser = c->Ecx;
+                DWORD esp = c->Esp;
+                DWORD ret = exp2_read_safe(esp);
+                DWORD a1 = exp2_read_safe(esp + 4);
+                DWORD a2 = exp2_read_safe(esp + 8);
+                DWORD conn = exp2_read_safe(fuser + 0x7c);
+                char b[320];
+                wsprintfA(b,
+                    "ONCONNREPL entry fuser(ecx)=0x%08x +8c(state)=0x%08x +7c(connector)=0x%08x ret=0x%08x a1=0x%08x a2=0x%08x esi=0x%08x edi=0x%08x",
+                    fuser, exp2_read_safe(fuser + 0x8c), conn, ret, a1, a2, c->Esi, c->Edi);
+                exp_log(b);
+                wsprintfA(b,
+                    "ONCONNREPL connector=0x%08x conn+60=0x%08x conn+6c(nonce)=0x%08x conn+54=0x%08x conn+58=0x%08x conn+5c=0x%08x",
+                    conn,
+                    conn ? exp2_read_safe(conn + 0x60) : 0,
+                    conn ? exp2_read_safe(conn + 0x6c) : 0,
+                    conn ? exp2_read_safe(conn + 0x54) : 0,
+                    conn ? exp2_read_safe(conn + 0x58) : 0,
+                    conn ? exp2_read_safe(conn + 0x5c) : 0);
+                exp_log(b);
+            }
+            /* (3) CONNECTNONCE -- Connector::connect 0x00a91210 entry. ECX =
+             * Connector. Log +0x60 (connected byte), +0x6c (NONCE -- live capture
+             * if connect runs), +0x54/+0x58/+0x5c (gate fields). */
+            if (addr == VA_CONN_CONNECT_IMPL) {
+                PCONTEXT c = ei->ContextRecord;
+                DWORD conn = c->Ecx;
+                DWORD esp = c->Esp;
+                DWORD ret = exp2_read_safe(esp);
+                DWORD a1 = exp2_read_safe(esp + 4);
+                char b[320];
+                wsprintfA(b,
+                    "CONNECTNONCE entry connector(ecx)=0x%08x ret=0x%08x a1=0x%08x edx=0x%08x esi=0x%08x edi=0x%08x",
+                    conn, ret, a1, c->Edx, c->Esi, c->Edi);
+                exp_log(b);
+                wsprintfA(b,
+                    "CONNECTNONCE connector=0x%08x +60(connected)=0x%08x +6c(NONCE)=0x%08x +54=0x%08x +58=0x%08x +5c=0x%08x +68=0x%08x +70=0x%08x",
+                    conn,
+                    exp2_read_safe(conn + 0x60), exp2_read_safe(conn + 0x6c),
+                    exp2_read_safe(conn + 0x54), exp2_read_safe(conn + 0x58),
+                    exp2_read_safe(conn + 0x5c), exp2_read_safe(conn + 0x68),
+                    exp2_read_safe(conn + 0x70));
+                exp_log(b);
+            }
+#endif
 #ifdef EXP_DUMP_CONNECTOR_HANDSHAKE
             if (addr == VA_CONN_CONNECT_BASE || addr == VA_CONN_CONNECT_IMPL ||
                 addr == VA_CONN_OPEN_IMPL ||
@@ -7257,6 +8668,9 @@ static LONG CALLBACK exp_veh(PEXCEPTION_POINTERS ei)
                 addr == VA_ONLOAD_AFTER_LOADLIST ||
                 addr == VA_SERVER_FINISH_SEND ||
                 addr == VA_UPDATE_AFTER_GETALL ||
+                addr == VA_UPDATE_ROWGATE2 ||
+                addr == VA_UPDATE_ADDGATE ||
+                addr == VA_UPDATE_RESOLVE ||
                 addr == VA_UPDATE_ADDCHAR ||
                 addr == VA_UPDATE_HASNOCHAR ||
                 addr == VA_UPDATE_SELECTCHAR) {
@@ -7270,6 +8684,42 @@ static LONG CALLBACK exp_veh(PEXCEPTION_POINTERS ei)
 #if EXP_TARGET_PROFILE == 69 || EXP_TARGET_PROFILE == 75 || EXP_TARGET_PROFILE == 76 || EXP_TARGET_PROFILE == 77 || EXP_TARGET_PROFILE == 78
             if (addr == VA_NEWOBJ_PID_STORED) {
                 exp_log_newobject_identity69(addr, ei->ContextRecord);
+            }
+            if (addr == VA_GATE_RESULT) {
+                /* LATE-52: every key-3 NewObject's pid->slot gate find. EAX=slot(or NULL), EDI=pid.
+                   hit=1 => pid has a registered slot (constructs); hit=0 => rejected before bff990. */
+                PCONTEXT gc = ei->ContextRecord;
+                exp_logf("GATEFIND pid=0x%08x slot=0x%08x hit=0x%08x",
+                         gc->Edi, gc->Eax, (DWORD)(gc->Eax != 0));
+            }
+            if (addr == VA_KEY03_NEWOBJECT) {
+                /* LATE-54: bff990 ENTRY -- [esp]=return address = the ACTUAL (indirect) caller.
+                   Decides wire-dispatch vs local construct for the 0x3e9 TClient. bff990's only
+                   static callers are off-path bbf750(0xbbf7ba) + the table installer(0xbfdb9c). */
+                DWORD esp = ei->ContextRecord->Esp;
+                exp_logf("BFF990_CALLER ret=0x%08x a1=0x%08x a2=0x%08x",
+                         exp2_read_safe(esp), exp2_read_safe(esp + 4), exp2_read_safe(esp + 8));
+                /* FORK-A capture (user-directed): dump the proven-working construct's wire message.
+                 * a1 = the dispatched wire msg (LATE-99: esi=[ebp+8]); bff990 reads the OID via
+                 * [msg+0x28]/[msg+0x54] and the component-tail via bd4b20(obj,msg). Capture the OID
+                 * + a byte window so we have the template to forge a TPlayer construct from. Limit 8. */
+                {
+                    static int bff_cap = 0;
+                    if (bff_cap < 8) {
+                        DWORD a1 = exp2_read_safe(esp + 4);
+                        char lbl[48]; char mb[160];
+                        bff_cap++;
+                        wsprintfA(mb, "BFF990_MSG a1=0x%08x oid28=0x%08x oid54=0x%08x f4=0x%08x",
+                                  a1, a1 ? exp2_read_safe(a1 + 0x28) : 0,
+                                  a1 ? exp2_read_safe(a1 + 0x54) : 0,
+                                  a1 ? exp2_read_safe(a1 + 0x04) : 0);
+                        exp_log(mb);
+                        if (a1) {
+                            wsprintfA(lbl, "BFF990_MSG_A1_%d", bff_cap);
+                            exp_dump_bytes(lbl, a1, 96);
+                        }
+                    }
+                }
             }
             if (addr == VA_OBJPTR_MAT_ENTRY ||
                 addr == VA_OBJPTR_BB2580_CALL ||
@@ -7359,7 +8809,8 @@ static LONG CALLBACK exp_veh(PEXCEPTION_POINTERS ei)
                 addr == VA_CHANNEL_OPEN || addr == VA_CHANNEL_CHANGEFINISH ||
                 addr == VA_KEY6_EXEC_CALLSITE || addr == VA_FUSER_CONNECT ||
                 addr == VA_FCLIENTWORLD_CONNECT || addr == VA_MASTER_ATTACH_BFE230 ||
-                addr == VA_CLIENTCOMPUTER_ATTACH) {
+                addr == VA_CLIENTCOMPUTER_ATTACH || addr == VA_SERVERCOMPUTER_ATTACH ||
+                addr == VA_C5A880_CTRLOBJ_CONSTRUCT || addr == VA_ONSIG_SETCONTROL_DISPATCH) {
                 exp_log_preconnect_marker(addr, ei->ContextRecord);
             }
 #endif
