@@ -1,0 +1,59 @@
+=== CLIENT INTERNAL LOG TAP ===
+[System] >>> GMSEvent... 14.13, GSS_Connecting, SCS_OK, 0
+[System] LuaClient | OnInitialize
+[System] ClientMailModule | OnStart
+[System] CliQuestModle | OnStart
+[System] CliCommonMod | OnStart
+[System] >>> GMSEvent... 14.425, GSS_Connected, SCS_OK, 0
+[System] >>> GMSEvent... 14.435, GSS_SessionInChallenge, SCS_OK, 0
+[System] >>> GMSEvent... 14.442, GSS_SessionInResult, SCS_OK, 0
+[System] >>> GMSEvent... 14.443, GSS_MasterChannelUpdate, , 0
+[System] >>> GMSEvent... 18.456, GSS_SignIn, SCS_OK, 0
+[System] >>> GMSEvent... 18.487, GSS_SignInResult, SCS_OK, 0
+[System] session>> signInClientResult  | 1 | 1 | 1
+[System] >>> GMSEvent... 20.654, Master_SignInResult, SCS_OK, 0
+[System] >>> GMSEvent... 20.657, GSS_Disconnected, SCS_OK, 0
+[System] session>> logInClientResult  | 1 | 1 | 1 | 1
+[System] >>> GMSEvent... 20.676, Channel_LogInResult, SCS_OK, 0
+[System] Creating UI...
+[LUALOG] UIXLayout_EpisodeDialog, OnCreate
+[GAP] --- TEST5 forceload begin ---
+[GAP] Firenze.TestMode=true IsClient=true
+[GAP] C->LUA CreateDeferedTemplate(TPlayer) ENTER
+[GAP]    CreateDeferedTemplate(TPlayer) RETURN
+[GAP] PRE  CreateLocalObject(TPlayer) pcall=true ret=nil
+[GAP] FORCE _Template(TActor,force=true) ok=true err=table: 2E5BABD8
+[GAP] C->LUA Template(TPlayer,TActor,force=nil) => Defered
+[GAP] reload_file(TPlayer) ok=true err=1
+[GAP] C->LUA CreateDeferedTemplate(TPlayer) ENTER
+[GAP]    LUA->C CreateCom(DBCom) => ok
+[GAP]    LUA->C CreateCom(Player) => ok
+[GAP]    LUA->C CreateCom(CStatusPlayer) => ok
+[GAP]    LUA->C CreateCom(CPrivateStatus) => ok
+[GAP]    LUA->C CreateCom(User) => ok
+[GAP]    LUA->C CreateCom(Physics) => ok
+[GAP]    LUA->C CreateCom(CBody) => ok
+[GAP]    LUA->C CreateCom(PlayerController) => ok
+[GAP]    LUA->C CreateCom(CSkillBook) => ok
+[GAP]    LUA->C CreateCom(CInventory) => ok
+[GAP]    LUA->C CreateCom(CEquipment) => ok
+[GAP]    LUA->C CreateCom(CItemManager) => ok
+[GAP]    LUA->C CreateCom(QuestManager) => ok
+[GAP]    LUA->C CreateCom(Exchanger) => ok
+[GAP]    LUA->C CreateCom(PersonalStore) => ok
+[GAP]    LUA->C CreateCom(CChat) => ok
+[GAP]    LUA->C CreateCom(CBlackBoard) => ok
+[GAP]    LUA->C CreateCom(PartyProxy) => ok
+[GAP]    LUA->C CreateCom(CAdmin) => ok
+[GAP]    LUA->C CreateCom(CCommunity) => ok
+[GAP]    LUA->C CreateCom(CJournal) => ok
+[GAP]    LUA->C CreateCom(CPlayerDbFilter) => ok
+[GAP]    LUA->C CreateCom(CTrigger) => ok
+[GAP]    LUA->C CreateCom(GuildProxy) => ok
+[GAP]    LUA->C CreateCom(CMarket) => ok
+[GAP]    LUA->C goLua_RegistObject(parent=TActor)
+[GAP]    CreateDeferedTemplate(TPlayer) RETURN
+[GAP] CreateDeferedTemplate(TPlayer) ok=true err=true
+[GAP] POST CreateLocalObject(TPlayer) pcall=true ret/err=table: 386A2F08
+[GAP] INVENTORY built=1 oid=1 player=1 user=1 cstatus=1 cbody=1 phys=1 inv=1 equip=1 tmpl=1 defer=0
+[GAP] --- TEST5 forceload end ---

@@ -1,0 +1,4 @@
+TEST5 start: force-load realize (Template TActor force=true; reload TPlayer->Defered; CreateDeferedTemplate->DefaultImpl; CreateLocalObject)
+REACHED 0x00c48760  arg1=0x001adc2c arg2=0x9f4a5bcd
+CTORDIAG bd2cd0 obj=0x359576d0 cls38=0x9f4a5bcd desc=0x352e0888
+TEST5 BUILT=1 OID=1 PLAYER=1 USER=1 CSTATUS=1 CBODY=1 PHYS=1 INV=1 EQUIP=1 TMPL=1 DEFER=0
