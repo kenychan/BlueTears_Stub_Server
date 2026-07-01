@@ -21,9 +21,26 @@ FINDINGS = ROOT / "Res" / "RE_findings"
 QUEUE_SCRIPT = ROOT / "Res" / "queue_admin_command.ps1"
 CHANNEL_CLICK_CALIBRATION = ROOT / "Res" / "channel_click_calibration.json"
 CHANNEL_CLICK_SEQUENCE = ROOT / "Res" / "channel_click_sequence.json"
+NPSLAYER_EXP_LOG = ROOT / "TW" / "Bin" / "NpSlayer_exp.log"
 RESULT_RE = re.compile(r"\[master-ladder-result\]\s+rung=(\S+)\s+alive_ms=(\d+)\s+class=(\S+)\s+event=(\S+)")
+CLICK_LOG_RE = re.compile(
+    r"(?:UI_TEXT.*(?:伺服|頻道|確認|Server|Channel|Confirm))"
+)
+LIVE_LOG_RE = re.compile(
+    r"(CODEX_|UI_|UI_TEXT|CHARMGR|LOADLIST|POSTFINISH|FINISH|"
+    r"Server_Finish|Master_Finish|SESSION_E0|FUSER_STATE|EXCEPTION|"
+    r"LSR_GATE|LOGIN_THROW_SITE|TAG0B|OBJLIST|ONLOAD|transition|"
+    r"create|select)",
+    re.IGNORECASE,
+)
+GSS_CHANNEL_LIST_SENT_RE = re.compile(r"sent full-gss stage2 0x1003\+0x1004")
+GSS_CHANNEL_SELECTED_RE = re.compile(r"decoded 0x4005")
+GAME_CLIENT_IMAGES = ("NClient.exe", "PunchMonster.exe")
+CLIENT_KILL_STABLE_SECONDS = 2.0
+CLIENT_KILL_TIMEOUT_SECONDS = 8.0
 
 user32 = ctypes.WinDLL("user32", use_last_error=True)
+kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
 try:
     user32.SetProcessDPIAware()
 except Exception:
@@ -46,6 +63,7 @@ class POINT(ctypes.Structure):
 EnumWindowsProc = ctypes.WINFUNCTYPE(wt.BOOL, wt.HWND, wt.LPARAM)
 user32.EnumWindows.argtypes = [EnumWindowsProc, wt.LPARAM]
 user32.GetClassNameW.argtypes = [wt.HWND, wt.LPWSTR, ctypes.c_int]
+user32.GetWindowThreadProcessId.argtypes = [wt.HWND, ctypes.POINTER(wt.DWORD)]
 user32.GetClientRect.argtypes = [wt.HWND, ctypes.POINTER(RECT)]
 user32.ClientToScreen.argtypes = [wt.HWND, ctypes.POINTER(POINT)]
 user32.IsWindowVisible.argtypes = [wt.HWND]
@@ -55,12 +73,18 @@ user32.BringWindowToTop.argtypes = [wt.HWND]
 user32.SetCursorPos.argtypes = [ctypes.c_int, ctypes.c_int]
 user32.mouse_event.argtypes = [wt.DWORD, wt.DWORD, wt.DWORD, wt.DWORD, ctypes.c_size_t]
 user32.keybd_event.argtypes = [wt.BYTE, wt.BYTE, wt.DWORD, ctypes.c_size_t]
+kernel32.OpenProcess.argtypes = [wt.DWORD, wt.BOOL, wt.DWORD]
+kernel32.OpenProcess.restype = wt.HANDLE
+kernel32.QueryFullProcessImageNameW.argtypes = [wt.HANDLE, wt.DWORD, wt.LPWSTR, ctypes.POINTER(wt.DWORD)]
+kernel32.QueryFullProcessImageNameW.restype = wt.BOOL
+kernel32.CloseHandle.argtypes = [wt.HANDLE]
 
 SW_RESTORE = 9
 VK_RETURN = 0x0D
 KEYEVENTF_KEYUP = 0x0002
 MOUSEEVENTF_LEFTDOWN = 0x0002
 MOUSEEVENTF_LEFTUP = 0x0004
+PROCESS_QUERY_LIMITED_INFORMATION = 0x1000
 
 
 def queue_admin(command: str) -> None:
@@ -73,9 +97,17 @@ def queue_admin(command: str) -> None:
     )
 
 
-def kill_game() -> None:
-    queue_admin("kill_game")
-    for name in ("NClient.exe", "GameMon.des", "GameGuard.des", "ncclient.exe"):
+def append_npslayer_marker(text: str) -> None:
+    try:
+        NPSLAYER_EXP_LOG.parent.mkdir(parents=True, exist_ok=True)
+        with NPSLAYER_EXP_LOG.open("a", encoding="utf-8", errors="replace") as f:
+            f.write(text.rstrip() + "\n")
+    except OSError:
+            pass
+
+
+def taskkill_images(image_names: tuple[str, ...]) -> None:
+    for name in image_names:
         subprocess.run(
             ["taskkill", "/F", "/IM", name],
             stdout=subprocess.DEVNULL,
@@ -84,8 +116,146 @@ def kill_game() -> None:
         )
 
 
+def kill_game() -> None:
+    queue_admin("kill_game")
+    taskkill_images((*GAME_CLIENT_IMAGES, "GameMon.des", "GameGuard.des", "ncclient.exe"))
+    wait_for_game_clients_gone()
+
+
+def kill_client_only() -> None:
+    # The game often runs elevated after the launcher handoff, so local taskkill
+    # can fail silently. Queue the elevated worker too, while preserving it.
+    # NClient can hand off into PunchMonster after a tiny gap, so require a
+    # stable quiet window instead of trusting the first empty process list.
+    queue_admin("kill_game")
+    if wait_for_game_clients_gone():
+        append_npslayer_marker("=== CODEX_CLIENT_KILL_CONFIRMED ===")
+    else:
+        append_npslayer_marker("=== CODEX_CLIENT_KILL_STILL_RUNNING ===")
+
+
+def is_process_running(image_name: str) -> bool:
+    proc = subprocess.run(
+        ["tasklist", "/FI", f"IMAGENAME eq {image_name}"],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.DEVNULL,
+        text=True,
+        check=False,
+    )
+    return image_name.lower() in proc.stdout.lower()
+
+
+def is_game_client_running() -> bool:
+    return any(is_process_running(name) for name in GAME_CLIENT_IMAGES)
+
+
+def wait_for_game_clients_gone(
+    timeout: float = CLIENT_KILL_TIMEOUT_SECONDS,
+    stable_seconds: float = CLIENT_KILL_STABLE_SECONDS,
+) -> bool:
+    deadline = time.time() + timeout
+    quiet_since: float | None = None
+    next_admin_queue = 0.0
+    while time.time() < deadline:
+        now = time.time()
+        if now >= next_admin_queue:
+            queue_admin("kill_game")
+            next_admin_queue = now + 1.0
+        taskkill_images(GAME_CLIENT_IMAGES)
+        if is_game_client_running():
+            quiet_since = None
+        else:
+            if quiet_since is None:
+                quiet_since = now
+            if now - quiet_since >= stable_seconds:
+                return True
+        time.sleep(0.25)
+    return not is_game_client_running()
+
+
+def wait_for_client_launch(timeout: float = 30.0) -> bool:
+    deadline = time.time() + timeout
+    while time.time() < deadline:
+        if is_game_client_running():
+            print("[launch-check] game client is running")
+            append_npslayer_marker("=== CODEX_LAUNCH_CHECK seen_game_client=1 ===")
+            return True
+        time.sleep(0.5)
+    print("[launch-check] game client was not observed after queueing launch")
+    append_npslayer_marker("=== CODEX_LAUNCH_CHECK seen_game_client=0 ===")
+    return False
+
+
+class NpSlayerLiveMonitor:
+    """Non-blocking NpSlayer tailer used while the client is alive."""
+
+    def __init__(self, stall_seconds: float):
+        self.stall_seconds = stall_seconds
+        self.last_growth = time.time()
+        self.pos = 0
+        if NPSLAYER_EXP_LOG.exists():
+            try:
+                self.pos = NPSLAYER_EXP_LOG.stat().st_size
+            except OSError:
+                self.pos = 0
+        print(
+            f"[observe] live NpSlayer tail enabled; "
+            f"stall_kill={stall_seconds:.1f}s"
+        )
+
+    def poll(self) -> str | None:
+        if NPSLAYER_EXP_LOG.exists():
+            try:
+                with NPSLAYER_EXP_LOG.open("r", encoding="utf-8", errors="replace") as f:
+                    f.seek(self.pos)
+                    chunk = f.read()
+                    self.pos = f.tell()
+            except OSError:
+                chunk = ""
+            if chunk:
+                self.last_growth = time.time()
+                for line in chunk.splitlines():
+                    if LIVE_LOG_RE.search(line):
+                        print(f"[npslayer] {line[:220]}")
+
+        if not is_game_client_running():
+            print("[observe] game client is no longer running")
+            append_npslayer_marker("=== CODEX_OBSERVE_END reason=client_exit ===")
+            return "client_exit"
+
+        if self.stall_seconds > 0 and time.time() - self.last_growth >= self.stall_seconds:
+            print(
+                f"[observe] no NpSlayer growth for {self.stall_seconds:.1f}s; "
+                "killing client, keeping launcher"
+            )
+            append_npslayer_marker(
+                f"=== CODEX_STALL_KILL no_npslayer_growth={self.stall_seconds:.1f}s ==="
+            )
+            kill_client_only()
+            append_npslayer_marker("=== CODEX_OBSERVE_END reason=stall_kill ===")
+            return "stall_kill"
+
+        return None
+
+
+def observe_npslayer_live(duration: float, stall_seconds: float) -> str:
+    """Tail useful NpSlayer lines and kill the client if its log stalls."""
+    deadline = time.time() + max(0.0, duration)
+    monitor = NpSlayerLiveMonitor(stall_seconds)
+    while time.time() < deadline:
+        event = monitor.poll()
+        if event is not None:
+            return event
+
+        time.sleep(0.25)
+
+    append_npslayer_marker("=== CODEX_OBSERVE_END reason=duration_elapsed ===")
+    return "duration_elapsed"
+
+
 def find_game_window() -> tuple[int, tuple[int, int, int, int]] | None:
-    found: list[tuple[int, tuple[int, int, int, int]]] = []
+    found_known: list[tuple[int, tuple[int, int, int, int]]] = []
+    found_unknown: list[tuple[int, tuple[int, int, int, int]]] = []
 
     @EnumWindowsProc
     def enum_proc(hwnd, _):
@@ -101,7 +271,7 @@ def find_game_window() -> tuple[int, tuple[int, int, int, int]] | None:
         origin = POINT(0, 0)
         if not user32.ClientToScreen(hwnd, ctypes.byref(origin)):
             return True
-        found.append((
+        item = (
             int(hwnd),
             (
                 int(origin.x),
@@ -109,11 +279,45 @@ def find_game_window() -> tuple[int, tuple[int, int, int, int]] | None:
                 int(origin.x + rect.right - rect.left),
                 int(origin.y + rect.bottom - rect.top),
             ),
-        ))
+        )
+        _pid, image_name = describe_game_window(int(hwnd))
+        if image_name in GAME_CLIENT_IMAGES:
+            found_known.append(item)
+        else:
+            found_unknown.append(item)
         return True
 
     user32.EnumWindows(enum_proc, 0)
-    return found[0] if found else None
+    if found_known:
+        return found_known[0]
+    return found_unknown[0] if found_unknown else None
+
+
+def get_window_pid(hwnd: int) -> int:
+    pid = wt.DWORD(0)
+    user32.GetWindowThreadProcessId(wt.HWND(hwnd), ctypes.byref(pid))
+    return int(pid.value)
+
+
+def get_process_image_name(pid: int) -> str:
+    if pid <= 0:
+        return ""
+    handle = kernel32.OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, False, pid)
+    if not handle:
+        return ""
+    try:
+        size = wt.DWORD(1024)
+        buf = ctypes.create_unicode_buffer(size.value)
+        if not kernel32.QueryFullProcessImageNameW(handle, 0, buf, ctypes.byref(size)):
+            return ""
+        return Path(buf.value).name
+    finally:
+        kernel32.CloseHandle(handle)
+
+
+def describe_game_window(hwnd: int) -> tuple[int, str]:
+    pid = get_window_pid(hwnd)
+    return pid, get_process_image_name(pid)
 
 
 def tap_enter() -> None:
@@ -179,16 +383,106 @@ def load_channel_click_sequence() -> list[tuple[str, float, float]]:
     return out
 
 
-def channel_clicker(stop: threading.Event) -> None:
-    delays = (12.0, 22.0, 32.0)
-    last = 0.0
-    for attempt, delay in enumerate(delays, start=1):
-        time.sleep(max(0.0, delay - last))
-        last = delay
-        if stop.is_set():
+def channel_clicker(stop: threading.Event, mode: str, stub_log: Path | None = None) -> None:
+    fallback_delays = (18.0, 30.0, 44.0)
+    # Unattended first-run clients can close the GSS socket ~3.5s after the
+    # 0x1003+0x1004 server list if no UI click happens. Start the recorded
+    # zone/channel sequence early, then keep bounded retries for slower loads.
+    ready_delays = (1.0, 5.0, 13.0, 25.0)
+    start = time.time()
+    next_timed = 0
+    queued = 0
+    last_queue_at = 0.0
+    ready_at: float | None = None
+    channel_selected = False
+    log_pos = 0
+    stub_pos = 0
+    if NPSLAYER_EXP_LOG.exists():
+        try:
+            log_pos = NPSLAYER_EXP_LOG.stat().st_size
+        except OSError:
+            log_pos = 0
+    if stub_log is not None and stub_log.exists():
+        try:
+            stub_pos = stub_log.stat().st_size
+        except OSError:
+            stub_pos = 0
+
+    def queue_click(reason: str) -> None:
+        nonlocal queued, last_queue_at
+        now = time.time()
+        if now - last_queue_at < 3.0:
             return
-        print(f"[channel-clicker] queue=elevated_click_channel full-sequence attempt={attempt}")
+        queued += 1
+        last_queue_at = now
+        print(
+            f"[channel-clicker] queue=elevated_click_channel "
+            f"attempt={queued} reason={reason}"
+        )
+        append_npslayer_marker(
+            f"=== CODEX_CLICK_QUEUE attempt={queued} reason={reason} ==="
+        )
         queue_admin("click_channel")
+
+    while not stop.is_set():
+        elapsed = time.time() - start
+        if stub_log is not None and stub_log.exists():
+            try:
+                with stub_log.open("r", encoding="utf-8", errors="replace") as f:
+                    f.seek(stub_pos)
+                    chunk = f.read()
+                    stub_pos = f.tell()
+            except OSError:
+                chunk = ""
+            if chunk:
+                for line in chunk.splitlines():
+                    if GSS_CHANNEL_SELECTED_RE.search(line):
+                        channel_selected = True
+                        append_npslayer_marker(
+                            "=== CODEX_CLICK_DISARMED reason=server_decoded_0x4005 ==="
+                        )
+                        break
+                    if ready_at is None and GSS_CHANNEL_LIST_SENT_RE.search(line):
+                        ready_at = time.time()
+                        next_timed = 0
+                        append_npslayer_marker(
+                            "=== CODEX_CLICK_ARMED reason=server_sent_0x1003_0x1004 ==="
+                        )
+
+        if channel_selected:
+            time.sleep(0.25)
+            continue
+
+        if mode in ("timed", "both"):
+            if ready_at is None:
+                delays = fallback_delays
+                base_elapsed = elapsed
+            else:
+                delays = ready_delays
+                base_elapsed = time.time() - ready_at
+            if next_timed < len(delays) and base_elapsed >= delays[next_timed]:
+                next_timed += 1
+                if ready_at is None:
+                    queue_click(f"fallback_timed_{elapsed:.1f}s")
+                else:
+                    queue_click(f"server_ready_plus_{base_elapsed:.1f}s")
+
+        if mode in ("log", "both") and NPSLAYER_EXP_LOG.exists():
+            try:
+                with NPSLAYER_EXP_LOG.open("r", encoding="utf-8", errors="replace") as f:
+                    f.seek(log_pos)
+                    chunk = f.read()
+                    log_pos = f.tell()
+            except OSError:
+                chunk = ""
+            if chunk:
+                for line in chunk.splitlines():
+                    if CLICK_LOG_RE.search(line):
+                        marker = line.strip()[:96].replace(" ", "_")
+                        queue_click(f"log_{marker}")
+                        break
+
+        time.sleep(0.25)
 
 
 def read_result(path: Path, rung: str) -> tuple[str, int, str, str, str] | None:
@@ -236,15 +530,22 @@ def run_probe(
     probe: str,
     stamp: str,
     click_channel: bool,
+    click_mode: str,
     admin_command: str,
     observe_seconds: float,
+    stall_kill_seconds: float,
     leave_running_on_result: bool,
+    server_script: str = str(ROOT / "Res" / "gss_stub_server_v4.py"),
 ) -> dict:
     rung = probe
+    is_enter_game_probe = rung == "ordered-db-mage-select-enter"
+    if is_enter_game_probe and observe_seconds <= 0:
+        observe_seconds = 90.0
+        leave_running_on_result = True
     stub_stdout = FINDINGS / f"master_ladder_{stamp}_{rung}.stdout.log"
     stub_stderr = FINDINGS / f"master_ladder_{stamp}_{rung}.stderr.log"
     stub_cmd = [
-        str(PYTHON), str(ROOT / "Res" / "gss_stub_server_v4.py"),
+        str(PYTHON), str(server_script),
         "--full-gss",
         "--master-probe", rung,
         "--master-crypto", "xor",
@@ -263,6 +564,10 @@ def run_probe(
 
     print(f"[rung] {rung}")
     print(f"[stub] {' '.join(stub_cmd)}")
+    append_npslayer_marker(
+        f"=== CODEX_RUN_START stamp={stamp} rung={rung} "
+        f"time={datetime.now().isoformat(timespec='seconds')} ==="
+    )
     kill_game()
     time.sleep(1.0)
     with stub_stdout.open("w", encoding="utf-8", errors="replace") as so, stub_stderr.open("w", encoding="utf-8", errors="replace") as se:
@@ -281,12 +586,19 @@ def run_probe(
         click_stop = threading.Event()
         click_thread: threading.Thread | None = None
         if click_channel:
-            click_thread = threading.Thread(target=channel_clicker, args=(click_stop,), daemon=True)
+            click_thread = threading.Thread(
+                target=channel_clicker,
+                args=(click_stop, click_mode, stub_stderr),
+                daemon=True,
+            )
             click_thread.start()
 
         queue_admin(admin_command)
+        client_seen = wait_for_client_launch(timeout=30.0)
+        live_monitor = NpSlayerLiveMonitor(stall_kill_seconds) if client_seen else None
         deadline = time.time() + 150.0
         found = None
+        observe_event = None
         try:
             while time.time() < deadline:
                 if rung == "silent":
@@ -297,6 +609,10 @@ def run_probe(
                     break
                 if stub.poll() is not None:
                     break
+                if live_monitor is not None:
+                    observe_event = live_monitor.poll()
+                    if observe_event is not None:
+                        break
                 time.sleep(0.5)
         finally:
             click_stop.set()
@@ -304,29 +620,41 @@ def run_probe(
                 click_thread.join(timeout=1.0)
             if found is not None and observe_seconds > 0:
                 print(f"[observe] result seen; leaving client/stub alive for {observe_seconds:.1f}s")
-                time.sleep(observe_seconds)
-            if not (found is not None and leave_running_on_result):
+                observe_event = observe_npslayer_live(observe_seconds, stall_kill_seconds)
+            if observe_event == "stall_kill":
+                stop_proc(stub)
+            elif not (found is not None and leave_running_on_result):
                 kill_game()
                 stop_proc(stub)
             else:
                 print(f"[observe] leaving client/stub running; stub_pid={stub.pid}")
 
     if found is None:
+        event = observe_event or "no_master_ladder_result"
+        append_npslayer_marker(
+            f"=== CODEX_RUN_END stamp={stamp} rung={rung} "
+            f"result=timeout event={event} ==="
+        )
         return {
             "rung": rung,
             "result": "timeout",
             "alive_ms": None,
             "class": "error",
-            "event": "no_master_ladder_result",
+            "event": event,
             "stderr": str(stub_stderr),
         }
     line, alive_ms, klass, event, _text = found
+    append_npslayer_marker(
+        f"=== CODEX_RUN_END stamp={stamp} rung={rung} "
+        f"result=ok class={klass} event={event} alive_ms={alive_ms} ==="
+    )
     return {
         "rung": rung,
         "result": "ok",
         "alive_ms": alive_ms,
         "class": klass,
         "event": event,
+        "observe_event": observe_event,
         "line": line,
         "stderr": str(stub_stderr),
     }
@@ -369,16 +697,31 @@ def main() -> int:
             "ordered-empty-onloadplayers",
             "ordered-empty-loginrpc-bootstrap",
             "ordered-empty-loginrpc-bootstrap-goluaadd",
+            "ordered-enter-oneplayer-tplayer",
+            "ordered-enter-componented-tplayer",
+            "ordered-db-mage-select-enter",
             "silent-master",
         ),
         default="ladder",
     )
     ap.add_argument("--no-click-channel", action="store_true")
     ap.add_argument(
+        "--click-mode",
+        choices=("timed", "log", "both"),
+        default="both",
+        help="queue the elevated channel click sequence on timers, NpSlayer log markers, or both",
+    )
+    ap.add_argument(
         "--observe-seconds",
         type=float,
         default=0.0,
         help="after a result marker, keep the client/stub alive this many seconds",
+    )
+    ap.add_argument(
+        "--stall-kill-seconds",
+        type=float,
+        default=8.0,
+        help="during observation, kill the client if NpSlayer log has no growth",
     )
     ap.add_argument(
         "--leave-running-on-result",
@@ -390,6 +733,11 @@ def main() -> int:
         choices=("launch_original_stub", "trace_original_login", "trace_key6_gate", "trace_key6_min", "trace_login_bootstrap"),
         default="launch_original_stub",
         help="admin launcher command used to start the client",
+    )
+    ap.add_argument(
+        "--server-script",
+        default=str(ROOT / "Res" / "gss_stub_server_v4.py"),
+        help="server entry point to launch (default = legacy stub; use server/run_server.py for the modular host)",
     )
     args = ap.parse_args()
 
@@ -483,6 +831,15 @@ def main() -> int:
     elif args.mode == "ordered-empty-loginrpc-bootstrap-goluaadd":
         probes = ["ordered-empty-loginrpc-bootstrap-goluaadd"]
         summary_path = FINDINGS / f"master_ordered_empty_loginrpc_bootstrap_goluaadd_{stamp}_summary.log"
+    elif args.mode == "ordered-enter-oneplayer-tplayer":
+        probes = ["ordered-enter-oneplayer-tplayer"]
+        summary_path = FINDINGS / f"master_ordered_enter_oneplayer_tplayer_{stamp}_summary.log"
+    elif args.mode == "ordered-enter-componented-tplayer":
+        probes = ["ordered-enter-componented-tplayer"]
+        summary_path = FINDINGS / f"master_ordered_enter_componented_tplayer_{stamp}_summary.log"
+    elif args.mode == "ordered-db-mage-select-enter":
+        probes = ["ordered-db-mage-select-enter"]
+        summary_path = FINDINGS / f"master_ordered_db_mage_select_enter_{stamp}_summary.log"
     elif args.mode == "silent-master":
         probes = ["silent"]
         summary_path = FINDINGS / f"master_silent_{stamp}_summary.log"
@@ -494,9 +851,12 @@ def main() -> int:
             probe,
             stamp,
             not args.no_click_channel,
+            args.click_mode,
             args.admin_command,
             args.observe_seconds,
+            args.stall_kill_seconds,
             args.leave_running_on_result,
+            args.server_script,
         )
         results.append(result)
         print(f"[result] {result}")
