@@ -866,6 +866,8 @@ static volatile int   g_d2_arm      = 0;   /* capture window around the trigger 
 static volatile int   g_d2_injected = 0;   /* one-shot inject guard                     */
 static volatile int   g_force_ui_done = 0;  /* OPTION 2: one-shot force-row UI guard     */
 static volatile int   g_clientlog_tap_done = 0; /* CLIENT-LOG TAP one-shot guard          */
+static volatile int   g_gap_tap_done = 0;       /* C<->Lua GAP TAP one-shot guard (always-on, channel 4) */
+static volatile int   g_b1b2_done = 0;          /* TEST-B1B2 (LATE-131) one-shot guard; consumed only when char-select is up */
 /* TEST-1 (user: "previous full char list parse again + see the trace log"): when set, gate
  * OFF the in-client D2 dummy inject + EARLY_REALIZE so the WIRE object-value char-list parses
  * NATURALLY (no fake char, no LogServer={} client/server flip). Keeps the CLIENTLOG tap only,
@@ -908,8 +910,73 @@ static volatile int   g_enter_game_force = 0;
  * signal, calls back into C" theory); (2) _Template('TActor',..,true,true) to set GoTemplateForceLoading;
  * (3) reload_file('TPlayer') -> now DeferedImpl; (4) CreateDeferedTemplate('TPlayer') -> DefaultImpl;
  * (5) CreateLocalObject('TPlayer') -> real component-bearing char, or nil? Decides faithful-vs-architectural. */
-static volatile int   g_test5_forceload = 1;
+static volatile int   g_test5_forceload = 0;  /* LATE-111 milestone proven; off while TEST6 runs */
+/* TEST-6 (LATE-111 follow-on): integrate the force-built TPlayer into the ROSTER. The char is
+ * resolved by `GWorld:FindObject(oid)` and CharacterManager:GetOwner()=TAccount. DIAGNOSE the
+ * integration gate (SAFE, pcall-guarded, no risky add): build via force-load realize, set identity,
+ * then probe -- is the built char in GWorld (FindObject-able)? does it have an owner? is the
+ * CharacterManager + its TAccount owner reachable? Pins exactly what the faithful integration needs. */
+static volatile int   g_test6_integrate = 0;  /* gate pinned (LATE-112); off while TEST7 runs */
+/* TEST-7 (LATE-112 follow-on): the GWorld-resident construct. CreateLocalObject lands in the LOCAL
+ * registrar (not GWorld) -> the roster's GWorld:FindObject misses it. Lead: `GWorld:CreateObject(name)`
+ * (9 client-side Lua uses; `ServerWorld:CreateObject('TPlayer')` precedent at CStatus.lua:812) builds
+ * INTO the world. Was nil pre-realize (LATE-103); RE-TEST now the template realizes. If it returns a
+ * real, FindObject-able, owner-bearing TPlayer -> that's the faithful GWorld-resident construct unlock. */
+static volatile int   g_test7_gwcreate = 0;  /* GWorld:CreateObject is nil on client (LATE-113); off while TEST8 runs */
+/* TEST-8 (LATE-116, T1): client-local ROSTER integration via the client's OWN UI handler. The char-select
+ * ROW is created by the Intro frame's "AddCharacter" command handler (UIIntro.lua:56), which takes a BUILT
+ * character OBJECT directly (event.m_param3 -- NOT an OID): reads its CStatus (Level/JobClass), sets up CBody,
+ * table.insert(self.characters, character), refreshes CharacterSelectionDialog -> ROW. NO GWorld residency /
+ * OID / server lane needed. The native fire-point is FUser::updateCharacter (0x010b2080) via 0x010b0490 (our
+ * seat). T8: force-build the FULL-component TPlayer (LATE-111), set valid display data, fire "AddCharacter"
+ * faithfully into UIIntro.frame (fallback = direct insert+refresh), read back the row count. The NEW variable
+ * vs LATE-105 (reached AddCharacter, no row, with a HOLLOW dummy) = the full 25-component char. */
+static volatile int   g_test8_addrow = 0;   /* T1 done (LATE-117: display-valid + Lua-list insert); off while TEST9 runs */
+/* TEST-9 (LATE-117, T2): the NATIVE roster row. T1 proved the LATE-111 char is display-valid but
+ * only reached the Lua UIIntro.characters list; the native CharacterManager+0x28 map (what
+ * updateCharacter->getAllPlayers->AddCharacter reads) stayed empty. T2 reuses the PROVEN D2 native
+ * machinery (capture g_d2_char @bff767, +0x28 rb-splice @getAllPlayers, ShowDialog+UpdateCharacter
+ * @VA_UPDATE_AFTER_GETALL) but feeds it the FULL force-built TPlayer (not the hollow dummy) so the
+ * native AddCharacter handler's CStatus/JobClass/CBody reads PASS (T1 VALID=1). Built at the LoadList
+ * seat BEFORE getAllPlayers; capture armed only around CreateLocalObject. Independent of
+ * g_natural_parse_only. Goal = a NATIVE-projected VISIBLE row. */
+static volatile int   g_test9_charmgr = 0;   /* T2 done (LATE-118: native +0x28 splice fragile/didn't engage); off while TEST10 runs */
+/* TEST-10 (LATE-118, T2'): the DECOUPLED render. The native +0x28 splice / updateCharacter->getAllPlayers
+ * ->AddCharacter projection isn't reachable in the stub flow (T2). This path doesn't need it: at the
+ * UIIntro-live LoadList/post-finish seat, with the LATE-111 valid char, UI:ShowDialog the
+ * CharacterSelectionDialog (so its instance exists), insert the char into UIIntro.characters, then dialog
+ * Update -> the dialog paints the row from the char's CStatusPlayer/User/CEquipment. T1 proved the insert
+ * + display-validity; the only missing piece was ShowDialog. Best-effort SetOwner first (avoid orphan
+ * fault), SetPhysics LAST + guarded (3D preview; the row text doesn't need it). One-shot. */
+static volatile int   g_test10_render = 0;  /* LATE-124: clean OBSERVATION build -- no force-inject; watch the faithful flow via the client's own 4 log channels */
+/* TEST-B1B2 (LATE-131): the FAITHFUL natural-roster lever, never tried before. T1 FORCED AddCharacter,
+ * T2 spliced CharacterManager+0x28, T2' decoupled-rendered -- none drove the client's OWN
+ * onLoadPlayersCacheResult -> LoadList with our built char as the arg3 LIST ELEMENT. Per
+ * claude_ba9420_resolver_lever.md §4(b1) (the recommended lever): ba9420 just UNBOXES a live Lua
+ * wrapper -- so placing the locally-built, Player-bearing TPlayer (LATE-111, PLAYER=1) directly as
+ * the objectList element makes LoadList's bd3660(Player) gate PASS and AddCharacter fire, with NO
+ * DAT_01825258 registry, NO forged OID. b1 = call session:onLoadPlayersCacheResult(from,{o}) [the
+ * exact entry TPlayerCache.lua:12 uses]; session reached via TAccount's Com('Session') (T6 confirmed
+ * TAccount/CharacterManager exist). b2(diagnostic, faithful) = read what key/descriptor the natural
+ * construct registers under (GetID + resolver probe), so the SERVER can emit it later -- NOT forcing a
+ * node into DAT_01825258 (that's the §4(a) engine-self-gate brute-force, disallowed by §0). One-shot.
+ * Watch: B_PLAYER (cond2), B_SESS (session reachable), B_CALLED (onLoadPlayers ran), B_ROW
+ * (getAllPlayers>0) + STACKCHAIN/ACCESS for the residency wall. */
+static volatile int   g_test_b1b2 = 0;  /* OFF (LATE-131): in-client injection re-walked dead lane #8 (onLoadPlayersCacheResult=resolve-only). The product is the FAITHFUL SERVER, no injection. Probe kept as a falsified-RE record only. */
 static DWORD g_d2_node[16] = { 0 };         /* hand-built MSVC std::map _Tree node: _Left@0,_Parent@4,_Right@8, key@0xc, Object*@0x10, _Color/_Isnil bytes @0x14/0x15 */
+/* TEST-10 (T2' owner test-patch): a large inert buffer to point an orphan TPlayer's owner field at,
+ * so the teardown's [owner+0xdc] write lands in valid writable memory instead of NULL+0xdc (the
+ * FUN_0081f390+0x627 crash). dword[0] = a fake vtable ptr (-> all-`ret` stubs) in case teardown vcalls
+ * the owner; keeps the client alive long enough to screenshot the rendered char-select row. */
+static DWORD g_fake_vtable[64];             /* every slot -> a tiny `ret`/stub; filled at init */
+static DWORD g_fake_owner[0x80] = { 0 };    /* obj+0x40 target; +0xdc is well inside */
+static void __fastcall fake_owner_stub(void) { }   /* inert no-op for any teardown vcall on the fake owner */
+static void exp_init_fake_owner(void)
+{
+    int k;
+    for (k = 0; k < 64; ++k) g_fake_vtable[k] = (DWORD)(DWORD_PTR)&fake_owner_stub;
+    g_fake_owner[0] = (DWORD)(DWORD_PTR)&g_fake_vtable;   /* fake vptr in case teardown vcalls owner */
+}
 #define KEY_TPLAYERDUMMY_CLS38 0x35c6b710u /* *(obj+0x38) for a TPlayerDummy (CTORDIAG)  */
 #endif
 #if EXP_TARGET_PROFILE == 69 || EXP_TARGET_PROFILE == 75 || EXP_TARGET_PROFILE == 76 || EXP_TARGET_PROFILE == 77 || EXP_TARGET_PROFILE == 78
@@ -4983,6 +5050,221 @@ static void exp_log_post_finish_ui(DWORD addr, PCONTEXT c)
         wsprintfA(tb, "CLIENTLOG_TAP done TAP_HAS_IO=%d(f%d) N=%d(f%d)", hio, fio, ncl, fnc);
         exp_log(tb);
     }
+    /* ===================================================================== *
+     * CHANNEL 4 -- C<->Lua GAP TAP  (ALWAYS-ON, passive, logging-only)
+     * ---------------------------------------------------------------------
+     * The char CONSTRUCT logic lives in Lua (Template.lua DefaultImpl/Empty/
+     * Defered + goLua_CreateObject/goLua_RegistObject), invoked by C signals.
+     * A branch decision (EmptyImpl-vs-DefaultImpl realize) is SILENT on
+     * channels 1-3 -- no log, no throw, no OutputDebugString. This tap wraps
+     * the C<->Lua boundary GLOBALS with pass-through logging wrappers so every
+     * crossing during the LIVE login->roster->char-select flow is witnessed.
+     * It does NOT force, realize, restore, or modify behavior -- it only logs.
+     * Its OWN file (client_gap.log) so it never drowns in NpSlayer_exp.log.
+     * One-shot, earliest Lua seat (right after CLIENTLOG_TAP, before onLoadPlayers).
+     * DECISIVE for the user's hypothesis: if the natural flow re-realizes /
+     * registers a TPlayer, goLua_RegistObject(name=...) fires here (EmptyImpl
+     * SKIPS it -- Template.lua:95); if it stays silent for the char, the char
+     * is NOT built via the Lua template path (cross-check the native bff990 seat).
+     * ===================================================================== */
+    if (addr == VA_FUSER_UI_UPDATE_HELPER && !g_gap_tap_done) {
+        static const char *gapchunk =
+            "if not _GAP_HOOKED then\n"
+            "  _GAP_HOOKED=true\n"
+            "  _GAP_PATH='C:/Users/keny-/Downloads/qqxj/TW/Bin/client_gap.log'\n"
+            "  _GAP_F=nil\n"
+            "  pcall(function() _GAP_F=io.open(_GAP_PATH,'w') end)\n"
+            "  if _GAP_F then _GAP_F:write('=== C<->LUA GAP TAP (channel 4, always-on, passive) ===\\n'); _GAP_F:flush() end\n"
+            "  local function G(s)\n"
+            "    _GAP_N=(_GAP_N or 0)+1\n"
+            "    if _GAP_F then pcall(function() _GAP_F:write(tostring(_GAP_N)..': '..s..'\\n'); _GAP_F:flush() end) end\n"
+            "  end\n"
+            "  _GAP_SINK=G\n"
+            "  G('GAP tap installed (passive). IsClient='..tostring(IsClient and IsClient()))\n"
+            /* Template(): the realize-branch decision (Empty vs Defered vs Default) */
+            "  if Template then local _T=Template\n"
+            "    Template=function(o,p,f,fc)\n"
+            "      local t=_T(o,p,f,fc)\n"
+            "      local br='?'\n"
+            "      if type(t)=='table' then\n"
+            "        if t.Object~=nil then br='Default(+Object,WILL regist)'\n"
+            "        elseif t.ParentName~=nil then br='Defered'\n"
+            "        else br='Empty(NO regist)' end\n"
+            "      end\n"
+            "      G('Template('..tostring(o)..', parent='..tostring(p)..', force='..tostring(f)..') => '..br)\n"
+            "      return t\n"
+            "    end\n"
+            "  end\n"
+            /* reload_file(): runtime re-realize trigger */
+            "  if reload_file then local _RF=reload_file\n"
+            "    reload_file=function(n) G('reload_file('..tostring(n)..')'); return _RF(n) end\n"
+            "  end\n"
+            /* CreateDeferedTemplate(): the DefaultImpl-realize trigger */
+            "  if CreateDeferedTemplate then local _CDT=CreateDeferedTemplate\n"
+            "    CreateDeferedTemplate=function(n) G('CreateDeferedTemplate('..tostring(n)..') ENTER'); local r=_CDT(n); G('CreateDeferedTemplate('..tostring(n)..') => '..tostring(r)); return r end\n"
+            "  end\n"
+            /* goLua_CreateObject(): the actual object build */
+            "  if goLua_CreateObject then local _CO=goLua_CreateObject\n"
+            "    goLua_CreateObject=function(o,p) G('goLua_CreateObject('..tostring(o)..', parent='..tostring(p)..')'); return _CO(o,p) end\n"
+            "  end\n"
+            /* goLua_RegistObject(): THE decisive call -- EmptyImpl SKIPS it (Template.lua:95) */
+            "  if goLua_RegistObject then local _RG=goLua_RegistObject\n"
+            "    goLua_RegistObject=function(o,p) local nm; pcall(function() nm=o and o.m_Name end); G('goLua_RegistObject(name='..tostring(nm)..', parent='..tostring(p)..')  <<< DefaultImpl ran'); return _RG(o,p) end\n"
+            "  end\n"
+            "  G('GAP wrappers armed: Template/reload_file/CreateDeferedTemplate/goLua_CreateObject/goLua_RegistObject')\n"
+            /* ---------------------------------------------------------------
+             * GLOBAL bridge recorder (user LATE-146): sweep _G and wrap EVERY
+             * global C-function with a first-hit pass-through logger, so no
+             * global C<->Lua bridge is missed (the 5 named wrappers above only
+             * cover the construct path). We use WRAPPERS, not a debug call-hook:
+             * debug.sethook is per-lua_State, and the construct runs on other
+             * coroutines/threads (proven live -- the hook caught 1 crossing then
+             * went silent while the shared-global wrappers kept firing). Global
+             * wrappers live in the shared _G table, so they fire regardless of
+             * which thread crosses. Passive pass-through (args+all returns
+             * preserved); first-hit dedup keeps client_gap.log an INVENTORY, not
+             * a flood. NOTE: catches GLOBAL bridges; object METHODS (World:CreateObject,
+             * obj:BackupReplicate) live on metatables -- pinned via RE + the API model
+             * (flowmodels/api) instead. The what=='C' filter auto-skips the 5 globals
+             * already wrapped above (they are now Lua closures). --------------- */
+            "  if debug and debug.getinfo then\n"
+            "    _GAP_SEEN={}\n"
+            "    local _skip={G=true,tostring=true,tonumber=true,type=true,pairs=true,ipairs=true,\n"
+            "      next=true,rawget=true,rawset=true,rawequal=true,select=true,pcall=true,xpcall=true,\n"
+            "      error=true,assert=true,setmetatable=true,getmetatable=true,print=true,require=true}\n"
+            "    local _n=0\n"
+            "    for k,v in pairs(_G) do\n"
+            "      if type(v)=='function' and type(k)=='string' and not _skip[k] then\n"
+            "        local okc,info=pcall(debug.getinfo,v,'S')\n"
+            "        if okc and info and info.what=='C' then\n"
+            "          local _orig=v; local _nm=k\n"
+            "          _G[k]=function(...)\n"
+            "            if not _GAP_SEEN[_nm] then _GAP_SEEN[_nm]=true; G('BRIDGE global '.._nm) end\n"
+            "            return _orig(...)\n"
+            "          end\n"
+            "          _n=_n+1\n"
+            "        end\n"
+            "      end\n"
+            "    end\n"
+            "    G('global bridge recorder ARMED: wrapped '.._n..' global C-functions (shared _G, first-hit dedup)')\n"
+            "  else\n"
+            "    G('global bridge recorder UNAVAILABLE (no debug.getinfo) -- fixed wrappers only')\n"
+            "  end\n"
+            "end\n";
+        void *Lg; int fgn = 0; int gn; char gb[160];
+        g_gap_tap_done = 1;
+        exp_log("GAP_TAP install: passive C<->Lua boundary wrappers -> TW/Bin/client_gap.log (channel 4 always-on)");
+        exp_b_lua_run(gapchunk);
+        Lg = (void*)(*(DWORD*)(DWORD_PTR)BDEFER_L_SLOT);
+        gn = exp_bdefer_read_num(Lg, "_GAP_N", &fgn);
+        wsprintfA(gb, "GAP_TAP done _GAP_N=%d(f%d) -> client_gap.log", gn, fgn);
+        exp_log(gb);
+    }
+    /* =====================================================================
+     * TEST-B1B2 (LATE-131): the FAITHFUL natural-roster lever. The seat-based
+     * v1 (last run) PROVED the timing wall: VA_FUSER_UI_UPDATE_HELPER only fires
+     * twice, both PRE-login (cm=nil/sess=nil), then with server count=0 the
+     * client jumps straight to ShowJobClassSelection (HasNoCharacter) and the
+     * char-update seat never re-fires. Fix: hook the Lua-defined natural
+     * checkpoint Session.Client_FinishLoadingCharacter (Session.lua:129) -- it
+     * fires ONCE post-login and `self` IS the live session. The wrap:
+     *   (1) builds the full Player-bearing TPlayer (LATE-111 recipe),
+     *   (2) b1: feeds its LIVE wrapper as the arg3 element to the client's OWN
+     *       self:onLoadPlayersCacheResult(from,{o}) -> LoadList (ba9420 unboxes
+     *       it, bd3660(Player) passes -> inserts into CharacterManager+0x28),
+     *   (3) reads getAllPlayers; if >0 calls orig with count BUMPED to the real
+     *       roster size so the client's own FUser::updateCharacter projects the
+     *       UI "AddCharacter" row (the natural chain), else falls back to the
+     *       server count (honest negative).
+     * Never tried: T1 FORCED AddCharacter, T2 spliced +0x28, T2' decoupled-
+     * rendered -- none drove the client's own LoadList with our char as the list
+     * element (claude_ba9420_resolver_lever.md §4(b1)). b2(diagnostic) = the
+     * GetID the natural construct carries, for a later server emit. Results flow
+     * via GLOG -> client_internal.log [B1B2] (logged BEFORE orig, so a downstream
+     * orphan-render crash (task #18 residency wall) won't lose the b1 verdict).
+     * Installed once at the early seat (like the GAP tap). ==================== */
+    if (addr == VA_FUSER_UI_UPDATE_HELPER && g_test_b1b2 && !g_b1b2_done) {
+        /* Retarget (run#3 finding): Session.Client_FinishLoadingCharacter is invoked by the NATIVE
+         * server->client RPC dispatcher (NID binding) -> a Lua SC.Functions replacement does NOT
+         * intercept it. UIIntro:ShowJobClassSelection is called Lua->Lua from the HasNoCharacter
+         * handler (UIIntro.lua:123) -> interceptable, and it fires EXACTLY when the roster is empty.
+         * Wrap it: build the Player-bearing TPlayer, inject via the client's OWN
+         * cm:LoadList / session:onLoadPlayersCacheResult (b1), and if the roster populated, drive the
+         * real display chain (ShowCharacterSelection + UpdateCharacter) instead of the no-char screen. */
+        static const char *b12chunk =
+            "if not _B1B2_INSTALLED then\n"
+            "  _B1B2_INSTALLED=true\n"
+            "  local function GLOG(s) if _CLIENTLOG_SINK then pcall(_CLIENTLOG_SINK,'B1B2',s) end end\n"
+            "  local SC = GetClass and GetClass('UIIntro')\n"
+            /* UIIntro is a PLAIN global table (UIIntro={...}); methods are DIRECT fields, not .Functions */
+            "  local orig = SC and (rawget(SC,'ShowJobClassSelection') or SC.ShowJobClassSelection)\n"
+            "  if not orig then GLOG('INSTALL FAIL: no UIIntro.ShowJobClassSelection SC='..tostring(SC)..' orig='..tostring(orig))\n"
+            "  else\n"
+            "    SC.ShowJobClassSelection = function(self, ...)\n"
+            "      if _B1B2_FIRED then return orig(self, ...) end\n"
+            "      _B1B2_FIRED=true\n"
+            "      GLOG('FIRE ShowJobClassSelection (roster empty) self='..tostring(self))\n"
+            "      local rostered=false\n"
+            "      local okx,errx = pcall(function()\n"
+            "        local oldTM=Firenze and Firenze.TestMode; if Firenze then Firenze.TestMode=nil end\n"
+            "        pcall(Template,'TActor','TNetObject',true,true)\n"
+            "        pcall(reload_file,'TPlayer')\n"
+            "        pcall(CreateDeferedTemplate,'TPlayer')\n"
+            "        if Firenze then Firenze.TestMode=oldTM end\n"
+            "        local w=GetEnvironment():GetNObject('ClientWorld')\n"
+            "        local co,o=pcall(function() return w:CreateLocalObject('TPlayer') end)\n"
+            "        o=(co and o) or nil\n"
+            "        GLOG('built='..tostring(o~=nil))\n"
+            "        if o then\n"
+            "          local hasP; pcall(function() hasP=(o.Player~=nil) end)\n"
+            "          GLOG('cond2(bd3660 Player) o.Player~=nil='..tostring(hasP))\n"
+            "          pcall(function() o.Player.m_AccountId=1001 end)\n"
+            "          pcall(function() o.Player.m_name='B1Hero' end)\n"
+            "          pcall(function() o.CStatusPlayer.Level=42 end)\n"
+            "          local gid; pcall(function() gid=o:GetID() end); GLOG('b2 GetID='..tostring(gid))\n"
+            /* live CharacterManager = GetNObject('User').m_character_manager (GameLogic_GetAccount.lua:4);
+             * GetNObject('CharacterManager') is nil pre-roster -- that was run#5's cm=nil. */
+            "          local cm; pcall(function() local u=GetEnvironment():GetNObject('User'); cm=u and u.m_character_manager end)\n"
+            "          if not cm then pcall(function() cm=GetEnvironment():GetNObject('CharacterManager') end) end\n"
+            "          GLOG('cm='..tostring(cm)..' (via User.m_character_manager)')\n"
+            /* b1 path A: direct cm:LoadList(from,{o}) -- the per-element bd3660(Player)+insert */
+            "          local oka,erra=pcall(function() cm:LoadList(0, {o}) end)\n"
+            "          GLOG('b1A cm:LoadList ok='..tostring(oka)..' err='..tostring(erra))\n"
+            "          local n0; if cm then pcall(function() local t=cm:getAllPlayers(); n0=t and #t or 0 end) end\n"
+            "          GLOG('after LoadList getAllPlayers='..tostring(n0))\n"
+            /* b1 path B (fallback): session:onLoadPlayersCacheResult via cm:GetOwner()->Session */
+            "          if (n0 or 0)==0 then\n"
+            "            local acct; pcall(function() acct=cm:GetOwner() end)\n"
+            "            local sess; pcall(function() sess=acct and (acct.Session or (acct.Com and acct:Com('Session'))) end)\n"
+            "            GLOG('fallback acct='..tostring(acct)..' sess='..tostring(sess))\n"
+            "            local okc,errc=pcall(function() sess:onLoadPlayersCacheResult(0, {o}) end)\n"
+            "            GLOG('b1B onLoadPlayersCacheResult ok='..tostring(okc)..' err='..tostring(errc))\n"
+            "            if cm then pcall(function() local t=cm:getAllPlayers(); n0=t and #t or 0 end) end\n"
+            "            GLOG('after onLoadPlayers getAllPlayers='..tostring(n0))\n"
+            "          end\n"
+            "          rostered = (n0 or 0) > 0\n"
+            "          GLOG('ROSTERED='..tostring(rostered)..' count='..tostring(n0))\n"
+            "        end\n"
+            "      end)\n"
+            "      GLOG('inject ok='..tostring(okx)..' err='..tostring(errx))\n"
+            /* if the client's OWN roster now has the char, drive the real display chain */
+            "      if rostered then\n"
+            "        local oks,errs=pcall(function() self:ShowCharacterSelection() end)\n"
+            "        GLOG('ShowCharacterSelection ok='..tostring(oks)..' err='..tostring(errs))\n"
+            "        local oku,erru=pcall(function() self:UpdateCharacter() end)\n"
+            "        GLOG('UpdateCharacter ok='..tostring(oku)..' err='..tostring(erru))\n"
+            "        return true\n"
+            "      end\n"
+            "      GLOG('NOT rostered -> falling back to original ShowJobClassSelection')\n"
+            "      return orig(self, ...)\n"
+            "    end\n"
+            "    GLOG('INSTALL OK: UIIntro.ShowJobClassSelection wrap armed')\n"
+            "  end\n"
+            "end\n";
+        g_b1b2_done = 1;   /* install once at the early seat */
+        exp_log("TEST-B1B2 install: wrap UIIntro.ShowJobClassSelection (interceptable Lua->Lua b1 lever; results -> client_internal.log [B1B2])");
+        exp_b_lua_run(b12chunk);
+    }
 #endif
     /* LATE-22 (Claude): realize the char TYPES EARLY -- one-shot at 0x010b0490,
      * which fires BEFORE onLoadPlayers decodes the tag-0x07 char element. Test #3
@@ -5704,6 +5986,59 @@ static void exp_log_loadlist_probe(DWORD addr, PCONTEXT c)
         exp_dump_bytes("LOADLIST_ARG2", a2, 64);
         exp_dump_bytes("LOADLIST_ARG3", a3, 64);
 #if EXP_TARGET_PROFILE == 78
+        /* TEST-9 (LATE-117, T2): force-build the FULL-component TPlayer HERE (BEFORE getAllPlayers),
+         * arm the class-agnostic capture (VA_D2_CREATELOCAL_RET @bff767 -> g_d2_char) only around
+         * CreateLocalObject, and set D2_OBJ + valid display data. The EXISTING proven seats then run:
+         * VA_CHARMGR_GETALL rb-splices g_d2_char into CharacterManager+0x28 (key 0x3eb), and
+         * VA_UPDATE_AFTER_GETALL ShowDialog+UpdateCharacter projects the row. NEW vs the dummy: the
+         * full char passes the AddCharacter handler reads (T1 VALID=1). One-shot. */
+        if (g_test9_charmgr) {
+            static int t9_done = 0;
+            if (!t9_done && !g_d2_char) {
+                /* chunk A: realize the TPlayer template via force-load (NO capture armed) */
+                static const char *t9a =
+                    "local function GLOG(s) if _CLIENTLOG_SINK then pcall(_CLIENTLOG_SINK,'T2CM',s) end end\n"
+                    "GLOG('--- TEST9 realize begin ---')\n"
+                    "local oldTM=Firenze and Firenze.TestMode; if Firenze then Firenze.TestMode=nil end\n"
+                    "pcall(Template,'TActor','TNetObject',true,true)\n"
+                    "pcall(reload_file,'TPlayer')\n"
+                    "pcall(CreateDeferedTemplate,'TPlayer')\n"
+                    "if Firenze then Firenze.TestMode=oldTM end\n"
+                    "GLOG('--- TEST9 realize end ---')\n";
+                /* chunk B: build the instance (capture armed) + set valid display data */
+                static const char *t9b =
+                    "local function GLOG(s) if _CLIENTLOG_SINK then pcall(_CLIENTLOG_SINK,'T2CM',s) end end\n"
+                    "local w=GetEnvironment():GetNObject('ClientWorld')\n"
+                    "local co,o=pcall(function() return w:CreateLocalObject('TPlayer') end)\n"
+                    "o=(co and o) or nil\n"
+                    "D2_OBJ=o\n"
+                    "T9_BUILT=(o~=nil) and 1 or 0; T9_OID=-1\n"
+                    "if o then\n"
+                    "  pcall(function() o.Player.m_name='TestHero777' end)\n"
+                    "  pcall(function() o.User.m_PlayerName='TestHero777' end)\n"
+                    "  local st; pcall(function() st=o:GetCom(CStatus) end)\n"
+                    "  local jc,jl\n"
+                    "  pcall(function() for k,v in pairs(JobClassNameTable) do if type(v)=='table' then for lk,lv in pairs(v) do if type(lv)=='string' then jc=k; jl=lk; break end end end if jc then break end end end)\n"
+                    "  pcall(function() st:SetJobClass(jc or 0) end)\n"
+                    "  pcall(function() st.ClassLevel=jl or 0 end)\n"
+                    "  pcall(function() st:SetAttributeValue('Level',50) end)\n"
+                    "  local oid; pcall(function() oid=o:GetID() end); T9_OID=oid or -1\n"
+                    "  GLOG('built oid='..tostring(oid)..' job='..tostring(jc)..' lvlpair='..tostring(jl))\n"
+                    "end\n";
+                void *L9; int f9=0; int built, oid9; char t9b2[160];
+                t9_done = 1;
+                exp_log("TEST9 start (T2): realize FULL TPlayer @LoadList -> arm capture -> CreateLocalObject -> existing +0x28 splice + force-UI row");
+                exp_b_lua_run(t9a);
+                g_d2_arm = 1;
+                exp_b_lua_run(t9b);
+                g_d2_arm = 0;
+                L9 = (void*)(*(DWORD*)(DWORD_PTR)BDEFER_L_SLOT);
+                built = exp_bdefer_read_num(L9, "T9_BUILT", &f9);
+                f9 = 0; oid9 = exp_bdefer_read_num(L9, "T9_OID", &f9);
+                wsprintfA(t9b2, "TEST9 BUILT=%d OID=%d g_d2_char=0x%08x (expect +0x28 splice + FORCEUI next)", built, oid9, (DWORD)g_d2_char);
+                exp_log(t9b2);
+            }
+        }
         /* D2 TRIGGER (one-shot): construct CreateLocalObject('TPlayerDummy') here --
          * BEFORE getAllPlayers, with the CharacterManager already live -- and capture
          * the new Object* via the armed CTORDIAG bd2cd0 (cls38==TPlayerDummy) seat.
@@ -5902,6 +6237,263 @@ static void exp_log_loadlist_probe(DWORD addr, PCONTEXT c)
                 for (i=0;i<11;++i){ tf[i]=0; tv[i]=exp_bdefer_read_num(L5, tn[i], &tf[i]); }
                 wsprintfA(tb, "TEST5 BUILT=%d OID=%d PLAYER=%d USER=%d CSTATUS=%d CBODY=%d PHYS=%d INV=%d EQUIP=%d TMPL=%d DEFER=%d",
                           tv[0],tv[1],tv[2],tv[3],tv[4],tv[5],tv[6],tv[7],tv[8],tv[9],tv[10]);
+                exp_log(tb);
+            }
+        }
+        /* TEST-6 (LATE-111 follow-on): integrate the built TPlayer into the roster -- DIAGNOSE the gate. */
+        if (g_test6_integrate) {
+            static int t6_done = 0;
+            if (!t6_done) {
+                static const char *t6chunk =
+                    "local function GLOG(s) if _CLIENTLOG_SINK then pcall(_CLIENTLOG_SINK,'INTEG',s) end end\n"
+                    "GLOG('--- TEST6 integrate begin ---')\n"
+                    /* realize via the engine's OWN force-load (LATE-111) */
+                    "local oldTM=Firenze and Firenze.TestMode; if Firenze then Firenze.TestMode=nil end\n"
+                    "pcall(Template,'TActor','TNetObject',true,true)\n"
+                    "pcall(reload_file,'TPlayer')\n"
+                    "pcall(CreateDeferedTemplate,'TPlayer')\n"
+                    "if Firenze then Firenze.TestMode=oldTM end\n"
+                    "local w=GetEnvironment():GetNObject('ClientWorld')\n"
+                    "local co,o=pcall(function() return w:CreateLocalObject('TPlayer') end)\n"
+                    "o=(co and o) or nil\n"
+                    "GLOG('built='..tostring(o~=nil))\n"
+                    "T6_BUILT=(o~=nil) and 1 or 0; T6_OID=-1; T6_INGW=0; T6_HASOWN=0; T6_CM=0\n"
+                    "if o then\n"
+                    "  pcall(function() o.Player.m_name='TestHero777' end)\n"
+                    "  pcall(function() o.CStatusPlayer.Level=50 end)\n"
+                    "  local oid; pcall(function() oid=o:GetID() end); T6_OID=oid or -1\n"
+                    "  GLOG('oid='..tostring(oid)..' name_set='..tostring((function() local n; pcall(function() n=o.Player.m_name end); return n end)()))\n"
+                    /* GATE 1: is the built char in GWorld (the roster resolves via GWorld:FindObject)? */
+                    "  local gw; pcall(function() gw=GWorld:FindObject(oid) end)\n"
+                    "  GLOG('GATE1 GWorld:FindObject(oid)='..tostring(gw)); T6_INGW=(gw~=nil) and 1 or 0\n"
+                    /* GATE 2: does it have an owner (orphan = no owner -> teardown crash)? */
+                    "  local own; pcall(function() own=o:GetOwner() end)\n"
+                    "  GLOG('GATE2 o:GetOwner()='..tostring(own)); T6_HASOWN=(own~=nil) and 1 or 0\n"
+                    /* GATE 3: CharacterManager + its TAccount owner (the owner the char should take) */
+                    "  local cm; pcall(function() cm=GetEnvironment():GetNObject('CharacterManager') end)\n"
+                    "  T6_CM=(cm~=nil) and 1 or 0\n"
+                    "  local cmown; if cm then pcall(function() cmown=cm:GetOwner() end) end\n"
+                    "  GLOG('GATE3 CharacterManager='..tostring(cm)..' :GetOwner(TAccount)='..tostring(cmown))\n"
+                    "  local n; pcall(function() n=GWorld:GetAllObjectCount() end)\n"
+                    "  GLOG('GWorld:GetAllObjectCount()='..tostring(n))\n"
+                    "end\n"
+                    "GLOG('--- TEST6 integrate end ---')\n";
+                void *L6; int i; char tb[200];
+                static const char *tn[5] = {"T6_BUILT","T6_OID","T6_INGW","T6_HASOWN","T6_CM"};
+                int tv[5], tf[5];
+                t6_done = 1;
+                exp_log("TEST6 start: integrate-gate diagnosis (build real TPlayer; probe GWorld membership + owner + CharacterManager)");
+                exp_b_lua_run(t6chunk);
+                L6 = (void*)(*(DWORD*)(DWORD_PTR)BDEFER_L_SLOT);
+                for (i=0;i<5;++i){ tf[i]=0; tv[i]=exp_bdefer_read_num(L6, tn[i], &tf[i]); }
+                wsprintfA(tb, "TEST6 BUILT=%d OID=%d INGWORLD=%d HASOWNER=%d CHARMGR=%d", tv[0],tv[1],tv[2],tv[3],tv[4]);
+                exp_log(tb);
+            }
+        }
+        /* TEST-7 (LATE-112 follow-on): GWorld-resident construct -- does GWorld:CreateObject('TPlayer') work now the template realizes? */
+        if (g_test7_gwcreate) {
+            static int t7_done = 0;
+            if (!t7_done) {
+                static const char *t7chunk =
+                    "local function GLOG(s) if _CLIENTLOG_SINK then pcall(_CLIENTLOG_SINK,'GWCREATE',s) end end\n"
+                    "GLOG('--- TEST7 GWorld:CreateObject begin ---')\n"
+                    /* realize the template first (LATE-111 force-load) */
+                    "local oldTM=Firenze and Firenze.TestMode; if Firenze then Firenze.TestMode=nil end\n"
+                    "pcall(Template,'TActor','TNetObject',true,true)\n"
+                    "pcall(reload_file,'TPlayer')\n"
+                    "pcall(CreateDeferedTemplate,'TPlayer')\n"
+                    "if Firenze then Firenze.TestMode=oldTM end\n"
+                    "T7_A=0; T7_OID=-1; T7_INGW=0; T7_OWN=0; T7_HASP=0\n"
+                    /* candidate A: GWorld:CreateObject('TPlayer') -- the world-resident construct */
+                    "local okA,a=pcall(function() return GWorld:CreateObject('TPlayer') end)\n"
+                    "GLOG('A GWorld:CreateObject(TPlayer) ok='..tostring(okA)..' obj='..tostring(a))\n"
+                    "a=(okA and a) or nil; T7_A=(a~=nil) and 1 or 0\n"
+                    "if a then\n"
+                    "  local oid; pcall(function() oid=a:GetID() end); T7_OID=oid or -1\n"
+                    "  local gw; pcall(function() gw=GWorld:FindObject(oid) end); T7_INGW=(gw~=nil) and 1 or 0\n"
+                    "  local own; pcall(function() own=a:GetOwner() end); T7_OWN=(own~=nil) and 1 or 0\n"
+                    "  local hp; pcall(function() hp=(a:GetComponent('Player')~=nil) end); T7_HASP=(hp) and 1 or 0\n"
+                    "  GLOG('A oid='..tostring(oid)..' inGWorld='..tostring(gw~=nil)..' owner='..tostring(own)..' hasPlayer='..tostring(hp))\n"
+                    "end\n"
+                    /* candidate B: ServerWorld:CreateObject('TPlayer') (CStatus.lua:812 precedent) */
+                    "local sw; pcall(function() sw=GetEnvironment():GetNObject('ServerWorld') end)\n"
+                    "GLOG('ServerWorld='..tostring(sw))\n"
+                    "if sw then local okB,b=pcall(function() return sw:CreateObject('TPlayer') end)\n"
+                    "  GLOG('B ServerWorld:CreateObject(TPlayer) ok='..tostring(okB)..' obj='..tostring(b)) end\n"
+                    "GLOG('--- TEST7 GWorld:CreateObject end ---')\n";
+                void *L7; int i; char tb[200];
+                static const char *tn[5] = {"T7_A","T7_OID","T7_INGW","T7_OWN","T7_HASP"};
+                int tv[5], tf[5];
+                t7_done = 1;
+                exp_log("TEST7 start: GWorld:CreateObject('TPlayer') world-resident construct probe (template realized)");
+                exp_b_lua_run(t7chunk);
+                L7 = (void*)(*(DWORD*)(DWORD_PTR)BDEFER_L_SLOT);
+                for (i=0;i<5;++i){ tf[i]=0; tv[i]=exp_bdefer_read_num(L7, tn[i], &tf[i]); }
+                wsprintfA(tb, "TEST7 CREATED=%d OID=%d INGWORLD=%d HASOWNER=%d HASPLAYER=%d", tv[0],tv[1],tv[2],tv[3],tv[4]);
+                exp_log(tb);
+            }
+        }
+        /* TEST-8 (LATE-116, T1): client-local ROSTER row via the Intro frame's OWN "AddCharacter" handler. */
+        if (g_test8_addrow) {
+            static int t8_done = 0;
+            if (!t8_done) {
+                static const char *t8chunk =
+                    "local function GLOG(s) if _CLIENTLOG_SINK then pcall(_CLIENTLOG_SINK,'ADDROW',s) end end\n"
+                    "GLOG('--- TEST8 addrow begin ---')\n"
+                    /* (1) force-build the FULL-component TPlayer (LATE-111 recipe) */
+                    "local oldTM=Firenze and Firenze.TestMode; if Firenze then Firenze.TestMode=nil end\n"
+                    "pcall(Template,'TActor','TNetObject',true,true)\n"
+                    "pcall(reload_file,'TPlayer')\n"
+                    "pcall(CreateDeferedTemplate,'TPlayer')\n"
+                    "if Firenze then Firenze.TestMode=oldTM end\n"
+                    "local w=GetEnvironment():GetNObject('ClientWorld')\n"
+                    "local co,o=pcall(function() return w:CreateLocalObject('TPlayer') end)\n"
+                    "o=(co and o) or nil\n"
+                    "T8_BUILT=(o~=nil) and 1 or 0\n"
+                    "GLOG('built='..tostring(o~=nil))\n"
+                    "T8_VALID=0;T8_CB=-1;T8_CA=-1;T8_FOK=0;T8_DIRECT=0;T8_HASUI=0;T8_HASFRAME=0\n"
+                    "if o then\n"
+                    /* (2) display data so the handler reads succeed (find a valid job/level pair) */
+                    "  pcall(function() o.Player.m_name='TestHero777' end)\n"
+                    "  local st; pcall(function() st=o:GetCom(CStatus) end)\n"
+                    "  local jc,jl\n"
+                    "  pcall(function() for k,v in pairs(JobClassNameTable) do if type(v)=='table' then for lk,lv in pairs(v) do if type(lv)=='string' then jc=k; jl=lk; break end end end if jc then break end end end)\n"
+                    "  pcall(function() st:SetJobClass(jc or 0) end)\n"
+                    "  pcall(function() st.ClassLevel=jl or 0 end)\n"
+                    "  pcall(function() st:SetAttributeValue('Level',50) end)\n"
+                    "  pcall(function() st.Level=50 end)\n"
+                    /* (3) validate the handler's own reads on this char */
+                    "  local lv; pcall(function() lv=o:GetCom(CStatus):GetAttributeValue('Level') end)\n"
+                    "  local jb; pcall(function() jb=st:GetJobClass() end)\n"
+                    "  local jstr; pcall(function() jstr=JobClassNameTable[jb][st.ClassLevel or 0] end)\n"
+                    "  local hasbody=(o.CBody~=nil); local hasphys=(o.Physics~=nil)\n"
+                    "  T8_VALID=(lv~=nil and jb~=nil and jstr~=nil and hasbody and hasphys) and 1 or 0\n"
+                    "  GLOG('VALIDATE level='..tostring(lv)..' job='..tostring(jb)..' jstr='..tostring(jstr)..' cbody='..tostring(hasbody)..' phys='..tostring(hasphys))\n"
+                    /* (4) locate the live UIIntro + frame + characters */
+                    "  T8_HASUI=(UIIntro~=nil) and 1 or 0\n"
+                    "  local fr; pcall(function() fr=UIIntro.frame end); T8_HASFRAME=(fr~=nil) and 1 or 0\n"
+                    "  pcall(function() T8_CB=#UIIntro.characters end)\n"
+                    "  GLOG('UIIntro='..tostring(UIIntro)..' frame='..tostring(fr)..' chars_before='..tostring(T8_CB))\n"
+                    /* (5) FAITHFUL fire: the client's OWN AddCharacter command into the Intro frame */
+                    "  local okF=pcall(function()\n"
+                    "    local ev=UIEvent:Create('AddCharacter')\n"
+                    "    ev.m_param1='TestHero777'; ev.m_param2=w; ev.m_param3=o\n"
+                    "    fr:HandleEvent(ev)\n"
+                    "  end)\n"
+                    "  T8_FOK=okF and 1 or 0\n"
+                    "  local after1=T8_CB; pcall(function() after1=#UIIntro.characters end)\n"
+                    "  GLOG('FIRE AddCharacter ok='..tostring(okF)..' chars_after='..tostring(after1))\n"
+                    /* (6) FALLBACK: event didn't add it -> drive the handler core directly (insert+refresh) */
+                    "  if (after1 or -1)<=(T8_CB or -1) then\n"
+                    "    local okD=pcall(function()\n"
+                    "      table.insert(UIIntro.characters, o)\n"
+                    "      local ui=UI:GetLayoutInstance('CharacterSelectionDialog')\n"
+                    "      if ui then ui:GetTopControl():HandleEvent(UIEvent:Create('Update')) end\n"
+                    "    end)\n"
+                    "    T8_DIRECT=okD and 1 or 0\n"
+                    "    GLOG('FALLBACK direct insert ok='..tostring(okD))\n"
+                    "  end\n"
+                    "  pcall(function() T8_CA=#UIIntro.characters end)\n"
+                    "  GLOG('chars_after_final='..tostring(T8_CA))\n"
+                    "end\n"
+                    "GLOG('--- TEST8 addrow end ---')\n";
+                void *L8; int i; char tb[260];
+                static const char *tn[8] = {"T8_BUILT","T8_VALID","T8_CB","T8_CA","T8_FOK","T8_DIRECT","T8_HASUI","T8_HASFRAME"};
+                int tv[8], tf[8];
+                t8_done = 1;
+                exp_log("TEST8 start: client-local AddCharacter row (force-build TPlayer; fire AddCharacter into UIIntro.frame; fallback direct insert)");
+                exp_b_lua_run(t8chunk);
+                L8 = (void*)(*(DWORD*)(DWORD_PTR)BDEFER_L_SLOT);
+                for (i=0;i<8;++i){ tf[i]=0; tv[i]=exp_bdefer_read_num(L8, tn[i], &tf[i]); }
+                wsprintfA(tb, "TEST8 BUILT=%d VALID=%d CHARS_BEFORE=%d CHARS_AFTER=%d FIRE_OK=%d DIRECT=%d HASUI=%d HASFRAME=%d",
+                          tv[0],tv[1],tv[2],tv[3],tv[4],tv[5],tv[6],tv[7]);
+                exp_log(tb);
+            }
+        }
+        /* TEST-10 (LATE-119, T2'): DECOUPLED render + ORPHAN OWNER test-patch -> survive + VISIBLE row.
+         * The render runs (T2' proven); the new bit is patching the orphan's owner field (obj+0x40) to a
+         * valid inert buffer so the teardown's [owner+0xdc] write (FUN_0081f390+0x627) doesn't NULL-fault,
+         * keeping the client alive at char-select long enough to screenshot. Capture the char Object* via
+         * the armed bff767 seat, then native-write obj+0x40 = &g_fake_owner. */
+        if (g_test10_render) {
+            static int t10_done = 0;
+            if (!t10_done) {
+                /* chunk A: realize the TPlayer template (no capture) */
+                static const char *t10a =
+                    "local function GLOG(s) if _CLIENTLOG_SINK then pcall(_CLIENTLOG_SINK,'T2R',s) end end\n"
+                    "GLOG('--- TEST10 realize begin ---')\n"
+                    "local oldTM=Firenze and Firenze.TestMode; if Firenze then Firenze.TestMode=nil end\n"
+                    "pcall(Template,'TActor','TNetObject',true,true)\n"
+                    "pcall(reload_file,'TPlayer')\n"
+                    "pcall(CreateDeferedTemplate,'TPlayer')\n"
+                    "if Firenze then Firenze.TestMode=oldTM end\n";
+                /* chunk B: build the instance (capture armed) + valid display data; D2_OBJ=o for render */
+                static const char *t10b =
+                    "local function GLOG(s) if _CLIENTLOG_SINK then pcall(_CLIENTLOG_SINK,'T2R',s) end end\n"
+                    "local w=GetEnvironment():GetNObject('ClientWorld')\n"
+                    "local co,o=pcall(function() return w:CreateLocalObject('TPlayer') end)\n"
+                    "o=(co and o) or nil\n"
+                    "D2_OBJ=o\n"
+                    "T10_BUILT=(o~=nil) and 1 or 0;T10_OWN=0;T10_SHOW=0;T10_DLG=0;T10_NB=-1;T10_NA=-1;T10_PHYS=0;T10_HASUI=0\n"
+                    "if o then\n"
+                    "  pcall(function() o.Player.m_name='TestHero777' end)\n"
+                    "  pcall(function() o.User.m_PlayerName='TestHero777' end)\n"
+                    "  local st; pcall(function() st=o:GetCom(CStatus) end)\n"
+                    "  local jc,jl\n"
+                    "  pcall(function() for k,v in pairs(JobClassNameTable) do if type(v)=='table' then for lk,lv in pairs(v) do if type(lv)=='string' then jc=k; jl=lk; break end end end if jc then break end end end)\n"
+                    "  pcall(function() st:SetJobClass(jc or 0) end)\n"
+                    "  pcall(function() st.ClassLevel=jl or 0 end)\n"
+                    "  pcall(function() st:SetAttributeValue('Level',50) end)\n"
+                    "end\n";
+                /* chunk C: render -- ShowDialog + insert + Update + physics (uses D2_OBJ) */
+                static const char *t10c =
+                    "local function GLOG(s) if _CLIENTLOG_SINK then pcall(_CLIENTLOG_SINK,'T2R',s) end end\n"
+                    "local o=D2_OBJ\n"
+                    "if o then\n"
+                    "  T10_HASUI=(UIIntro~=nil) and 1 or 0\n"
+                    "  local shok=pcall(function() UI:ShowDialog('CharacterSelectionDialog') end); T10_SHOW=shok and 1 or 0\n"
+                    "  GLOG('ShowDialog ok='..tostring(shok))\n"
+                    "  pcall(function() T10_NB=#UIIntro.characters end)\n"
+                    "  local has=false\n"
+                    "  pcall(function() for _,x in ipairs(UIIntro.characters or {}) do if x==o then has=true break end end end)\n"
+                    "  if not has then pcall(function() table.insert(UIIntro.characters, o) end) end\n"
+                    "  local uiinst=UI:GetLayoutInstance('CharacterSelectionDialog')\n"
+                    "  T10_DLG=(uiinst~=nil) and 1 or 0\n"
+                    "  if uiinst then pcall(function() uiinst:GetTopControl():HandleEvent(UIEvent:Create('Update')) end) end\n"
+                    "  pcall(function() T10_NA=#UIIntro.characters end)\n"
+                    "  GLOG('dlg='..tostring(uiinst)..' chars='..tostring(T10_NA))\n"
+                    "  local pok=pcall(function() o.Physics:SetPhysics(GameIntroData.SelectionPlayerPos, NiPoint3()); o.CBody:SetScale(GameIntroData.SelectionPlayerScale) end)\n"
+                    "  T10_PHYS=pok and 1 or 0; GLOG('SetPhysics ok='..tostring(pok))\n"
+                    "end\n"
+                    "GLOG('--- TEST10 render end ---')\n";
+                void *L10; int i; char tb[240];
+                static const char *tn[8] = {"T10_BUILT","T10_OWN","T10_SHOW","T10_DLG","T10_NB","T10_NA","T10_PHYS","T10_HASUI"};
+                int tv[8], tf[8];
+                DWORD old40 = 0;
+                t10_done = 1;
+                exp_log("TEST10 start (T2'): realize -> arm capture -> build -> OWNER-PATCH obj+0x40 -> ShowDialog/insert/Update -> hold for screenshot");
+                exp_b_lua_run(t10a);
+                g_d2_char = 0;            /* fresh capture */
+                g_d2_arm = 1;
+                exp_b_lua_run(t10b);
+                g_d2_arm = 0;
+                /* ORPHAN OWNER test-patch: point obj+0x40 at an inert valid buffer so teardown won't NULL-fault */
+                if (g_d2_char) {
+                    exp_init_fake_owner();
+                    old40 = exp2_read_safe((DWORD)g_d2_char + 0x40);
+                    __try { *(DWORD*)(DWORD_PTR)((DWORD)g_d2_char + 0x40) = (DWORD)(DWORD_PTR)&g_fake_owner; }
+                    __except(1) { exp_log("TEST10 OWNERPATCH write exception"); }
+                    wsprintfA(tb, "TEST10 OWNERPATCH char=0x%08x old+40=0x%08x new+40=0x%08x",
+                              (DWORD)g_d2_char, old40, exp2_read_safe((DWORD)g_d2_char + 0x40));
+                    exp_log(tb);
+                } else {
+                    exp_log("TEST10 OWNERPATCH skip: g_d2_char not captured");
+                }
+                exp_b_lua_run(t10c);
+                L10 = (void*)(*(DWORD*)(DWORD_PTR)BDEFER_L_SLOT);
+                for (i=0;i<8;++i){ tf[i]=0; tv[i]=exp_bdefer_read_num(L10, tn[i], &tf[i]); }
+                wsprintfA(tb, "TEST10 BUILT=%d OWN=%d SHOW=%d DLG=%d NB=%d NA=%d PHYS=%d HASUI=%d",
+                          tv[0],tv[1],tv[2],tv[3],tv[4],tv[5],tv[6],tv[7]);
                 exp_log(tb);
             }
         }
@@ -8953,7 +9545,12 @@ static LONG CALLBACK exp_veh(PEXCEPTION_POINTERS ei)
                 exp_log_map_candidate("COMP_OBJ14", exp2_read_safe(obj + 0x14));
                 exp_log_map_candidate("COMP_OBJ18", exp2_read_safe(obj + 0x18));
 #ifdef EXP_INJECT_B4_COMPONENT_OBJ18
-                exp_inject_b4_component_obj18(obj, ei->ContextRecord->Ecx, key);
+                /* LATE-124: clean-observation default -- the obj+0x18 write is a TEST
+                 * intervention (s54/s55), NOT what the client does naturally. Gate it
+                 * behind !g_natural_parse_only so the committed full-trace build only
+                 * OBSERVES (no force-patch, per CLAUDE.md §0). */
+                if (!g_natural_parse_only)
+                    exp_inject_b4_component_obj18(obj, ei->ContextRecord->Ecx, key);
 #endif
 #if EXP_TARGET_PROFILE != 62 && EXP_TARGET_PROFILE != 63
                 /* s6: open the read-primitive tracer window for ServerCom slot-7,
