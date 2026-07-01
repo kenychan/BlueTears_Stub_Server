@@ -1,7 +1,9 @@
 # SERVER_QUICKREF — where things live + how the pieces connect (read to change/read fast)
 
-The faithful host = **`server/src`** (the emulator: runs the shipped server Lua) + **`Res/gss_stub_server_v4.py`**
-(the wire/crypto/channel TRANSPORT). The stub is TEST/RE transport ONLY; all game logic belongs in `server/src`.
+The faithful host = **`server/`**: START POINT **`run_server.py`** driving **`server/src`** (the emulator — runs the
+shipped server Lua over a Python engine substrate, with its OWN wire/crypto/channel transport in `server/src/net/`,
+stub-free + live-E1-verified 2026-07-01). **⛔ `Res/gss_stub_server_v4.py` = FROZEN LEGACY — reference only, no more
+edits;** its transport is fully migrated into `server/src/net/`. Game logic AND transport now live in `server/`.
 
 ## 1. `server/src` — the host stack, in THREE TIERS (all self-tests GREEN)
 
@@ -81,13 +83,13 @@ be archived. (Legacy Res deps still imported by `net/packets.py`: `gss_stub_serv
 flag points the harness at run_server.py; default stays the legacy stub). Server logger = `gss.run_server`
 (entry) + `gss-v4` (bridged handle) in `Res/RE_findings/master_ladder_*_ordered-db-mage-select-enter.stderr.log`.
 
-**Legacy module deps still bridged (Res/):** `gss_stub_server_v3` (SESSION_OK, build_signin_client_result,
-pack_variant), `live_character_db` (DEFAULT_DB, init_db, load_account), `nid_hash` (native_nid), and the
-stub itself (only for `net.connection`'s bridged handlers — the last thing to remove).
+**Legacy module deps still bridged (Res/, small helpers — NOT the v4 stub):** `gss_stub_server_v3` (SESSION_OK,
+build_signin_client_result, pack_variant), `live_character_db` (DEFAULT_DB, init_db, load_account), `nid_hash`
+(native_nid).
 
-**NEXT (carve): under the now-established live-E1 gate**, extract the clean-path-only `handle`/`handle_master_phase`
-into `net/connection.py` (drop the ~30 dead-probe branches + their dead builders), re-run the E1 live test, then
-archive the stub. This is the ONE remaining step to a stub-free modular host.
+**✅ CARVE DONE (2026-07-01):** the clean-path `handle`/`handle_master_phase` are lifted into `net/connection.py` as
+real stub-free code (the ~30 dead-probe branches dropped) + live-E1-verified. `net.connection` no longer imports
+`gss_stub_server_v4` — the v4 stub is fully DETACHED and can be archived (FROZEN LEGACY reference only).
 
 **Dead lanes NOT extracted (archived in git history + the mirror):** all `build_b4_*` / `build_tplayerdummy_*` /
 char-tail builders, `build_backupobj`, `build_character_replication_packets`, the 32 dead `MASTER_*_PROBES` + their
