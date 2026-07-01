@@ -1,0 +1,9239 @@
+{
+ "generated_from": "Res/tw_lua_decompiled",
+ "total": 1252,
+ "classes": {
+  "ActorController": {
+   "file": "Class/Main/ActorController.lua",
+   "rpcs": [
+    {
+     "method": "ApplyModifier",
+     "types": [
+      "Client",
+      "Server"
+     ],
+     "line": 112
+    },
+    {
+     "method": "ChangePositionTarget",
+     "types": [
+      "Client",
+      "Server"
+     ],
+     "line": 107
+    },
+    {
+     "method": "ClassUpWrapper",
+     "types": [
+      "Server"
+     ],
+     "line": 113
+    },
+    {
+     "method": "CollectionResult",
+     "types": [
+      "Client"
+     ],
+     "line": 135
+    },
+    {
+     "method": "CreateMpRegenHelper",
+     "types": [
+      "Server"
+     ],
+     "line": 143
+    },
+    {
+     "method": "DecreaseHyperGauge",
+     "types": [
+      "Server"
+     ],
+     "line": 128
+    },
+    {
+     "method": "DownCallForceStartSkill",
+     "types": [
+      "Client"
+     ],
+     "line": 127
+    },
+    {
+     "method": "DownCallPlaySound",
+     "types": [
+      "Client"
+     ],
+     "line": 138
+    },
+    {
+     "method": "DownCallPlayerTalk",
+     "types": [
+      "Client"
+     ],
+     "line": 139
+    },
+    {
+     "method": "FloatUp",
+     "types": [
+      "Client"
+     ],
+     "line": 134
+    },
+    {
+     "method": "ForceApplyOrb",
+     "types": [
+      "Server"
+     ],
+     "line": 140
+    },
+    {
+     "method": "ForceUpdateModifier",
+     "types": [
+      "Client",
+      "Server"
+     ],
+     "line": 126
+    },
+    {
+     "method": "ForceUpdateModifierVariable",
+     "types": [
+      "Server"
+     ],
+     "line": 144
+    },
+    {
+     "method": "GetCollectionItem",
+     "types": [
+      "Server"
+     ],
+     "line": 109
+    },
+    {
+     "method": "GetMiningItem",
+     "types": [
+      "Server"
+     ],
+     "line": 111
+    },
+    {
+     "method": "IncreaseStatSpecific",
+     "types": [
+      "Server"
+     ],
+     "line": 110
+    },
+    {
+     "method": "LuaCallSkillFunction",
+     "types": [
+      "Server",
+      "Client"
+     ],
+     "line": 156
+    },
+    {
+     "method": "LuaNetFireProjectile",
+     "types": [
+      "Client"
+     ],
+     "line": 158
+    },
+    {
+     "method": "NetActionWeakFreeze",
+     "types": [
+      "Client"
+     ],
+     "line": 157
+    },
+    {
+     "method": "NetChangeBosslistener",
+     "types": [
+      "Client"
+     ],
+     "line": 153
+    },
+    {
+     "method": "NetChangePlayerlistener",
+     "types": [
+      "Client"
+     ],
+     "line": 154
+    },
+    {
+     "method": "NetLuaBuffCombat",
+     "types": [
+      "Server"
+     ],
+     "line": 155
+    },
+    {
+     "method": "NetLuaBuffCombatEffect",
+     "types": [
+      "Client"
+     ],
+     "line": 159
+    },
+    {
+     "method": "NetRestoreTransformedBody",
+     "types": [
+      "Client",
+      "Server"
+     ],
+     "line": 117
+    },
+    {
+     "method": "NetTransformBody",
+     "types": [
+      "Client",
+      "Server"
+     ],
+     "line": 116
+    },
+    {
+     "method": "NotifyCannotCollect",
+     "types": [
+      "Client"
+     ],
+     "line": 121
+    },
+    {
+     "method": "OnClientGetCellInfoResult",
+     "types": [
+      "Client"
+     ],
+     "line": 119
+    },
+    {
+     "method": "OnLevelUp",
+     "types": [
+      "Client"
+     ],
+     "line": 129
+    },
+    {
+     "method": "OnPlayDeleteEffect",
+     "types": [
+      "Client"
+     ],
+     "line": 137
+    },
+    {
+     "method": "OnPlayEffect",
+     "types": [
+      "Client"
+     ],
+     "line": 136
+    },
+    {
+     "method": "OnQuitFloatUp",
+     "types": [
+      "Client",
+      "Server"
+     ],
+     "line": 124
+    },
+    {
+     "method": "OnReplicateCurrentState",
+     "types": [
+      "Client"
+     ],
+     "line": 147
+    },
+    {
+     "method": "OnRequestUserInfo",
+     "types": [
+      "Client"
+     ],
+     "line": 122
+    },
+    {
+     "method": "OnServerGetCellInfo",
+     "types": [
+      "Server"
+     ],
+     "line": 118
+    },
+    {
+     "method": "OnSkillPointUp",
+     "types": [
+      "Client"
+     ],
+     "line": 130
+    },
+    {
+     "method": "OnTotalDamageResult",
+     "types": [
+      "Client"
+     ],
+     "line": 151
+    },
+    {
+     "method": "OutD3DRenderUse",
+     "types": [
+      "Client"
+     ],
+     "line": 152
+    },
+    {
+     "method": "PlayerCancelAction",
+     "types": [
+      "Client",
+      "Server"
+     ],
+     "line": 142
+    },
+    {
+     "method": "QuitFloatUpServer",
+     "types": [
+      "Server"
+     ],
+     "line": 125
+    },
+    {
+     "method": "ReplicateCurrentState",
+     "types": [
+      "Server"
+     ],
+     "line": 115
+    },
+    {
+     "method": "ReplyUserInfo",
+     "types": [
+      "Server"
+     ],
+     "line": 123
+    },
+    {
+     "method": "RequestSummonMonsterAtPosition",
+     "types": [
+      "Server"
+     ],
+     "line": 114
+    },
+    {
+     "method": "ResetCollectionTarget",
+     "types": [
+      "Server"
+     ],
+     "line": 108
+    },
+    {
+     "method": "SetBuffVariable",
+     "types": [
+      "Server"
+     ],
+     "line": 149
+    },
+    {
+     "method": "SetLimitedSpecial",
+     "types": [
+      "Client"
+     ],
+     "line": 141
+    },
+    {
+     "method": "SetPositionTarget",
+     "types": [
+      "Server"
+     ],
+     "line": 131
+    },
+    {
+     "method": "SetStoryManagerVariable",
+     "types": [
+      "Client",
+      "Server"
+     ],
+     "line": 120
+    },
+    {
+     "method": "SetVariable",
+     "types": [
+      "?"
+     ],
+     "line": 146
+    },
+    {
+     "method": "SkillBookLevelUp",
+     "types": [
+      "Server"
+     ],
+     "line": 145
+    },
+    {
+     "method": "ThrowItemResult",
+     "types": [
+      "Client"
+     ],
+     "line": 133
+    },
+    {
+     "method": "TotalDamageCheckEvent",
+     "types": [
+      "Server"
+     ],
+     "line": 150
+    },
+    {
+     "method": "UpdateActBIT",
+     "types": [
+      "Client",
+      "Server"
+     ],
+     "line": 148
+    },
+    {
+     "method": "UpdateLevelTagByFavor",
+     "types": [
+      "Client",
+      "Server"
+     ],
+     "line": 132
+    }
+   ]
+  },
+  "CBody": {
+   "file": "Class/Main/CBody.lua",
+   "rpcs": [
+    {
+     "method": "NotifyScaleToServer",
+     "types": [
+      "Server"
+     ],
+     "line": 51
+    },
+    {
+     "method": "SetUnlimitedAction",
+     "types": [
+      "Server"
+     ],
+     "line": 52
+    },
+    {
+     "method": "UnDressGoddessEquip",
+     "types": [
+      "Client",
+      "Server"
+     ],
+     "line": 50
+    }
+   ]
+  },
+  "CBombController": {
+   "file": "Class/Main/CBombController.lua",
+   "rpcs": [
+    {
+     "method": "AddDamageMonsters",
+     "types": [
+      "Server"
+     ],
+     "line": 10
+    },
+    {
+     "method": "Boom",
+     "types": [
+      "Client"
+     ],
+     "line": 9
+    },
+    {
+     "method": "OnSetEnabled",
+     "types": [
+      "Client"
+     ],
+     "line": 8
+    }
+   ]
+  },
+  "CChat": {
+   "file": "Class/Main/CChat.lua",
+   "rpcs": [
+    {
+     "method": "AddNoticeMessage",
+     "types": [
+      "Client"
+     ],
+     "line": 28
+    },
+    {
+     "method": "CheckPlayer",
+     "types": [
+      "Server"
+     ],
+     "line": 19
+    },
+    {
+     "method": "DeleteNoticeMessage",
+     "types": [
+      "Client"
+     ],
+     "line": 29
+    },
+    {
+     "method": "DeletePlayer",
+     "types": [
+      "Server"
+     ],
+     "line": 14
+    },
+    {
+     "method": "EmotionEvent",
+     "types": [
+      "Server"
+     ],
+     "line": 16
+    },
+    {
+     "method": "MTMReceiveMessage",
+     "types": [
+      "Client"
+     ],
+     "line": 12
+    },
+    {
+     "method": "MTMSendMessage",
+     "types": [
+      "Server"
+     ],
+     "line": 18
+    },
+    {
+     "method": "OnCheckPlayerResult",
+     "types": [
+      "Client"
+     ],
+     "line": 11
+    },
+    {
+     "method": "OnClientBroadcastProcess",
+     "types": [
+      "Client"
+     ],
+     "line": 21
+    },
+    {
+     "method": "OnMasterBroadcastProcess",
+     "types": [
+      "Master"
+     ],
+     "line": 20
+    },
+    {
+     "method": "OnRequestExecuteCommand",
+     "types": [
+      "Client"
+     ],
+     "line": 15
+    },
+    {
+     "method": "OnSendingMessageUpdate",
+     "types": [
+      "Client"
+     ],
+     "line": 13
+    },
+    {
+     "method": "PreBroadcast",
+     "types": [
+      "Server"
+     ],
+     "line": 27
+    },
+    {
+     "method": "RequestExecuteCommand",
+     "types": [
+      "Server"
+     ],
+     "line": 22
+    },
+    {
+     "method": "SendAllPlayersSlidingMsg",
+     "types": [
+      "Master"
+     ],
+     "line": 23
+    },
+    {
+     "method": "SetNoTalkEndTime",
+     "types": [
+      "Client",
+      "Server",
+      "Master"
+     ],
+     "line": 17
+    },
+    {
+     "method": "ShowClientSlidingMsg",
+     "types": [
+      "Client"
+     ],
+     "line": 24
+    },
+    {
+     "method": "ShowSlidingMessageEvent",
+     "types": [
+      "Client"
+     ],
+     "line": 25
+    },
+    {
+     "method": "ShowWorldBossMessageEvent",
+     "types": [
+      "Client"
+     ],
+     "line": 26
+    },
+    {
+     "method": "onBroadcastEvent",
+     "types": [
+      "Client"
+     ],
+     "line": 30
+    }
+   ]
+  },
+  "CFieldController": {
+   "file": "Class/Main/CFieldController.lua",
+   "rpcs": [
+    {
+     "method": "OnSetEnabled",
+     "types": [
+      "Client"
+     ],
+     "line": 8
+    }
+   ]
+  },
+  "Channel": {
+   "file": "Class/Main/Channel.lua",
+   "rpcs": [
+    {
+     "method": "AliveInsResult",
+     "types": [
+      "Server",
+      "Master"
+     ],
+     "line": 30
+    },
+    {
+     "method": "AppointSpawnMob",
+     "types": [
+      "Server"
+     ],
+     "line": 77
+    },
+    {
+     "method": "BroadcastEventOnMaster",
+     "types": [
+      "Master"
+     ],
+     "line": 93
+    },
+    {
+     "method": "BroadcastEventOnServer",
+     "types": [
+      "Server"
+     ],
+     "line": 94
+    },
+    {
+     "method": "CheckInsAliveFromMaster",
+     "types": [
+      "Server"
+     ],
+     "line": 67
+    },
+    {
+     "method": "ClearWorldBoss",
+     "types": [
+      "Server"
+     ],
+     "line": 81
+    },
+    {
+     "method": "DeleteAppointSpawnMob",
+     "types": [
+      "Server"
+     ],
+     "line": 78
+    },
+    {
+     "method": "Master_ForwardToGIP",
+     "types": [
+      "Master"
+     ],
+     "line": 70
+    },
+    {
+     "method": "Master_ForwardToPaymentMgrProxy",
+     "types": [
+      "Master"
+     ],
+     "line": 71
+    },
+    {
+     "method": "Master_ForwardToTencentAntiHackProxy",
+     "types": [
+      "Master"
+     ],
+     "line": 72
+    },
+    {
+     "method": "Master_MarketOnReqGoodsList",
+     "types": [
+      "Master"
+     ],
+     "line": 88
+    },
+    {
+     "method": "Master_OnGetChannelUserLimit",
+     "types": [
+      "Master"
+     ],
+     "line": 42
+    },
+    {
+     "method": "Master_OnSetChannelUserLimit",
+     "types": [
+      "Master"
+     ],
+     "line": 79
+    },
+    {
+     "method": "Master_PostSendGift",
+     "types": [
+      "Master"
+     ],
+     "line": 62
+    },
+    {
+     "method": "Master_PostSendMailWithItem",
+     "types": [
+      "Master"
+     ],
+     "line": 58
+    },
+    {
+     "method": "OnServerPCRoomEnable",
+     "types": [
+      "Server"
+     ],
+     "line": 74
+    },
+    {
+     "method": "OnServer_UpdateSelectedRandomQuests",
+     "types": [
+      "Server"
+     ],
+     "line": 66
+    },
+    {
+     "method": "SendSlidingMsgChannel",
+     "types": [
+      "Server"
+     ],
+     "line": 75
+    },
+    {
+     "method": "Server_ForwardToPaymentMgr",
+     "types": [
+      "Server"
+     ],
+     "line": 29
+    },
+    {
+     "method": "Server_MarketOnResCancel",
+     "types": [
+      "Server"
+     ],
+     "line": 65
+    },
+    {
+     "method": "Server_MarketOnResGoodsList",
+     "types": [
+      "Server"
+     ],
+     "line": 64
+    },
+    {
+     "method": "Server_MarketOnResSalesGoodsList",
+     "types": [
+      "Server"
+     ],
+     "line": 63
+    },
+    {
+     "method": "Server_OnCheckClientFile",
+     "types": [
+      "Server"
+     ],
+     "line": 46
+    },
+    {
+     "method": "Server_OnGetChannelUserLimitFromMaster",
+     "types": [
+      "Server"
+     ],
+     "line": 41
+    },
+    {
+     "method": "Server_OnResetAntiHackConfig",
+     "types": [
+      "Server"
+     ],
+     "line": 59
+    },
+    {
+     "method": "Server_OnResetCDGConfig",
+     "types": [
+      "Server"
+     ],
+     "line": 60
+    },
+    {
+     "method": "Server_OnSendGift",
+     "types": [
+      "Server"
+     ],
+     "line": 61
+    },
+    {
+     "method": "Server_OnSendMailWithItem",
+     "types": [
+      "Server"
+     ],
+     "line": 57
+    },
+    {
+     "method": "Server_OnSetAntiFishingMessage",
+     "types": [
+      "Server"
+     ],
+     "line": 56
+    },
+    {
+     "method": "Server_OnSetAntiHack",
+     "types": [
+      "Server"
+     ],
+     "line": 47
+    },
+    {
+     "method": "Server_OnSetAntiHackEnable",
+     "types": [
+      "Server"
+     ],
+     "line": 37
+    },
+    {
+     "method": "Server_OnSetAntiHackSub",
+     "types": [
+      "Server"
+     ],
+     "line": 76
+    },
+    {
+     "method": "Server_OnSetBlockBingo",
+     "types": [
+      "Server"
+     ],
+     "line": 51
+    },
+    {
+     "method": "Server_OnSetBlockCommonSkill",
+     "types": [
+      "Server"
+     ],
+     "line": 55
+    },
+    {
+     "method": "Server_OnSetBlockCube",
+     "types": [
+      "Server"
+     ],
+     "line": 52
+    },
+    {
+     "method": "Server_OnSetBlockGoddessSkill",
+     "types": [
+      "Server"
+     ],
+     "line": 54
+    },
+    {
+     "method": "Server_OnSetBlockInteractNpc",
+     "types": [
+      "Server"
+     ],
+     "line": 50
+    },
+    {
+     "method": "Server_OnSetBlockPortal",
+     "types": [
+      "Server"
+     ],
+     "line": 53
+    },
+    {
+     "method": "Server_OnSetCashShopEnable",
+     "types": [
+      "Server"
+     ],
+     "line": 36
+    },
+    {
+     "method": "Server_OnSetCheckClientFile",
+     "types": [
+      "Server"
+     ],
+     "line": 45
+    },
+    {
+     "method": "Server_OnSetCheckInject",
+     "types": [
+      "Server"
+     ],
+     "line": 44
+    },
+    {
+     "method": "Server_OnSetDailyResetTime",
+     "types": [
+      "Server"
+     ],
+     "line": 43
+    },
+    {
+     "method": "Server_OnSetExchangerEnable",
+     "types": [
+      "Server"
+     ],
+     "line": 39
+    },
+    {
+     "method": "Server_OnSetExpRateHunt",
+     "types": [
+      "Server"
+     ],
+     "line": 33
+    },
+    {
+     "method": "Server_OnSetFGManager",
+     "types": [
+      "Server"
+     ],
+     "line": 87
+    },
+    {
+     "method": "Server_OnSetFGManagerEnable",
+     "types": [
+      "Server"
+     ],
+     "line": 86
+    },
+    {
+     "method": "Server_OnSetInvalidFileKick",
+     "types": [
+      "Server"
+     ],
+     "line": 85
+    },
+    {
+     "method": "Server_OnSetItemDropRate",
+     "types": [
+      "Server"
+     ],
+     "line": 34
+    },
+    {
+     "method": "Server_OnSetMailBoxEnable",
+     "types": [
+      "Server"
+     ],
+     "line": 40
+    },
+    {
+     "method": "Server_OnSetMaxLevel",
+     "types": [
+      "Server"
+     ],
+     "line": 35
+    },
+    {
+     "method": "Server_OnSetPCRoomEnable",
+     "types": [
+      "Server"
+     ],
+     "line": 48
+    },
+    {
+     "method": "Server_OnSetResAntiHack",
+     "types": [
+      "Server"
+     ],
+     "line": 38
+    },
+    {
+     "method": "Server_OnSetVIPEnable",
+     "types": [
+      "Server"
+     ],
+     "line": 49
+    },
+    {
+     "method": "Server_OnSetVulfarismFilterEnable",
+     "types": [
+      "Server"
+     ],
+     "line": 32
+    },
+    {
+     "method": "Server_OnUpdateVulgarismFilterData",
+     "types": [
+      "Server"
+     ],
+     "line": 31
+    },
+    {
+     "method": "SlidingMessageEvent",
+     "types": [
+      "Server"
+     ],
+     "line": 83
+    },
+    {
+     "method": "SpawnWorldBoss",
+     "types": [
+      "Server"
+     ],
+     "line": 80
+    },
+    {
+     "method": "SpawnWorldBossMessage",
+     "types": [
+      "Server"
+     ],
+     "line": 84
+    },
+    {
+     "method": "UpdateCapsuleNotifyList_Server",
+     "types": [
+      "Server"
+     ],
+     "line": 92
+    },
+    {
+     "method": "WorldBossDeadMessage",
+     "types": [
+      "Master"
+     ],
+     "line": 82
+    },
+    {
+     "method": "onLoadNoticeMessage",
+     "types": [
+      "Server"
+     ],
+     "line": 89
+    },
+    {
+     "method": "onLoadWeeklyBingo",
+     "types": [
+      "Server"
+     ],
+     "line": 73
+    },
+    {
+     "method": "onPartyCreated",
+     "types": [
+      "Server"
+     ],
+     "line": 68
+    },
+    {
+     "method": "onPartyDeleted",
+     "types": [
+      "Server"
+     ],
+     "line": 69
+    },
+    {
+     "method": "onRunCommandDeleteNoticeMessage",
+     "types": [
+      "Server"
+     ],
+     "line": 91
+    },
+    {
+     "method": "onRunCommandNoticeMessage",
+     "types": [
+      "Server"
+     ],
+     "line": 90
+    }
+   ]
+  },
+  "CMarket": {
+   "file": "Class/Main/CMarket.lua",
+   "rpcs": [
+    {
+     "method": "OnNotifyEnabled",
+     "types": [
+      "Client"
+     ],
+     "line": 50
+    },
+    {
+     "method": "OnReqBuyServer",
+     "types": [
+      "Server"
+     ],
+     "line": 38
+    },
+    {
+     "method": "OnReqCancelMaster",
+     "types": [
+      "Master"
+     ],
+     "line": 35
+    },
+    {
+     "method": "OnReqGoodsListMaster",
+     "types": [
+      "Master"
+     ],
+     "line": 34
+    },
+    {
+     "method": "OnReqRegisterGoodsBunchServer",
+     "types": [
+      "Server"
+     ],
+     "line": 41
+    },
+    {
+     "method": "OnReqRegisterGoodsServer",
+     "types": [
+      "Server"
+     ],
+     "line": 36
+    },
+    {
+     "method": "OnReqSalesGoodsCountServer",
+     "types": [
+      "Server"
+     ],
+     "line": 40
+    },
+    {
+     "method": "OnResBuyClient",
+     "types": [
+      "Client"
+     ],
+     "line": 46
+    },
+    {
+     "method": "OnResBuyServer",
+     "types": [
+      "Server"
+     ],
+     "line": 39
+    },
+    {
+     "method": "OnResCancelClient",
+     "types": [
+      "Client"
+     ],
+     "line": 47
+    },
+    {
+     "method": "OnResEventClient",
+     "types": [
+      "Client"
+     ],
+     "line": 49
+    },
+    {
+     "method": "OnResGoodsListClient",
+     "types": [
+      "Client"
+     ],
+     "line": 42
+    },
+    {
+     "method": "OnResLatestPriceClient",
+     "types": [
+      "Client"
+     ],
+     "line": 44
+    },
+    {
+     "method": "OnResRegisterGoodsClient2",
+     "types": [
+      "Client"
+     ],
+     "line": 45
+    },
+    {
+     "method": "OnResRegisterGoodsServer",
+     "types": [
+      "Server"
+     ],
+     "line": 37
+    },
+    {
+     "method": "OnResSalesGoodsCountClient",
+     "types": [
+      "Client"
+     ],
+     "line": 48
+    },
+    {
+     "method": "OnResSalesGoodsListClient",
+     "types": [
+      "Client"
+     ],
+     "line": 43
+    }
+   ]
+  },
+  "CPrivateStatus": {
+   "file": "Class/Main/CPrivateStatus.lua",
+   "rpcs": [
+    {
+     "method": "AddDibs",
+     "types": [
+      "Server"
+     ],
+     "line": 271
+    },
+    {
+     "method": "AddMapChangedJob",
+     "types": [
+      "Client"
+     ],
+     "line": 142
+    },
+    {
+     "method": "AttachRideSlot",
+     "types": [
+      "Client"
+     ],
+     "line": 233
+    },
+    {
+     "method": "CallUIPopUp",
+     "types": [
+      "Client"
+     ],
+     "line": 201
+    },
+    {
+     "method": "CancelRegistInstancePvP",
+     "types": [
+      "Server"
+     ],
+     "line": 285
+    },
+    {
+     "method": "CancelStartBattleResult",
+     "types": [
+      "Client"
+     ],
+     "line": 204
+    },
+    {
+     "method": "CancelStartBattleResult_Compensation",
+     "types": [
+      "Client"
+     ],
+     "line": 212
+    },
+    {
+     "method": "CannotCancelArenaMoveDialog",
+     "types": [
+      "Client"
+     ],
+     "line": 190
+    },
+    {
+     "method": "CheckGoddessSkill",
+     "types": [
+      "Server"
+     ],
+     "line": 240
+    },
+    {
+     "method": "CheckGoddessSkillPortal",
+     "types": [
+      "Server"
+     ],
+     "line": 241
+    },
+    {
+     "method": "CheckInsAliveFromClient",
+     "types": [
+      "Server"
+     ],
+     "line": 171
+    },
+    {
+     "method": "ClearInstanceInfo",
+     "types": [
+      "Server"
+     ],
+     "line": 155
+    },
+    {
+     "method": "ClearZoneNext",
+     "types": [
+      "Server"
+     ],
+     "line": 177
+    },
+    {
+     "method": "Client_DoOpenPersonalStore",
+     "types": [
+      "Client"
+     ],
+     "line": 129
+    },
+    {
+     "method": "CloseThemeBossKeyUI",
+     "types": [
+      "Client"
+     ],
+     "line": 181
+    },
+    {
+     "method": "CommandExitInstance",
+     "types": [
+      "Server"
+     ],
+     "line": 161
+    },
+    {
+     "method": "CompleteMarbleStoneQuest",
+     "types": [
+      "Server"
+     ],
+     "line": 246
+    },
+    {
+     "method": "ConfirmExitInstance",
+     "types": [
+      "Client"
+     ],
+     "line": 221
+    },
+    {
+     "method": "ConfirmExitInstanceDelay",
+     "types": [
+      "Client"
+     ],
+     "line": 222
+    },
+    {
+     "method": "ConfirmInstancePvP",
+     "types": [
+      "Server"
+     ],
+     "line": 284
+    },
+    {
+     "method": "CreateMapPortalProcess",
+     "types": [
+      "Server"
+     ],
+     "line": 148
+    },
+    {
+     "method": "CreateServerObject",
+     "types": [
+      "Server"
+     ],
+     "line": 165
+    },
+    {
+     "method": "CreateSpecialInstancePortalProcess",
+     "types": [
+      "Server"
+     ],
+     "line": 166
+    },
+    {
+     "method": "CreateTownPortalProcess",
+     "types": [
+      "Server"
+     ],
+     "line": 145
+    },
+    {
+     "method": "CreateZoneEndPortalProcess",
+     "types": [
+      "Server"
+     ],
+     "line": 167
+    },
+    {
+     "method": "DeleteGoddessSkill",
+     "types": [
+      "Server"
+     ],
+     "line": 239
+    },
+    {
+     "method": "FatigueFloatUp",
+     "types": [
+      "Server"
+     ],
+     "line": 143
+    },
+    {
+     "method": "ForceStartGoddessSkill",
+     "types": [
+      "Client"
+     ],
+     "line": 248
+    },
+    {
+     "method": "GetRoomName",
+     "types": [
+      "Server"
+     ],
+     "line": 272
+    },
+    {
+     "method": "GetThemeBossKey",
+     "types": [
+      "Server"
+     ],
+     "line": 211
+    },
+    {
+     "method": "HideArenaMoveDialog",
+     "types": [
+      "Client"
+     ],
+     "line": 191
+    },
+    {
+     "method": "HideNpcDialog",
+     "types": [
+      "Client"
+     ],
+     "line": 159
+    },
+    {
+     "method": "IncreaseFavorStat",
+     "types": [
+      "Server"
+     ],
+     "line": 139
+    },
+    {
+     "method": "IncreaseMarbleStoneWrapper",
+     "types": [
+      "Server"
+     ],
+     "line": 163
+    },
+    {
+     "method": "IncreaseMaxGaugeCount",
+     "types": [
+      "Server"
+     ],
+     "line": 270
+    },
+    {
+     "method": "IncreaseMineExpResult",
+     "types": [
+      "Client"
+     ],
+     "line": 252
+    },
+    {
+     "method": "IncreaseMineLevel",
+     "types": [
+      "Server"
+     ],
+     "line": 254
+    },
+    {
+     "method": "IncreaseMineLevelResult",
+     "types": [
+      "Client"
+     ],
+     "line": 253
+    },
+    {
+     "method": "InitRebirthCount",
+     "types": [
+      "Client"
+     ],
+     "line": 160
+    },
+    {
+     "method": "MapObjectAction",
+     "types": [
+      "Server"
+     ],
+     "line": 180
+    },
+    {
+     "method": "MonsterDescription",
+     "types": [
+      "Server"
+     ],
+     "line": 267
+    },
+    {
+     "method": "NetIncreaseMineExp",
+     "types": [
+      "Server"
+     ],
+     "line": 255
+    },
+    {
+     "method": "NewShowSystemMsg",
+     "types": [
+      "Client"
+     ],
+     "line": 147
+    },
+    {
+     "method": "NotifyAddQuestItem",
+     "types": [
+      "Client"
+     ],
+     "line": 130
+    },
+    {
+     "method": "NotifyMarbleGaugeMax",
+     "types": [
+      "Client"
+     ],
+     "line": 243
+    },
+    {
+     "method": "OnBless",
+     "types": [
+      "Server"
+     ],
+     "line": 133
+    },
+    {
+     "method": "OnCheckGoddessPortal",
+     "types": [
+      "Client"
+     ],
+     "line": 217
+    },
+    {
+     "method": "OnCheckGoddessSkill",
+     "types": [
+      "Client"
+     ],
+     "line": 242
+    },
+    {
+     "method": "OnClearRevengeInfo",
+     "types": [
+      "Client"
+     ],
+     "line": 265
+    },
+    {
+     "method": "OnClearRevengeInfoMember",
+     "types": [
+      "Client"
+     ],
+     "line": 266
+    },
+    {
+     "method": "OnClientNotifyEventProcess",
+     "types": [
+      "Client"
+     ],
+     "line": 236
+    },
+    {
+     "method": "OnCurse",
+     "types": [
+      "Server"
+     ],
+     "line": 134
+    },
+    {
+     "method": "OnGivePCRm",
+     "types": [
+      "Client"
+     ],
+     "line": 257
+    },
+    {
+     "method": "OnGiveVIP",
+     "types": [
+      "Client"
+     ],
+     "line": 259
+    },
+    {
+     "method": "OnMasterAddRefuseList",
+     "types": [
+      "Master"
+     ],
+     "line": 224
+    },
+    {
+     "method": "OnMasterDelRefuseList",
+     "types": [
+      "Master"
+     ],
+     "line": 228
+    },
+    {
+     "method": "OnMasterInitRefuseList",
+     "types": [
+      "Master"
+     ],
+     "line": 226
+    },
+    {
+     "method": "OnMoveProcess",
+     "types": [
+      "Client"
+     ],
+     "line": 200
+    },
+    {
+     "method": "OnResultRemoveVehicle",
+     "types": [
+      "Client"
+     ],
+     "line": 232
+    },
+    {
+     "method": "OnResultRideBegin",
+     "types": [
+      "Client"
+     ],
+     "line": 235
+    },
+    {
+     "method": "OnResultRideEnd",
+     "types": [
+      "Client"
+     ],
+     "line": 229
+    },
+    {
+     "method": "OnServerAddRefuseList",
+     "types": [
+      "Server"
+     ],
+     "line": 223
+    },
+    {
+     "method": "OnServerDelRefuseList",
+     "types": [
+      "Server"
+     ],
+     "line": 227
+    },
+    {
+     "method": "OnServerInitRefuseList",
+     "types": [
+      "Server"
+     ],
+     "line": 225
+    },
+    {
+     "method": "OnServerMSSpawnEven",
+     "types": [
+      "?"
+     ],
+     "line": 216
+    },
+    {
+     "method": "OnServerRideBegin",
+     "types": [
+      "Server"
+     ],
+     "line": 230
+    },
+    {
+     "method": "OnServerRideEnd",
+     "types": [
+      "Server"
+     ],
+     "line": 234
+    },
+    {
+     "method": "OnSetDialogAutoShowTime",
+     "types": [
+      "Server",
+      "Master"
+     ],
+     "line": 269
+    },
+    {
+     "method": "OnShowClearUI",
+     "types": [
+      "Client"
+     ],
+     "line": 206
+    },
+    {
+     "method": "OnShowFightUIArena",
+     "types": [
+      "Client"
+     ],
+     "line": 208
+    },
+    {
+     "method": "OnShowFightUISpecialIns",
+     "types": [
+      "Client"
+     ],
+     "line": 205
+    },
+    {
+     "method": "OnSoundProcess",
+     "types": [
+      "Client"
+     ],
+     "line": 207
+    },
+    {
+     "method": "OnSuccessRevenge",
+     "types": [
+      "Client"
+     ],
+     "line": 260
+    },
+    {
+     "method": "OnSuccessRevengeMember",
+     "types": [
+      "Client"
+     ],
+     "line": 261
+    },
+    {
+     "method": "OnSurrenderRevenge",
+     "types": [
+      "Client"
+     ],
+     "line": 263
+    },
+    {
+     "method": "OnSurrenderRevengeMember",
+     "types": [
+      "Client"
+     ],
+     "line": 264
+    },
+    {
+     "method": "OutCallUIPopUp",
+     "types": [
+      "Client"
+     ],
+     "line": 203
+    },
+    {
+     "method": "OutInsLogProcess",
+     "types": [
+      "Server"
+     ],
+     "line": 175
+    },
+    {
+     "method": "OutInstanceRoom",
+     "types": [
+      "Server"
+     ],
+     "line": 156
+    },
+    {
+     "method": "PopupMagicSquareConfirmHide",
+     "types": [
+      "Client"
+     ],
+     "line": 198
+    },
+    {
+     "method": "QuitInstanceClearCutScene",
+     "types": [
+      "Server"
+     ],
+     "line": 152
+    },
+    {
+     "method": "QuitInstanceStartCutScene",
+     "types": [
+      "Server"
+     ],
+     "line": 151
+    },
+    {
+     "method": "RemoveDibs",
+     "types": [
+      "Server"
+     ],
+     "line": 131
+    },
+    {
+     "method": "RequestCallUIPopUp",
+     "types": [
+      "Client"
+     ],
+     "line": 202
+    },
+    {
+     "method": "RequestCancelMoveArena",
+     "types": [
+      "Server"
+     ],
+     "line": 189
+    },
+    {
+     "method": "RequestCancelStartBattle",
+     "types": [
+      "Server"
+     ],
+     "line": 184
+    },
+    {
+     "method": "RequestCancelStartBattle_Compensation",
+     "types": [
+      "Server"
+     ],
+     "line": 185
+    },
+    {
+     "method": "RequestExitInsStartCutScene",
+     "types": [
+      "Server"
+     ],
+     "line": 150
+    },
+    {
+     "method": "RequestThemeBossKeyType",
+     "types": [
+      "Server"
+     ],
+     "line": 210
+    },
+    {
+     "method": "ResetVehicles",
+     "types": [
+      "Client",
+      "Server"
+     ],
+     "line": 231
+    },
+    {
+     "method": "ResultCheckStatPerHours",
+     "types": [
+      "Client"
+     ],
+     "line": 140
+    },
+    {
+     "method": "ResultMessageBlessedTarget",
+     "types": [
+      "Client"
+     ],
+     "line": 136
+    },
+    {
+     "method": "ResultMessageBlesser",
+     "types": [
+      "Client"
+     ],
+     "line": 135
+    },
+    {
+     "method": "ResultMessageCursedTarget",
+     "types": [
+      "Client"
+     ],
+     "line": 138
+    },
+    {
+     "method": "ResultMessageCurser",
+     "types": [
+      "Client"
+     ],
+     "line": 137
+    },
+    {
+     "method": "ResurrectionPointRestore",
+     "types": [
+      "Server"
+     ],
+     "line": 268
+    },
+    {
+     "method": "RetryInstanceDungeon",
+     "types": [
+      "Server"
+     ],
+     "line": 174
+    },
+    {
+     "method": "STest1",
+     "types": [
+      "Server"
+     ],
+     "line": 286
+    },
+    {
+     "method": "SetEnableGoddessSkillType",
+     "types": [
+      "Server"
+     ],
+     "line": 245
+    },
+    {
+     "method": "SetFatigue",
+     "types": [
+      "Client",
+      "Server"
+     ],
+     "line": 162
+    },
+    {
+     "method": "SetFightInForbidSkillMap",
+     "types": [
+      "Client",
+      "Server"
+     ],
+     "line": 158
+    },
+    {
+     "method": "SetInstancePvP_changescore",
+     "types": [
+      "Client"
+     ],
+     "line": 282
+    },
+    {
+     "method": "SetInstancePvP_initscore",
+     "types": [
+      "Client"
+     ],
+     "line": 280
+    },
+    {
+     "method": "SetInstancePvP_leave",
+     "types": [
+      "Client"
+     ],
+     "line": 283
+    },
+    {
+     "method": "SetInstancePvP_start",
+     "types": [
+      "Client"
+     ],
+     "line": 281
+    },
+    {
+     "method": "SetNotifyMap",
+     "types": [
+      "Server"
+     ],
+     "line": 220
+    },
+    {
+     "method": "SetSelectedMode",
+     "types": [
+      "Server"
+     ],
+     "line": 173
+    },
+    {
+     "method": "SetSpecialInsFloor",
+     "types": [
+      "Server"
+     ],
+     "line": 183
+    },
+    {
+     "method": "SetUndying",
+     "types": [
+      "Server",
+      "Master"
+     ],
+     "line": 128
+    },
+    {
+     "method": "SetUserGuideStatus",
+     "types": [
+      "Server"
+     ],
+     "line": 215
+    },
+    {
+     "method": "SetUserGuideVar",
+     "types": [
+      "Server"
+     ],
+     "line": 213
+    },
+    {
+     "method": "SetUserGuideVisible",
+     "types": [
+      "Server"
+     ],
+     "line": 214
+    },
+    {
+     "method": "SetVisitedAreas",
+     "types": [
+      "Server"
+     ],
+     "line": 172
+    },
+    {
+     "method": "SetVisitedMap",
+     "types": [
+      "Server",
+      "Master"
+     ],
+     "line": 132
+    },
+    {
+     "method": "ShowArenaMoveDialog",
+     "types": [
+      "Client"
+     ],
+     "line": 209
+    },
+    {
+     "method": "ShowArenaMoveEffect",
+     "types": [
+      "Client"
+     ],
+     "line": 195
+    },
+    {
+     "method": "ShowCancelInstancePvPDlg",
+     "types": [
+      "Client"
+     ],
+     "line": 276
+    },
+    {
+     "method": "ShowEnterInstancePvPDlg",
+     "types": [
+      "Client"
+     ],
+     "line": 273
+    },
+    {
+     "method": "ShowFailMatchPvPDlg",
+     "types": [
+      "Client"
+     ],
+     "line": 275
+    },
+    {
+     "method": "ShowFinishEmotionPvP",
+     "types": [
+      "Client"
+     ],
+     "line": 279
+    },
+    {
+     "method": "ShowFinishInstancePvPDlg",
+     "types": [
+      "Client"
+     ],
+     "line": 278
+    },
+    {
+     "method": "ShowInsFailDialog",
+     "types": [
+      "Client"
+     ],
+     "line": 154
+    },
+    {
+     "method": "ShowInsRetryDialog",
+     "types": [
+      "Client"
+     ],
+     "line": 157
+    },
+    {
+     "method": "ShowInstancePvP_scoreBoard",
+     "types": [
+      "Client"
+     ],
+     "line": 277
+    },
+    {
+     "method": "ShowInventory",
+     "types": [
+      "Client"
+     ],
+     "line": 199
+    },
+    {
+     "method": "ShowNotifyUI",
+     "types": [
+      "Client"
+     ],
+     "line": 153
+    },
+    {
+     "method": "ShowPopup",
+     "types": [
+      "Client"
+     ],
+     "line": 244
+    },
+    {
+     "method": "ShowRewardDialog",
+     "types": [
+      "Client"
+     ],
+     "line": 188
+    },
+    {
+     "method": "ShowSystemMsg",
+     "types": [
+      "Client"
+     ],
+     "line": 146
+    },
+    {
+     "method": "ShowThemeBossKeyUI",
+     "types": [
+      "Client"
+     ],
+     "line": 192
+    },
+    {
+     "method": "ShowWaitInstancePvPDlg",
+     "types": [
+      "Client"
+     ],
+     "line": 274
+    },
+    {
+     "method": "ShowZoneGauge",
+     "types": [
+      "Client"
+     ],
+     "line": 218
+    },
+    {
+     "method": "SpawnInsMonster",
+     "types": [
+      "Server"
+     ],
+     "line": 176
+    },
+    {
+     "method": "SpecialInsMapLoadingEndProcess",
+     "types": [
+      "Server"
+     ],
+     "line": 182
+    },
+    {
+     "method": "StartMagicSquare",
+     "types": [
+      "Client"
+     ],
+     "line": 197
+    },
+    {
+     "method": "StoryHandleEvent",
+     "types": [
+      "Client"
+     ],
+     "line": 164
+    },
+    {
+     "method": "SummonPartyPlayerInThemeBoss",
+     "types": [
+      "Server"
+     ],
+     "line": 186
+    },
+    {
+     "method": "SurrenderRevenge",
+     "types": [
+      "Server"
+     ],
+     "line": 262
+    },
+    {
+     "method": "SyncCoolTime",
+     "types": [
+      "Client"
+     ],
+     "line": 237
+    },
+    {
+     "method": "SyncSavedCoolTime",
+     "types": [
+      "Client"
+     ],
+     "line": 238
+    },
+    {
+     "method": "UnclearZone",
+     "types": [
+      "Server"
+     ],
+     "line": 178
+    },
+    {
+     "method": "UpdateFieldFatigueResult",
+     "types": [
+      "Client"
+     ],
+     "line": 144
+    },
+    {
+     "method": "UpdateThemeBossKeyUI",
+     "types": [
+      "Client"
+     ],
+     "line": 196
+    },
+    {
+     "method": "UpdateUsePtlSkValue",
+     "types": [
+      "Server"
+     ],
+     "line": 249
+    },
+    {
+     "method": "UpdateValue_mSkIcL",
+     "types": [
+      "Server"
+     ],
+     "line": 251
+    },
+    {
+     "method": "UpdatemEnMsGgValue",
+     "types": [
+      "Server"
+     ],
+     "line": 250
+    },
+    {
+     "method": "UpdatemUGdMsgRmCntValue",
+     "types": [
+      "Server"
+     ],
+     "line": 179
+    },
+    {
+     "method": "UseGodSkillQuestUpdate",
+     "types": [
+      "Server"
+     ],
+     "line": 247
+    },
+    {
+     "method": "ZoneMoveNpc",
+     "types": [
+      "Server"
+     ],
+     "line": 219
+    },
+    {
+     "method": "ZoneMoveNpcResultFail",
+     "types": [
+      "Client"
+     ],
+     "line": 194
+    },
+    {
+     "method": "ZoneMoveNpcResultSuccess",
+     "types": [
+      "Client"
+     ],
+     "line": 193
+    },
+    {
+     "method": "onCoolTimeItemUsed",
+     "types": [
+      "Client"
+     ],
+     "line": 149
+    },
+    {
+     "method": "onIsPCRoom",
+     "types": [
+      "Client"
+     ],
+     "line": 256
+    },
+    {
+     "method": "onIsVIP",
+     "types": [
+      "Client"
+     ],
+     "line": 258
+    },
+    {
+     "method": "onRoomPlayerCameraShake",
+     "types": [
+      "Client"
+     ],
+     "line": 168
+    },
+    {
+     "method": "onSkillStartNotify",
+     "types": [
+      "Client"
+     ],
+     "line": 169
+    },
+    {
+     "method": "onSummonPartyPlayerInThemeBoss",
+     "types": [
+      "Client"
+     ],
+     "line": 187
+    },
+    {
+     "method": "onTimeLimitInsFailProcess",
+     "types": [
+      "Client"
+     ],
+     "line": 170
+    }
+   ]
+  },
+  "CPrivateStatus_Fishing": {
+   "file": "Class/Main/CPrivateStatus_Fishing.lua",
+   "rpcs": [
+    {
+     "method": "IncreaseFishingExp_NotifyMessage",
+     "types": [
+      "Client"
+     ],
+     "line": 10
+    }
+   ]
+  },
+  "CPrivateStatus_HotKeySettings": {
+   "file": "Class/Main/CPrivateStatus_HotKeySettings.lua",
+   "rpcs": [
+    {
+     "method": "ChangeQuickKeySet",
+     "types": [
+      "Server"
+     ],
+     "line": 202
+    },
+    {
+     "method": "DelHotKey",
+     "types": [
+      "Server"
+     ],
+     "line": 199
+    },
+    {
+     "method": "DelQuickKey",
+     "types": [
+      "Server"
+     ],
+     "line": 201
+    },
+    {
+     "method": "OnChangeQuickKeySet",
+     "types": [
+      "Client"
+     ],
+     "line": 203
+    },
+    {
+     "method": "SaveHotKey",
+     "types": [
+      "Server"
+     ],
+     "line": 198
+    },
+    {
+     "method": "SaveQuickKey",
+     "types": [
+      "Server"
+     ],
+     "line": 200
+    },
+    {
+     "method": "SetHKeyCnf",
+     "types": [
+      "Client"
+     ],
+     "line": 204
+    }
+   ]
+  },
+  "CStatus": {
+   "file": "Class/Main/CStatus.lua",
+   "rpcs": [
+    {
+     "method": "AddBuff",
+     "types": [
+      "Client",
+      "Server"
+     ],
+     "line": 40
+    },
+    {
+     "method": "AddBuff2",
+     "types": [
+      "Client",
+      "Server",
+      "Master"
+     ],
+     "line": 34
+    },
+    {
+     "method": "AddBuffInfo",
+     "types": [
+      "Client",
+      "Server"
+     ],
+     "line": 42
+    },
+    {
+     "method": "ChangeBuffData",
+     "types": [
+      "Client",
+      "Server"
+     ],
+     "line": 43
+    },
+    {
+     "method": "DelBuff",
+     "types": [
+      "Client",
+      "Server"
+     ],
+     "line": 41
+    },
+    {
+     "method": "DoModifications",
+     "types": [
+      "Client",
+      "Server"
+     ],
+     "line": 37
+    },
+    {
+     "method": "OnAddValue",
+     "types": [
+      "Server"
+     ],
+     "line": 39
+    },
+    {
+     "method": "OnApply_TotemBuff",
+     "types": [
+      "Server"
+     ],
+     "line": 44
+    },
+    {
+     "method": "OnClientUpdateSkillTreeDialog",
+     "types": [
+      "Client"
+     ],
+     "line": 38
+    },
+    {
+     "method": "OnServerGetCurrentBuffs",
+     "types": [
+      "Server"
+     ],
+     "line": 32
+    },
+    {
+     "method": "PoisonDamage",
+     "types": [
+      "Server"
+     ],
+     "line": 30
+    },
+    {
+     "method": "PrintBuff2",
+     "types": [
+      "Client",
+      "Server",
+      "Master"
+     ],
+     "line": 31
+    },
+    {
+     "method": "RemoveBuff2",
+     "types": [
+      "Client",
+      "Server",
+      "Master"
+     ],
+     "line": 35
+    },
+    {
+     "method": "ResultGetCurrentBuffs",
+     "types": [
+      "Client"
+     ],
+     "line": 33
+    },
+    {
+     "method": "UnitTest",
+     "types": [
+      "Server"
+     ],
+     "line": 45
+    },
+    {
+     "method": "UpdateBuff2",
+     "types": [
+      "Client",
+      "Server",
+      "Master"
+     ],
+     "line": 36
+    }
+   ]
+  },
+  "CStatusPlayer": {
+   "file": "Class/Main/CStatusPlayer.lua",
+   "rpcs": [
+    {
+     "method": "AddModifierStat",
+     "types": [
+      "Server"
+     ],
+     "line": 17
+    },
+    {
+     "method": "AddSkillHotKey",
+     "types": [
+      "Client"
+     ],
+     "line": 22
+    },
+    {
+     "method": "ClassUpResult",
+     "types": [
+      "Client"
+     ],
+     "line": 30
+    },
+    {
+     "method": "IncreasePlayerExpResult",
+     "types": [
+      "Client"
+     ],
+     "line": 18
+    },
+    {
+     "method": "LevelUpResult",
+     "types": [
+      "Client"
+     ],
+     "line": 24
+    },
+    {
+     "method": "MessageShow",
+     "types": [
+      "Client"
+     ],
+     "line": 23
+    },
+    {
+     "method": "NetMakeRealMinEquipment",
+     "types": [
+      "Server"
+     ],
+     "line": 25
+    },
+    {
+     "method": "NotifySetPlayerLevel",
+     "types": [
+      "Client"
+     ],
+     "line": 21
+    },
+    {
+     "method": "OnSaveRandomBuffValue",
+     "types": [
+      "Client"
+     ],
+     "line": 26
+    },
+    {
+     "method": "RepairAllRequest",
+     "types": [
+      "Server"
+     ],
+     "line": 29
+    },
+    {
+     "method": "RepairAllResult",
+     "types": [
+      "Client"
+     ],
+     "line": 19
+    },
+    {
+     "method": "RepairEquipRequest",
+     "types": [
+      "Server"
+     ],
+     "line": 28
+    },
+    {
+     "method": "RepairEquipResult",
+     "types": [
+      "Client"
+     ],
+     "line": 20
+    },
+    {
+     "method": "StatUp",
+     "types": [
+      "Server"
+     ],
+     "line": 27
+    }
+   ]
+  },
+  "CToolInterface": {
+   "file": "Class/Main/CToolInterface.lua",
+   "rpcs": [
+    {
+     "method": "AckMonster",
+     "types": [
+      "?"
+     ],
+     "line": 99
+    },
+    {
+     "method": "AddMobSkill",
+     "types": [
+      "?"
+     ],
+     "line": 111
+    },
+    {
+     "method": "AddQuest",
+     "types": [
+      "?"
+     ],
+     "line": 128
+    },
+    {
+     "method": "ChangeRoom",
+     "types": [
+      "Server"
+     ],
+     "line": 32
+    },
+    {
+     "method": "ChargeTestPoint",
+     "types": [
+      "?"
+     ],
+     "line": 134
+    },
+    {
+     "method": "ClassUp",
+     "types": [
+      "?"
+     ],
+     "line": 63
+    },
+    {
+     "method": "ClearZoneNext",
+     "types": [
+      "?"
+     ],
+     "line": 82
+    },
+    {
+     "method": "ComWeeklyBingoMs",
+     "types": [
+      "?"
+     ],
+     "line": 61
+    },
+    {
+     "method": "CreateDummyMonster",
+     "types": [
+      "?"
+     ],
+     "line": 98
+    },
+    {
+     "method": "CreateItem",
+     "types": [
+      "?"
+     ],
+     "line": 129
+    },
+    {
+     "method": "CreateMapAreaObject",
+     "types": [
+      "?"
+     ],
+     "line": 70
+    },
+    {
+     "method": "CreateMonsterHere",
+     "types": [
+      "?"
+     ],
+     "line": 123
+    },
+    {
+     "method": "DelAllMonster",
+     "types": [
+      "?"
+     ],
+     "line": 110
+    },
+    {
+     "method": "DelMonsterByAreaName",
+     "types": [
+      "?"
+     ],
+     "line": 109
+    },
+    {
+     "method": "DeleteMobSkill",
+     "types": [
+      "?"
+     ],
+     "line": 112
+    },
+    {
+     "method": "DeleteMonster",
+     "types": [
+      "?"
+     ],
+     "line": 100
+    },
+    {
+     "method": "DetachBoxAllMonster",
+     "types": [
+      "Server"
+     ],
+     "line": 49
+    },
+    {
+     "method": "DropItem",
+     "types": [
+      "Server"
+     ],
+     "line": 48
+    },
+    {
+     "method": "EstablishGuildForce",
+     "types": [
+      "Master"
+     ],
+     "line": 147
+    },
+    {
+     "method": "ForceClearMission",
+     "types": [
+      "?"
+     ],
+     "line": 136
+    },
+    {
+     "method": "ForceCompleteQuest",
+     "types": [
+      "?"
+     ],
+     "line": 130
+    },
+    {
+     "method": "ForceResetBlessCurseList",
+     "types": [
+      "Server"
+     ],
+     "line": 137
+    },
+    {
+     "method": "ForceResetCurseCount",
+     "types": [
+      "Server"
+     ],
+     "line": 138
+    },
+    {
+     "method": "ForceResetWeeklyBingo",
+     "types": [
+      "?"
+     ],
+     "line": 59
+    },
+    {
+     "method": "ForceResetWeeklyBingoData",
+     "types": [
+      "?"
+     ],
+     "line": 60
+    },
+    {
+     "method": "ForceSetFatigue",
+     "types": [
+      "?"
+     ],
+     "line": 57
+    },
+    {
+     "method": "GetCurrentMapName",
+     "types": [
+      "?"
+     ],
+     "line": 80
+    },
+    {
+     "method": "GetRoomNameList",
+     "types": [
+      "?"
+     ],
+     "line": 81
+    },
+    {
+     "method": "IncreasePlayerMarbleJam",
+     "types": [
+      "?"
+     ],
+     "line": 34
+    },
+    {
+     "method": "IncreasePlayerMoney",
+     "types": [
+      "?"
+     ],
+     "line": 33
+    },
+    {
+     "method": "IncreasePlayerStat",
+     "types": [
+      "?"
+     ],
+     "line": 43
+    },
+    {
+     "method": "InitBingoData",
+     "types": [
+      "Server"
+     ],
+     "line": 149
+    },
+    {
+     "method": "IsSetEnChantLevel",
+     "types": [
+      "Server"
+     ],
+     "line": 150
+    },
+    {
+     "method": "MoveToMap",
+     "types": [
+      "Server"
+     ],
+     "line": 66
+    },
+    {
+     "method": "NetAddMonsterAbility",
+     "types": [
+      "?"
+     ],
+     "line": 87
+    },
+    {
+     "method": "NetAddMonsterDeadEffect",
+     "types": [
+      "?"
+     ],
+     "line": 92
+    },
+    {
+     "method": "NetAddMonsterDeadEndEffect",
+     "types": [
+      "?"
+     ],
+     "line": 93
+    },
+    {
+     "method": "NetAddMonsterParts",
+     "types": [
+      "?"
+     ],
+     "line": 89
+    },
+    {
+     "method": "NetClearInventory",
+     "types": [
+      "?"
+     ],
+     "line": 42
+    },
+    {
+     "method": "NetClearObjectCache",
+     "types": [
+      "?"
+     ],
+     "line": 38
+    },
+    {
+     "method": "NetCreateNewMonster",
+     "types": [
+      "?"
+     ],
+     "line": 91
+    },
+    {
+     "method": "NetDeleteMonsterAbility",
+     "types": [
+      "?"
+     ],
+     "line": 88
+    },
+    {
+     "method": "NetDeleteMonsterParts",
+     "types": [
+      "?"
+     ],
+     "line": 90
+    },
+    {
+     "method": "NetDisableObjectCache",
+     "types": [
+      "?"
+     ],
+     "line": 40
+    },
+    {
+     "method": "NetFindSpawnRules",
+     "types": [
+      "?"
+     ],
+     "line": 75
+    },
+    {
+     "method": "NetGetMapAreaInfo",
+     "types": [
+      "?"
+     ],
+     "line": 68
+    },
+    {
+     "method": "NetGetMapAreaList",
+     "types": [
+      "?"
+     ],
+     "line": 85
+    },
+    {
+     "method": "NetGetMonsterIDListEx",
+     "types": [
+      "?"
+     ],
+     "line": 103
+    },
+    {
+     "method": "NetIncreaseZonePoint",
+     "types": [
+      "?"
+     ],
+     "line": 41
+    },
+    {
+     "method": "NetMigrationData",
+     "types": [
+      "?"
+     ],
+     "line": 96
+    },
+    {
+     "method": "NetModifySpawnRules",
+     "types": [
+      "?"
+     ],
+     "line": 77
+    },
+    {
+     "method": "NetMoveToPosition",
+     "types": [
+      "?"
+     ],
+     "line": 69
+    },
+    {
+     "method": "NetRemoveMonsterDeadEffect",
+     "types": [
+      "?"
+     ],
+     "line": 94
+    },
+    {
+     "method": "NetRemoveMonsterDeadEndEffect",
+     "types": [
+      "?"
+     ],
+     "line": 95
+    },
+    {
+     "method": "NetRequestAllQuestInfo",
+     "types": [
+      "?"
+     ],
+     "line": 135
+    },
+    {
+     "method": "NetSetMonsterAbilityData",
+     "types": [
+      "?"
+     ],
+     "line": 124
+    },
+    {
+     "method": "NetSetSkillData",
+     "types": [
+      "?"
+     ],
+     "line": 113
+    },
+    {
+     "method": "NotifyCurrentMapName",
+     "types": [
+      "?"
+     ],
+     "line": 84
+    },
+    {
+     "method": "NotifyFindSpawnRules",
+     "types": [
+      "?"
+     ],
+     "line": 76
+    },
+    {
+     "method": "NotifyMapAreaList",
+     "types": [
+      "?"
+     ],
+     "line": 86
+    },
+    {
+     "method": "NotifyMonsterIDListEx",
+     "types": [
+      "?"
+     ],
+     "line": 121
+    },
+    {
+     "method": "NotifySetPlayerLevel",
+     "types": [
+      "?"
+     ],
+     "line": 125
+    },
+    {
+     "method": "PutItemEx",
+     "types": [
+      "Server"
+     ],
+     "line": 148
+    },
+    {
+     "method": "Rebirth",
+     "types": [
+      "?"
+     ],
+     "line": 62
+    },
+    {
+     "method": "ReloadFileCore",
+     "types": [
+      "?"
+     ],
+     "line": 37
+    },
+    {
+     "method": "RemoveItem",
+     "types": [
+      "?"
+     ],
+     "line": 131
+    },
+    {
+     "method": "RepairAllEquipment",
+     "types": [
+      "?"
+     ],
+     "line": 53
+    },
+    {
+     "method": "RepairAllInventory",
+     "types": [
+      "Server"
+     ],
+     "line": 65
+    },
+    {
+     "method": "ReplyRequestAllQuestInfo",
+     "types": [
+      "?"
+     ],
+     "line": 39
+    },
+    {
+     "method": "ReplyRequestAllQuestInfo",
+     "types": [
+      "?"
+     ],
+     "line": 50
+    },
+    {
+     "method": "RequestDetachBox",
+     "types": [
+      "?"
+     ],
+     "line": 35
+    },
+    {
+     "method": "RequestSpawnRules",
+     "types": [
+      "?"
+     ],
+     "line": 78
+    },
+    {
+     "method": "RequestStartSpawn",
+     "types": [
+      "?"
+     ],
+     "line": 74
+    },
+    {
+     "method": "RequestStartSpawnAll",
+     "types": [
+      "?"
+     ],
+     "line": 71
+    },
+    {
+     "method": "RequestStopSpawn",
+     "types": [
+      "?"
+     ],
+     "line": 73
+    },
+    {
+     "method": "RequestStopSpawnAll",
+     "types": [
+      "?"
+     ],
+     "line": 72
+    },
+    {
+     "method": "ResetQuestLimitCount",
+     "types": [
+      "?"
+     ],
+     "line": 58
+    },
+    {
+     "method": "SaveSpawnRulesToFile",
+     "types": [
+      "?"
+     ],
+     "line": 79
+    },
+    {
+     "method": "SetFavorStat",
+     "types": [
+      "Server"
+     ],
+     "line": 139
+    },
+    {
+     "method": "SetGlobalVariable",
+     "types": [
+      "?"
+     ],
+     "line": 36
+    },
+    {
+     "method": "SetGuildExpMax",
+     "types": [
+      "Server"
+     ],
+     "line": 141
+    },
+    {
+     "method": "SetHavingDifficulty",
+     "types": [
+      "?"
+     ],
+     "line": 51
+    },
+    {
+     "method": "SetMapList",
+     "types": [
+      "Client"
+     ],
+     "line": 31
+    },
+    {
+     "method": "SetMobAIType",
+     "types": [
+      "?"
+     ],
+     "line": 117
+    },
+    {
+     "method": "SetMobBasicStat",
+     "types": [
+      "?"
+     ],
+     "line": 101
+    },
+    {
+     "method": "SetMobBasicStatByLevel",
+     "types": [
+      "?"
+     ],
+     "line": 104
+    },
+    {
+     "method": "SetMobBattleStat",
+     "types": [
+      "?"
+     ],
+     "line": 105
+    },
+    {
+     "method": "SetMobBattleStatByLevel",
+     "types": [
+      "?"
+     ],
+     "line": 106
+    },
+    {
+     "method": "SetMobBodyMaterial",
+     "types": [
+      "?"
+     ],
+     "line": 114
+    },
+    {
+     "method": "SetMobCollision",
+     "types": [
+      "?"
+     ],
+     "line": 116
+    },
+    {
+     "method": "SetMobCommonData",
+     "types": [
+      "?"
+     ],
+     "line": 108
+    },
+    {
+     "method": "SetMobDeadEffect",
+     "types": [
+      "?"
+     ],
+     "line": 118
+    },
+    {
+     "method": "SetMobLevelData",
+     "types": [
+      "?"
+     ],
+     "line": 102
+    },
+    {
+     "method": "SetMobName",
+     "types": [
+      "?"
+     ],
+     "line": 107
+    },
+    {
+     "method": "SetMobScale",
+     "types": [
+      "?"
+     ],
+     "line": 120
+    },
+    {
+     "method": "SetMobTemplateData",
+     "types": [
+      "?"
+     ],
+     "line": 119
+    },
+    {
+     "method": "SetMobWeapon",
+     "types": [
+      "?"
+     ],
+     "line": 122
+    },
+    {
+     "method": "SetMobWeaponMaterial",
+     "types": [
+      "?"
+     ],
+     "line": 115
+    },
+    {
+     "method": "SetPCRoom",
+     "types": [
+      "Server"
+     ],
+     "line": 44
+    },
+    {
+     "method": "SetPlayerLevelInServer",
+     "types": [
+      "Server"
+     ],
+     "line": 64
+    },
+    {
+     "method": "SetPlayerStat",
+     "types": [
+      "?"
+     ],
+     "line": 132
+    },
+    {
+     "method": "SetStaminaResetTime",
+     "types": [
+      "?"
+     ],
+     "line": 47
+    },
+    {
+     "method": "SetVIP",
+     "types": [
+      "Server"
+     ],
+     "line": 45
+    },
+    {
+     "method": "SkillLearn",
+     "types": [
+      "?"
+     ],
+     "line": 55
+    },
+    {
+     "method": "SkillLevelSet",
+     "types": [
+      "?"
+     ],
+     "line": 133
+    },
+    {
+     "method": "SkillPointInit",
+     "types": [
+      "?"
+     ],
+     "line": 52
+    },
+    {
+     "method": "SpecialInsMove",
+     "types": [
+      "Server"
+     ],
+     "line": 54
+    },
+    {
+     "method": "T_IncreaseMarbleStoneCount",
+     "types": [
+      "Server"
+     ],
+     "line": 146
+    },
+    {
+     "method": "T_SetGoddessSkill",
+     "types": [
+      "Server"
+     ],
+     "line": 144
+    },
+    {
+     "method": "T_SetGoddessSkillAll",
+     "types": [
+      "Server"
+     ],
+     "line": 145
+    },
+    {
+     "method": "T_SetMarbleStoneMax",
+     "types": [
+      "?"
+     ],
+     "line": 56
+    },
+    {
+     "method": "T_SetSkillAll",
+     "types": [
+      "Server"
+     ],
+     "line": 46
+    },
+    {
+     "method": "T_SkillLearn",
+     "types": [
+      "Server"
+     ],
+     "line": 142
+    },
+    {
+     "method": "T_SkillPointInit",
+     "types": [
+      "Server"
+     ],
+     "line": 143
+    },
+    {
+     "method": "UnclearZone",
+     "types": [
+      "?"
+     ],
+     "line": 83
+    },
+    {
+     "method": "Update",
+     "types": [
+      "?"
+     ],
+     "line": 126
+    },
+    {
+     "method": "UpdateGMonsterLevelData",
+     "types": [
+      "?"
+     ],
+     "line": 97
+    },
+    {
+     "method": "UpdateSkillInfo",
+     "types": [
+      "?"
+     ],
+     "line": 127
+    },
+    {
+     "method": "VirtualDropTest",
+     "types": [
+      "Server"
+     ],
+     "line": 140
+    },
+    {
+     "method": "VisitAllMaps",
+     "types": [
+      "Server"
+     ],
+     "line": 67
+    }
+   ]
+  },
+  "CTrigger": {
+   "file": "Class/Main/CTrigger.lua",
+   "rpcs": [
+    {
+     "method": "ProcessCommandResult",
+     "types": [
+      "Client",
+      "Server"
+     ],
+     "line": 7
+    }
+   ]
+  },
+  "DynamicObjectController": {
+   "file": "Class/Main/DynamicObjectController.lua",
+   "rpcs": [
+    {
+     "method": "ProcessDeadFirst",
+     "types": [
+      "Server"
+     ],
+     "line": 55
+    },
+    {
+     "method": "SetDead",
+     "types": [
+      "?"
+     ],
+     "line": 56
+    }
+   ]
+  },
+  "Interacter": {
+   "file": "Class/Main/Interacter.lua",
+   "rpcs": [
+    {
+     "method": "InteractServer",
+     "types": [
+      "Server"
+     ],
+     "line": 15
+    },
+    {
+     "method": "OnChangeQuest",
+     "types": [
+      "Client"
+     ],
+     "line": 14
+    },
+    {
+     "method": "OnInteract",
+     "types": [
+      "Server"
+     ],
+     "line": 16
+    }
+   ]
+  },
+  "NpcControllerEx": {
+   "file": "Class/Main/NpcControllerEx.lua",
+   "rpcs": [
+    {
+     "method": "OnDialogAcceptServer",
+     "types": [
+      "Server"
+     ],
+     "line": 45
+    },
+    {
+     "method": "OnDialogQuitClient",
+     "types": [
+      "Client"
+     ],
+     "line": 41
+    },
+    {
+     "method": "OnDialogQuitServer",
+     "types": [
+      "Server"
+     ],
+     "line": 46
+    },
+    {
+     "method": "OnDialogRequestClient",
+     "types": [
+      "Client"
+     ],
+     "line": 42
+    },
+    {
+     "method": "OnDialogRequestServer",
+     "types": [
+      "Server"
+     ],
+     "line": 47
+    },
+    {
+     "method": "OnStateChangedClient",
+     "types": [
+      "Client"
+     ],
+     "line": 44
+    },
+    {
+     "method": "onNpcMoveToMap",
+     "types": [
+      "Server"
+     ],
+     "line": 48
+    },
+    {
+     "method": "onResultNpcMoveToMap",
+     "types": [
+      "Client"
+     ],
+     "line": 43
+    },
+    {
+     "method": "onSaveComebackPosition",
+     "types": [
+      "Server"
+     ],
+     "line": 49
+    },
+    {
+     "method": "onSaveNpcPathData",
+     "types": [
+      "Server"
+     ],
+     "line": 50
+    },
+    {
+     "method": "onSaveNpcWayPointIndex",
+     "types": [
+      "Server"
+     ],
+     "line": 51
+    }
+   ]
+  },
+  "NpcInteracter": {
+   "file": "Class/Main/NpcInteracter.lua",
+   "rpcs": [
+    {
+     "method": "FocusIn",
+     "types": [
+      "Server"
+     ],
+     "line": 27
+    },
+    {
+     "method": "FocusOut",
+     "types": [
+      "Server"
+     ],
+     "line": 28
+    }
+   ]
+  },
+  "Physics": {
+   "file": "Class/Main/Physics.lua",
+   "rpcs": [
+    {
+     "method": "OnClearMotion",
+     "types": [
+      "Client"
+     ],
+     "line": 11
+    }
+   ]
+  },
+  "Player": {
+   "file": "Class/Main/Player.lua",
+   "rpcs": [
+    {
+     "method": "AddDibs",
+     "types": [
+      "Server"
+     ],
+     "line": 240
+    },
+    {
+     "method": "AddTimeQuestClient",
+     "types": [
+      "Client"
+     ],
+     "line": 253
+    },
+    {
+     "method": "BuyProduct",
+     "types": [
+      "Server"
+     ],
+     "line": 239
+    },
+    {
+     "method": "CanOpenCashShop",
+     "types": [
+      "Server"
+     ],
+     "line": 153
+    },
+    {
+     "method": "Client_OnChannelListRefresh",
+     "types": [
+      "Client"
+     ],
+     "line": 228
+    },
+    {
+     "method": "CloseCashShop",
+     "types": [
+      "Client",
+      "Server"
+     ],
+     "line": 202
+    },
+    {
+     "method": "DiceResult",
+     "types": [
+      "Client"
+     ],
+     "line": 203
+    },
+    {
+     "method": "DumpItemDropTestResult",
+     "types": [
+      "Client"
+     ],
+     "line": 258
+    },
+    {
+     "method": "EffectFilterReFresh",
+     "types": [
+      "Client"
+     ],
+     "line": 223
+    },
+    {
+     "method": "ForceReplicate",
+     "types": [
+      "Server"
+     ],
+     "line": 173
+    },
+    {
+     "method": "GCallFn",
+     "types": [
+      "Client",
+      "Server",
+      "Master"
+     ],
+     "line": 252
+    },
+    {
+     "method": "GetSkillCountResult",
+     "types": [
+      "?"
+     ],
+     "line": 208
+    },
+    {
+     "method": "HandleUIEvent",
+     "types": [
+      "Client"
+     ],
+     "line": 224
+    },
+    {
+     "method": "Master_ChannelListRefresh",
+     "types": [
+      "Server",
+      "Master"
+     ],
+     "line": 172
+    },
+    {
+     "method": "MeasureRTTDown",
+     "types": [
+      "?"
+     ],
+     "line": 207
+    },
+    {
+     "method": "MeasureRTTUp",
+     "types": [
+      "?"
+     ],
+     "line": 209
+    },
+    {
+     "method": "MonsterDescriptionResult",
+     "types": [
+      "Client"
+     ],
+     "line": 152
+    },
+    {
+     "method": "NetRequestQuestInfo",
+     "types": [
+      "Server"
+     ],
+     "line": 219
+    },
+    {
+     "method": "OnClientGetSRQLResult",
+     "types": [
+      "Client"
+     ],
+     "line": 222
+    },
+    {
+     "method": "OnClientShowClassUpInfoDialog",
+     "types": [
+      "Client"
+     ],
+     "line": 236
+    },
+    {
+     "method": "OnClientShowCommonSkillNotify",
+     "types": [
+      "Client"
+     ],
+     "line": 188
+    },
+    {
+     "method": "OnClientShowDialog",
+     "types": [
+      "Client"
+     ],
+     "line": 237
+    },
+    {
+     "method": "OnClientShowQuestDialog",
+     "types": [
+      "Client"
+     ],
+     "line": 154
+    },
+    {
+     "method": "OnClient_ChangeAntiFishingMessage",
+     "types": [
+      "Client"
+     ],
+     "line": 231
+    },
+    {
+     "method": "OnClient_GetSafeModeState",
+     "types": [
+      "Client"
+     ],
+     "line": 164
+    },
+    {
+     "method": "OnClient_ResultBlockPortal",
+     "types": [
+      "Client"
+     ],
+     "line": 225
+    },
+    {
+     "method": "OnClient_ResultCubeState",
+     "types": [
+      "Client"
+     ],
+     "line": 169
+    },
+    {
+     "method": "OnClientshowFinishEpisode",
+     "types": [
+      "Client"
+     ],
+     "line": 189
+    },
+    {
+     "method": "OnClosePartyList",
+     "types": [
+      "Server"
+     ],
+     "line": 206
+    },
+    {
+     "method": "OnOpenCashShop",
+     "types": [
+      "Client"
+     ],
+     "line": 200
+    },
+    {
+     "method": "OnPayResult",
+     "types": [
+      "Client"
+     ],
+     "line": 197
+    },
+    {
+     "method": "OnPlayerValidCheck",
+     "types": [
+      "Master"
+     ],
+     "line": 198
+    },
+    {
+     "method": "OnReadCashResult",
+     "types": [
+      "Client"
+     ],
+     "line": 196
+    },
+    {
+     "method": "OnRequestCellData",
+     "types": [
+      "Client"
+     ],
+     "line": 163
+    },
+    {
+     "method": "OnServerGetNpcPortraitInfo",
+     "types": [
+      "Server"
+     ],
+     "line": 232
+    },
+    {
+     "method": "OnServerGetSRQL",
+     "types": [
+      "Server"
+     ],
+     "line": 221
+    },
+    {
+     "method": "OnServer_AnswerClientKey",
+     "types": [
+      "Server"
+     ],
+     "line": 167
+    },
+    {
+     "method": "OnServer_AnswerKey",
+     "types": [
+      "Server"
+     ],
+     "line": 166
+    },
+    {
+     "method": "OnServer_CheckBlockCube",
+     "types": [
+      "Server"
+     ],
+     "line": 227
+    },
+    {
+     "method": "OnServer_CheckClientFile",
+     "types": [
+      "Server"
+     ],
+     "line": 170
+    },
+    {
+     "method": "OnServer_CheckInjectResult",
+     "types": [
+      "Server"
+     ],
+     "line": 168
+    },
+    {
+     "method": "OnServer_GetSafeModeState",
+     "types": [
+      "Server"
+     ],
+     "line": 165
+    },
+    {
+     "method": "OnServer_InvalidFileReport",
+     "types": [
+      "Server"
+     ],
+     "line": 229
+    },
+    {
+     "method": "OnShowAutoQuest",
+     "types": [
+      "Client"
+     ],
+     "line": 218
+    },
+    {
+     "method": "OnShowNpcDialog",
+     "types": [
+      "Client"
+     ],
+     "line": 176
+    },
+    {
+     "method": "OpenCashShop",
+     "types": [
+      "Client",
+      "Server"
+     ],
+     "line": 201
+    },
+    {
+     "method": "PartsEffectReFresh",
+     "types": [
+      "Client"
+     ],
+     "line": 230
+    },
+    {
+     "method": "PlayerDeSummonNPC",
+     "types": [
+      "?"
+     ],
+     "line": 255
+    },
+    {
+     "method": "PlayerSummonNPC",
+     "types": [
+      "?"
+     ],
+     "line": 254
+    },
+    {
+     "method": "PlayerValidCheckResult",
+     "types": [
+      "Client"
+     ],
+     "line": 148
+    },
+    {
+     "method": "ReadCash",
+     "types": [
+      "Server"
+     ],
+     "line": 178
+    },
+    {
+     "method": "ReplyRequestAllQuestInfo",
+     "types": [
+      "Client"
+     ],
+     "line": 220
+    },
+    {
+     "method": "RequestCellData",
+     "types": [
+      "Server"
+     ],
+     "line": 147
+    },
+    {
+     "method": "RunTutorialScript",
+     "types": [
+      "Server"
+     ],
+     "line": 156
+    },
+    {
+     "method": "Schema_UpdateData",
+     "types": [
+      "Server"
+     ],
+     "line": 161
+    },
+    {
+     "method": "SetCurVehicle",
+     "types": [
+      "Master"
+     ],
+     "line": 171
+    },
+    {
+     "method": "SetDeleted",
+     "types": [
+      "Client",
+      "Server"
+     ],
+     "line": 162
+    },
+    {
+     "method": "SetHideBankABUI",
+     "types": [
+      "Client"
+     ],
+     "line": 249
+    },
+    {
+     "method": "SetHideBankPBUI",
+     "types": [
+      "Client"
+     ],
+     "line": 248
+    },
+    {
+     "method": "ShowSendMailPopup",
+     "types": [
+      "Client"
+     ],
+     "line": 259
+    },
+    {
+     "method": "callbackScript2",
+     "types": [
+      "Server"
+     ],
+     "line": 233
+    },
+    {
+     "method": "exeMissionQuest",
+     "types": [
+      "Client"
+     ],
+     "line": 214
+    },
+    {
+     "method": "exitScript2",
+     "types": [
+      "Server"
+     ],
+     "line": 234
+    },
+    {
+     "method": "findRcpt",
+     "types": [
+      "Master"
+     ],
+     "line": 199
+    },
+    {
+     "method": "getMonsterDescription",
+     "types": [
+      "Server"
+     ],
+     "line": 146
+    },
+    {
+     "method": "netCheckClientABCache",
+     "types": [
+      "Client"
+     ],
+     "line": 245
+    },
+    {
+     "method": "netCheckClientPBCache",
+     "types": [
+      "Client"
+     ],
+     "line": 244
+    },
+    {
+     "method": "nextScript2",
+     "types": [
+      "Server"
+     ],
+     "line": 151
+    },
+    {
+     "method": "onCheckPathChange",
+     "types": [
+      "Client"
+     ],
+     "line": 256
+    },
+    {
+     "method": "onCheckPathChangeZoneStone",
+     "types": [
+      "Client"
+     ],
+     "line": 257
+    },
+    {
+     "method": "onChooseReward",
+     "types": [
+      "Client"
+     ],
+     "line": 190
+    },
+    {
+     "method": "onClientAasSystemMessage",
+     "types": [
+      "Client"
+     ],
+     "line": 183
+    },
+    {
+     "method": "onClientAfterMapChange",
+     "types": [
+      "Client"
+     ],
+     "line": 179
+    },
+    {
+     "method": "onClientgetTotalMailCount",
+     "types": [
+      "Client"
+     ],
+     "line": 210
+    },
+    {
+     "method": "onCloseAccountBank",
+     "types": [
+      "Server"
+     ],
+     "line": 145
+    },
+    {
+     "method": "onClosePartyInviteUI",
+     "types": [
+      "Client"
+     ],
+     "line": 204
+    },
+    {
+     "method": "onClosePrivateBank",
+     "types": [
+      "Server"
+     ],
+     "line": 144
+    },
+    {
+     "method": "onDeadHandler",
+     "types": [
+      "Client"
+     ],
+     "line": 251
+    },
+    {
+     "method": "onDirectingSceneStart",
+     "types": [
+      "Client"
+     ],
+     "line": 191
+    },
+    {
+     "method": "onFindRcpt",
+     "types": [
+      "Server"
+     ],
+     "line": 260
+    },
+    {
+     "method": "onGoGoShow",
+     "types": [
+      "Client"
+     ],
+     "line": 192
+    },
+    {
+     "method": "onInitializeSkillPoint",
+     "types": [
+      "Client"
+     ],
+     "line": 155
+    },
+    {
+     "method": "onLookForPartyReload",
+     "types": [
+      "Client"
+     ],
+     "line": 205
+    },
+    {
+     "method": "onMasterOneGameTime",
+     "types": [
+      "Master"
+     ],
+     "line": 182
+    },
+    {
+     "method": "onMasterRequestQueryTime",
+     "types": [
+      "Master"
+     ],
+     "line": 180
+    },
+    {
+     "method": "onMasterTestUserStart",
+     "types": [
+      "Master"
+     ],
+     "line": 184
+    },
+    {
+     "method": "onMonsterDropItem",
+     "types": [
+      "Client"
+     ],
+     "line": 250
+    },
+    {
+     "method": "onNewSystemMessage",
+     "types": [
+      "Client"
+     ],
+     "line": 160
+    },
+    {
+     "method": "onNotice",
+     "types": [
+      "Client"
+     ],
+     "line": 216
+    },
+    {
+     "method": "onPopupMsgBox",
+     "types": [
+      "Client"
+     ],
+     "line": 187
+    },
+    {
+     "method": "onPopupMsgBoxPlain",
+     "types": [
+      "Client"
+     ],
+     "line": 226
+    },
+    {
+     "method": "onPopupUI",
+     "types": [
+      "Client"
+     ],
+     "line": 186
+    },
+    {
+     "method": "onPositionEffect",
+     "types": [
+      "Client"
+     ],
+     "line": 185
+    },
+    {
+     "method": "onQuest",
+     "types": [
+      "Client"
+     ],
+     "line": 217
+    },
+    {
+     "method": "onQuestComplete",
+     "types": [
+      "Client"
+     ],
+     "line": 238
+    },
+    {
+     "method": "onResetCameraTarget",
+     "types": [
+      "Client"
+     ],
+     "line": 194
+    },
+    {
+     "method": "onResultOneGameTime",
+     "types": [
+      "Client"
+     ],
+     "line": 181
+    },
+    {
+     "method": "onResultSchema_UpdateData",
+     "types": [
+      "Client"
+     ],
+     "line": 211
+    },
+    {
+     "method": "onScriptPage",
+     "types": [
+      "Client"
+     ],
+     "line": 212
+    },
+    {
+     "method": "onScriptPage2",
+     "types": [
+      "Client"
+     ],
+     "line": 213
+    },
+    {
+     "method": "onScripts",
+     "types": [
+      "Client"
+     ],
+     "line": 215
+    },
+    {
+     "method": "onSetCameraTarget",
+     "types": [
+      "Client"
+     ],
+     "line": 193
+    },
+    {
+     "method": "onSetChannelChangeUI",
+     "types": [
+      "Client"
+     ],
+     "line": 174
+    },
+    {
+     "method": "onSetDestination",
+     "types": [
+      "Client"
+     ],
+     "line": 195
+    },
+    {
+     "method": "onSetMessageDialog",
+     "types": [
+      "Client"
+     ],
+     "line": 175
+    },
+    {
+     "method": "onSetPlayerAttrDisableArea",
+     "types": [
+      "Client"
+     ],
+     "line": 157
+    },
+    {
+     "method": "onShowBoard",
+     "types": [
+      "Client"
+     ],
+     "line": 177
+    },
+    {
+     "method": "onSystemMessage",
+     "types": [
+      "Client"
+     ],
+     "line": 158
+    },
+    {
+     "method": "onSystemMessageWithSound",
+     "types": [
+      "Client"
+     ],
+     "line": 159
+    },
+    {
+     "method": "reqAccountBank",
+     "types": [
+      "Server",
+      "Master"
+     ],
+     "line": 242
+    },
+    {
+     "method": "reqAccountBankAndAddTab",
+     "types": [
+      "Server",
+      "Master"
+     ],
+     "line": 247
+    },
+    {
+     "method": "reqPrivateBank",
+     "types": [
+      "Server",
+      "Master"
+     ],
+     "line": 243
+    },
+    {
+     "method": "reqPrivateBankAndAddTab",
+     "types": [
+      "Server",
+      "Master"
+     ],
+     "line": 246
+    },
+    {
+     "method": "runScript",
+     "types": [
+      "Server"
+     ],
+     "line": 149
+    },
+    {
+     "method": "runScript2",
+     "types": [
+      "Server"
+     ],
+     "line": 150
+    },
+    {
+     "method": "selectScriptResult",
+     "types": [
+      "Server"
+     ],
+     "line": 235
+    },
+    {
+     "method": "sendGift",
+     "types": [
+      "Server"
+     ],
+     "line": 241
+    },
+    {
+     "method": "showUICostom",
+     "types": [
+      "Client"
+     ],
+     "line": 142
+    },
+    {
+     "method": "showUIserver",
+     "types": [
+      "Server"
+     ],
+     "line": 143
+    }
+   ]
+  },
+  "PlayerController": {
+   "file": "Class/Main/PlayerController.lua",
+   "rpcs": [
+    {
+     "method": "ApplyElementalModifier",
+     "types": [
+      "Server"
+     ],
+     "line": 60
+    },
+    {
+     "method": "AttackAuraServerProcess",
+     "types": [
+      "Server"
+     ],
+     "line": 43
+    },
+    {
+     "method": "CheckPvPObjectDestroy",
+     "types": [
+      "Server"
+     ],
+     "line": 51
+    },
+    {
+     "method": "ClientOnDeadForParty",
+     "types": [
+      "Client"
+     ],
+     "line": 56
+    },
+    {
+     "method": "DeleteAura",
+     "types": [
+      "Server"
+     ],
+     "line": 50
+    },
+    {
+     "method": "MagicalDefenseAuraServerProcess",
+     "types": [
+      "Server"
+     ],
+     "line": 44
+    },
+    {
+     "method": "NetAlchemySpellProcess",
+     "types": [
+      "Server"
+     ],
+     "line": 47
+    },
+    {
+     "method": "NetDeleteSavedStatus",
+     "types": [
+      "Client",
+      "Server"
+     ],
+     "line": 48
+    },
+    {
+     "method": "NetForceDeleteProjectileAll",
+     "types": [
+      "Client"
+     ],
+     "line": 72
+    },
+    {
+     "method": "NetGuardFunction",
+     "types": [
+      "Client",
+      "Server"
+     ],
+     "line": 52
+    },
+    {
+     "method": "NetSaveCurrentStatus",
+     "types": [
+      "Client",
+      "Server"
+     ],
+     "line": 49
+    },
+    {
+     "method": "OnCancelCombat",
+     "types": [
+      "Server"
+     ],
+     "line": 64
+    },
+    {
+     "method": "OnCombatCancelEvent",
+     "types": [
+      "Client"
+     ],
+     "line": 62
+    },
+    {
+     "method": "OnCombatEndEvent",
+     "types": [
+      "Client"
+     ],
+     "line": 66
+    },
+    {
+     "method": "OnCombatStartEvent",
+     "types": [
+      "Client"
+     ],
+     "line": 63
+    },
+    {
+     "method": "OnConfirmCombat",
+     "types": [
+      "Server"
+     ],
+     "line": 65
+    },
+    {
+     "method": "PhysicalDefenseAuraServerProcess",
+     "types": [
+      "Server"
+     ],
+     "line": 45
+    },
+    {
+     "method": "ProcessPlayerRespawn",
+     "types": [
+      "Server"
+     ],
+     "line": 54
+    },
+    {
+     "method": "ProcessPlayerRespawn_Result",
+     "types": [
+      "Client"
+     ],
+     "line": 55
+    },
+    {
+     "method": "ProcessPlayerReturn",
+     "types": [
+      "Server"
+     ],
+     "line": 57
+    },
+    {
+     "method": "ProcessStaminaResult",
+     "types": [
+      "Client"
+     ],
+     "line": 59
+    },
+    {
+     "method": "RequestCombat",
+     "types": [
+      "Server"
+     ],
+     "line": 67
+    },
+    {
+     "method": "RequestCombatMessage",
+     "types": [
+      "Client"
+     ],
+     "line": 68
+    },
+    {
+     "method": "RequestDeadForParty",
+     "types": [
+      "Server"
+     ],
+     "line": 58
+    },
+    {
+     "method": "RequestMoveToMap",
+     "types": [
+      "Server"
+     ],
+     "line": 38
+    },
+    {
+     "method": "RequestQuestObjDeadProcess",
+     "types": [
+      "Server"
+     ],
+     "line": 39
+    },
+    {
+     "method": "SendCombatMessageOnLooker",
+     "types": [
+      "Client"
+     ],
+     "line": 70
+    },
+    {
+     "method": "SendDescExpToClient",
+     "types": [
+      "Client"
+     ],
+     "line": 53
+    },
+    {
+     "method": "SetCombatTypeToClientAndServer",
+     "types": [
+      "Client",
+      "Server"
+     ],
+     "line": 71
+    },
+    {
+     "method": "SoulOrbProcessClient",
+     "types": [
+      "Client"
+     ],
+     "line": 42
+    },
+    {
+     "method": "SoulOrbProcessServer",
+     "types": [
+      "Server"
+     ],
+     "line": 41
+    },
+    {
+     "method": "Update_UIBodyTagPlayerColor",
+     "types": [
+      "Client"
+     ],
+     "line": 69
+    },
+    {
+     "method": "VitalAuraServerProcess",
+     "types": [
+      "Server"
+     ],
+     "line": 46
+    },
+    {
+     "method": "WaitingCombatMessage",
+     "types": [
+      "Client"
+     ],
+     "line": 61
+    }
+   ]
+  },
+  "PlayerController_Fishing": {
+   "file": "Class/Main/PlayerController_Fishing.lua",
+   "rpcs": [
+    {
+     "method": "FishingResult",
+     "types": [
+      "Client"
+     ],
+     "line": 19
+    },
+    {
+     "method": "HideFishingWaitGaugeUI",
+     "types": [
+      "Client"
+     ],
+     "line": 24
+    },
+    {
+     "method": "OnSetFishingArea",
+     "types": [
+      "Client"
+     ],
+     "line": 21
+    },
+    {
+     "method": "RequestCancelFishing",
+     "types": [
+      "Server"
+     ],
+     "line": 16
+    },
+    {
+     "method": "RequestEndFishingFish",
+     "types": [
+      "Server"
+     ],
+     "line": 14
+    },
+    {
+     "method": "RequestEndFishingFishEmotion",
+     "types": [
+      "Server"
+     ],
+     "line": 15
+    },
+    {
+     "method": "RequestFishingFish",
+     "types": [
+      "Server"
+     ],
+     "line": 13
+    },
+    {
+     "method": "ServerSetFishingArea",
+     "types": [
+      "Server"
+     ],
+     "line": 17
+    },
+    {
+     "method": "SetActorDirectionForFishing",
+     "types": [
+      "Client"
+     ],
+     "line": 22
+    },
+    {
+     "method": "SetForceFishingAreaUnTouch",
+     "types": [
+      "Client"
+     ],
+     "line": 25
+    },
+    {
+     "method": "ShowFishingBarUI",
+     "types": [
+      "Client"
+     ],
+     "line": 18
+    },
+    {
+     "method": "ShowFishingRewardItemUI",
+     "types": [
+      "Client"
+     ],
+     "line": 20
+    },
+    {
+     "method": "ShowFishingWaitGaugeUI",
+     "types": [
+      "Client"
+     ],
+     "line": 23
+    },
+    {
+     "method": "ShowMessageFishingFail",
+     "types": [
+      "Client"
+     ],
+     "line": 27
+    },
+    {
+     "method": "ShowMessageFishingToolWornout",
+     "types": [
+      "Client"
+     ],
+     "line": 26
+    }
+   ]
+  },
+  "Session": {
+   "file": "Class/Main/Session.lua",
+   "rpcs": [
+    {
+     "method": "GPSDataClient",
+     "types": [
+      "Client"
+     ],
+     "line": 7
+    },
+    {
+     "method": "GPSDataServer",
+     "types": [
+      "Server"
+     ],
+     "line": 8
+    },
+    {
+     "method": "RequestGPS",
+     "types": [
+      "?"
+     ],
+     "line": 5
+    },
+    {
+     "method": "onRequestGPS",
+     "types": [
+      "Client"
+     ],
+     "line": 6
+    }
+   ]
+  },
+  "Trigger": {
+   "file": "Class/Main/Trigger.lua",
+   "rpcs": [
+    {
+     "method": "LuaOnServerTouch",
+     "types": [
+      "Server"
+     ],
+     "line": 17
+    },
+    {
+     "method": "LuaOnServerUnTouch",
+     "types": [
+      "Server"
+     ],
+     "line": 18
+    },
+    {
+     "method": "MoveToInstanceMap",
+     "types": [
+      "Server"
+     ],
+     "line": 13
+    },
+    {
+     "method": "MoveToMapPosition",
+     "types": [
+      "Client",
+      "Server"
+     ],
+     "line": 12
+    },
+    {
+     "method": "ProcessTownPortalReturn",
+     "types": [
+      "Server"
+     ],
+     "line": 15
+    },
+    {
+     "method": "ProcessTownPortalToTown",
+     "types": [
+      "Server"
+     ],
+     "line": 16
+    },
+    {
+     "method": "SetMTEnabled",
+     "types": [
+      "Client"
+     ],
+     "line": 14
+    }
+   ]
+  },
+  "TriggerCommands": {
+   "file": "Class/Main/TriggerCommands.lua",
+   "rpcs": [
+    {
+     "method": "AttachPartyPlayer",
+     "types": [
+      "Client"
+     ],
+     "line": 22
+    },
+    {
+     "method": "ServerLuaTouchCheck",
+     "types": [
+      "Server"
+     ],
+     "line": 21
+    },
+    {
+     "method": "ServerLuaTouchCheckResult",
+     "types": [
+      "Client"
+     ],
+     "line": 23
+    },
+    {
+     "method": "UpdateTouched",
+     "types": [
+      "Server"
+     ],
+     "line": 20
+    },
+    {
+     "method": "UpdateTouchedPlayerOID",
+     "types": [
+      "Server"
+     ],
+     "line": 19
+    }
+   ]
+  },
+  "User": {
+   "file": "Class/Main/User.lua",
+   "rpcs": [
+    {
+     "method": "AfterForcedMovePlayer",
+     "types": [
+      "Client"
+     ],
+     "line": 31
+    },
+    {
+     "method": "ChangeRoom",
+     "types": [
+      "Server"
+     ],
+     "line": 42
+    },
+    {
+     "method": "ClientNotifyOffline",
+     "types": [
+      "Client"
+     ],
+     "line": 32
+    },
+    {
+     "method": "ClientNotifyOnline",
+     "types": [
+      "Client"
+     ],
+     "line": 38
+    },
+    {
+     "method": "ClientOnMapChangedForParty",
+     "types": [
+      "Client"
+     ],
+     "line": 41
+    },
+    {
+     "method": "DirectSceneDetach",
+     "types": [
+      "Client"
+     ],
+     "line": 48
+    },
+    {
+     "method": "DirectScenePlayerDetach",
+     "types": [
+      "Server"
+     ],
+     "line": 27
+    },
+    {
+     "method": "DownSetEndCutScene",
+     "types": [
+      "Client"
+     ],
+     "line": 37
+    },
+    {
+     "method": "GetQuestCount",
+     "types": [
+      "?"
+     ],
+     "line": 45
+    },
+    {
+     "method": "LeaveInstance",
+     "types": [
+      "Server"
+     ],
+     "line": 29
+    },
+    {
+     "method": "Map_LoadedEvent",
+     "types": [
+      "Client"
+     ],
+     "line": 36
+    },
+    {
+     "method": "MoveToInstanceMap",
+     "types": [
+      "Server"
+     ],
+     "line": 39
+    },
+    {
+     "method": "MoveToMapWrapper",
+     "types": [
+      "Server"
+     ],
+     "line": 26
+    },
+    {
+     "method": "MoveToTown",
+     "types": [
+      "Server"
+     ],
+     "line": 47
+    },
+    {
+     "method": "OnBeforeMapLoadingProcess",
+     "types": [
+      "Client"
+     ],
+     "line": 33
+    },
+    {
+     "method": "PutItemExResult",
+     "types": [
+      "Client",
+      "Server"
+     ],
+     "line": 44
+    },
+    {
+     "method": "RequestDeadForParty",
+     "types": [
+      "Server"
+     ],
+     "line": 46
+    },
+    {
+     "method": "RequestMapChangedForParty",
+     "types": [
+      "Server"
+     ],
+     "line": 40
+    },
+    {
+     "method": "SetDefaultCamera",
+     "types": [
+      "Client"
+     ],
+     "line": 34
+    },
+    {
+     "method": "SetRememberT",
+     "types": [
+      "Client"
+     ],
+     "line": 35
+    },
+    {
+     "method": "SetSaveRoomName",
+     "types": [
+      "Server",
+      "Master"
+     ],
+     "line": 28
+    },
+    {
+     "method": "SpecialInsMove",
+     "types": [
+      "?"
+     ],
+     "line": 43
+    },
+    {
+     "method": "TempVolumeZero",
+     "types": [
+      "Client"
+     ],
+     "line": 30
+    }
+   ]
+  },
+  "ZoneBossInstanceManager": {
+   "file": "Class/Main/ZoneBossInstanceManager.lua",
+   "rpcs": [
+    {
+     "method": "AttackCountUICheck",
+     "types": [
+      "Server"
+     ],
+     "line": 32
+    },
+    {
+     "method": "AttackCountUICheck_InsMission",
+     "types": [
+      "Server"
+     ],
+     "line": 33
+    },
+    {
+     "method": "AttackCountUIUpdate",
+     "types": [
+      "Client"
+     ],
+     "line": 24
+    },
+    {
+     "method": "AttackCountUIUpdate_InsMission",
+     "types": [
+      "Client"
+     ],
+     "line": 35
+    },
+    {
+     "method": "HideAttackCountUI",
+     "types": [
+      "Client"
+     ],
+     "line": 27
+    },
+    {
+     "method": "HideCardSelectionDialog",
+     "types": [
+      "Client"
+     ],
+     "line": 41
+    },
+    {
+     "method": "HideTimeLimitUI",
+     "types": [
+      "Client"
+     ],
+     "line": 29
+    },
+    {
+     "method": "NotMoveToMapPositionMessage",
+     "types": [
+      "Client"
+     ],
+     "line": 23
+    },
+    {
+     "method": "OnCloseTimeDialog",
+     "types": [
+      "Client"
+     ],
+     "line": 36
+    },
+    {
+     "method": "OnShowDialogMessage",
+     "types": [
+      "Client"
+     ],
+     "line": 37
+    },
+    {
+     "method": "OnShowRankResultDialogMessage",
+     "types": [
+      "Client"
+     ],
+     "line": 42
+    },
+    {
+     "method": "PickItemResult",
+     "types": [
+      "Client"
+     ],
+     "line": 25
+    },
+    {
+     "method": "SelectCard",
+     "types": [
+      "Server"
+     ],
+     "line": 30
+    },
+    {
+     "method": "SelectCardResult",
+     "types": [
+      "Client"
+     ],
+     "line": 39
+    },
+    {
+     "method": "ShowAttackCountUI",
+     "types": [
+      "Client"
+     ],
+     "line": 28
+    },
+    {
+     "method": "ShowAttackCountUI_InsMission",
+     "types": [
+      "Client"
+     ],
+     "line": 34
+    },
+    {
+     "method": "ShowCardReulst",
+     "types": [
+      "Client"
+     ],
+     "line": 40
+    },
+    {
+     "method": "ShowCardSelectionDialog",
+     "types": [
+      "Client"
+     ],
+     "line": 38
+    },
+    {
+     "method": "ShowTimeLimitUI",
+     "types": [
+      "Client"
+     ],
+     "line": 26
+    },
+    {
+     "method": "ShowTimeLimitUI_InsMission",
+     "types": [
+      "Client"
+     ],
+     "line": 44
+    },
+    {
+     "method": "TimeLimitUICheck",
+     "types": [
+      "Server"
+     ],
+     "line": 31
+    },
+    {
+     "method": "TimeLimitUICheck_InsMission",
+     "types": [
+      "Server"
+     ],
+     "line": 43
+    }
+   ]
+  },
+  "AIController": {
+   "file": "Class/Main/AI/AIController.lua",
+   "rpcs": [
+    {
+     "method": "ActionDropItem",
+     "types": [
+      "Server"
+     ],
+     "line": 145
+    },
+    {
+     "method": "CallProcessEvent",
+     "types": [
+      "Client"
+     ],
+     "line": 134
+    },
+    {
+     "method": "ChangePosByJakil",
+     "types": [
+      "Server"
+     ],
+     "line": 151
+    },
+    {
+     "method": "ClearRoomMonster",
+     "types": [
+      "Server"
+     ],
+     "line": 137
+    },
+    {
+     "method": "ClearWorldBoss",
+     "types": [
+      "Server"
+     ],
+     "line": 121
+    },
+    {
+     "method": "ClientOnDamaged",
+     "types": [
+      "Client"
+     ],
+     "line": 131
+    },
+    {
+     "method": "DefenseFail",
+     "types": [
+      "Server"
+     ],
+     "line": 148
+    },
+    {
+     "method": "DispatchEvent",
+     "types": [
+      "Client"
+     ],
+     "line": 144
+    },
+    {
+     "method": "DownCallDispatchEvent",
+     "types": [
+      "Client"
+     ],
+     "line": 130
+    },
+    {
+     "method": "FailTimeLimitIns",
+     "types": [
+      "Server"
+     ],
+     "line": 136
+    },
+    {
+     "method": "FireAbsorbProjectile",
+     "types": [
+      "Client"
+     ],
+     "line": 150
+    },
+    {
+     "method": "HidingExCommand",
+     "types": [
+      "Server"
+     ],
+     "line": 126
+    },
+    {
+     "method": "IncreaseHitCount",
+     "types": [
+      "Server"
+     ],
+     "line": 135
+    },
+    {
+     "method": "KickInsPlayers",
+     "types": [
+      "Server"
+     ],
+     "line": 147
+    },
+    {
+     "method": "KillMonsterOnDeadSkillAbility",
+     "types": [
+      "Client",
+      "Server"
+     ],
+     "line": 125
+    },
+    {
+     "method": "ModifyStat",
+     "types": [
+      "Server"
+     ],
+     "line": 122
+    },
+    {
+     "method": "ModifyStatList",
+     "types": [
+      "Server"
+     ],
+     "line": 124
+    },
+    {
+     "method": "NetSetMonsterCollisionHeight",
+     "types": [
+      "Server"
+     ],
+     "line": 146
+    },
+    {
+     "method": "NotifyPosition",
+     "types": [
+      "Client",
+      "Server",
+      "Master"
+     ],
+     "line": 128
+    },
+    {
+     "method": "OnClientStartEventSkill",
+     "types": [
+      "Client"
+     ],
+     "line": 149
+    },
+    {
+     "method": "OnServerForceKillMonster",
+     "types": [
+      "Server"
+     ],
+     "line": 127
+    },
+    {
+     "method": "ProcessMobDelete",
+     "types": [
+      "Client",
+      "Server"
+     ],
+     "line": 120
+    },
+    {
+     "method": "ProcessModDeadBridge",
+     "types": [
+      "Server"
+     ],
+     "line": 140
+    },
+    {
+     "method": "RecoveryHPPercent",
+     "types": [
+      "Server"
+     ],
+     "line": 119
+    },
+    {
+     "method": "RollbackModifyStatList",
+     "types": [
+      "Server"
+     ],
+     "line": 123
+    },
+    {
+     "method": "RoomPlayerCameraShake",
+     "types": [
+      "Server"
+     ],
+     "line": 138
+    },
+    {
+     "method": "ServerOnMapEvent",
+     "types": [
+      "Client",
+      "Server"
+     ],
+     "line": 129
+    },
+    {
+     "method": "SkillStartNotify",
+     "types": [
+      "Server"
+     ],
+     "line": 139
+    },
+    {
+     "method": "SummonMonster",
+     "types": [
+      "Server"
+     ],
+     "line": 141
+    },
+    {
+     "method": "SummonMonsterAnger",
+     "types": [
+      "Server"
+     ],
+     "line": 143
+    },
+    {
+     "method": "SummonMonsterArea",
+     "types": [
+      "Server"
+     ],
+     "line": 142
+    },
+    {
+     "method": "onClientTalkAround",
+     "types": [
+      "Client"
+     ],
+     "line": 132
+    },
+    {
+     "method": "onServerTalkAround",
+     "types": [
+      "Server"
+     ],
+     "line": 133
+    }
+   ]
+  },
+  "AIController_Ability": {
+   "file": "Class/Main/AI/AIController_Ability.lua",
+   "rpcs": [
+    {
+     "method": "NetApplyAbilityImmuneAttackBuff",
+     "types": [
+      "Server"
+     ],
+     "line": 11
+    },
+    {
+     "method": "NetDispatchAbilityEvent",
+     "types": [
+      "Server"
+     ],
+     "line": 12
+    },
+    {
+     "method": "NotifyAbilityExecute",
+     "types": [
+      "Server",
+      "Master"
+     ],
+     "line": 10
+    },
+    {
+     "method": "SetAbilityParameter",
+     "types": [
+      "Server",
+      "Master"
+     ],
+     "line": 8
+    },
+    {
+     "method": "SetAbilityParameterList",
+     "types": [
+      "Server",
+      "Master"
+     ],
+     "line": 9
+    }
+   ]
+  },
+  "CashProductList": {
+   "file": "Class/Main/CashProduct/CashProductList.lua",
+   "rpcs": [
+    {
+     "method": "OnRequestProductList",
+     "types": [
+      "Server"
+     ],
+     "line": 14
+    },
+    {
+     "method": "OnRequestProductsByCode",
+     "types": [
+      "Server"
+     ],
+     "line": 16
+    },
+    {
+     "method": "ProductReloaded",
+     "types": [
+      "Client"
+     ],
+     "line": 13
+    },
+    {
+     "method": "ReplyProductList",
+     "types": [
+      "Server"
+     ],
+     "line": 12
+    },
+    {
+     "method": "RequestProductListResult",
+     "types": [
+      "Client"
+     ],
+     "line": 15
+    },
+    {
+     "method": "RequestProductListToMaster",
+     "types": [
+      "Master"
+     ],
+     "line": 11
+    },
+    {
+     "method": "RequestProductsByCodeResult",
+     "types": [
+      "Client"
+     ],
+     "line": 17
+    }
+   ]
+  },
+  "CCommunity": {
+   "file": "Class/Main/Community/CCommunity.lua",
+   "rpcs": [
+    {
+     "method": "AddBlockList",
+     "types": [
+      "Client",
+      "Master"
+     ],
+     "line": 309
+    },
+    {
+     "method": "AddBlokListResult",
+     "types": [
+      "Client"
+     ],
+     "line": 310
+    },
+    {
+     "method": "Master_AddBuddy",
+     "types": [
+      "Master"
+     ],
+     "line": 286
+    },
+    {
+     "method": "Master_AddFriend",
+     "types": [
+      "Master"
+     ],
+     "line": 288
+    },
+    {
+     "method": "Master_AddFriendByName",
+     "types": [
+      "Master"
+     ],
+     "line": 289
+    },
+    {
+     "method": "Master_DeleteBuddy",
+     "types": [
+      "Master"
+     ],
+     "line": 287
+    },
+    {
+     "method": "Master_DeleteFriend",
+     "types": [
+      "Master"
+     ],
+     "line": 290
+    },
+    {
+     "method": "Master_GetPlayerJournal",
+     "types": [
+      "Master"
+     ],
+     "line": 291
+    },
+    {
+     "method": "Master_RejectRequestBuddy",
+     "types": [
+      "Master"
+     ],
+     "line": 284
+    },
+    {
+     "method": "Master_SendRequestBuddy",
+     "types": [
+      "Master"
+     ],
+     "line": 282
+    },
+    {
+     "method": "Master_SendRequestBuddyByName",
+     "types": [
+      "Master"
+     ],
+     "line": 283
+    },
+    {
+     "method": "Master_StateBuddyDeny",
+     "types": [
+      "Master"
+     ],
+     "line": 285
+    },
+    {
+     "method": "OnClient_AddBuddy",
+     "types": [
+      "Client"
+     ],
+     "line": 302
+    },
+    {
+     "method": "OnClient_AddFriend",
+     "types": [
+      "Client"
+     ],
+     "line": 304
+    },
+    {
+     "method": "OnClient_AddRpm",
+     "types": [
+      "Client"
+     ],
+     "line": 306
+    },
+    {
+     "method": "OnClient_DeleteBuddy",
+     "types": [
+      "Client"
+     ],
+     "line": 303
+    },
+    {
+     "method": "OnClient_DeleteFriend",
+     "types": [
+      "Client"
+     ],
+     "line": 305
+    },
+    {
+     "method": "OnClient_DeleteRpm",
+     "types": [
+      "Client"
+     ],
+     "line": 307
+    },
+    {
+     "method": "OnClient_InitAddBuddy",
+     "types": [
+      "Client"
+     ],
+     "line": 298
+    },
+    {
+     "method": "OnClient_InitAddFriend",
+     "types": [
+      "Client"
+     ],
+     "line": 300
+    },
+    {
+     "method": "OnClient_InitAddRpm",
+     "types": [
+      "Client"
+     ],
+     "line": 299
+    },
+    {
+     "method": "OnClient_LogIn",
+     "types": [
+      "Client"
+     ],
+     "line": 295
+    },
+    {
+     "method": "OnClient_PlayerLoggedIn",
+     "types": [
+      "Client"
+     ],
+     "line": 296
+    },
+    {
+     "method": "OnClient_RequestBuddy",
+     "types": [
+      "Client"
+     ],
+     "line": 301
+    },
+    {
+     "method": "OnClient_SetPlayerJournal",
+     "types": [
+      "Client"
+     ],
+     "line": 308
+    },
+    {
+     "method": "OnClient_StatusChange",
+     "types": [
+      "Client"
+     ],
+     "line": 297
+    },
+    {
+     "method": "OnClient_UpdateBuddyRelationPosition",
+     "types": [
+      "Client"
+     ],
+     "line": 314
+    },
+    {
+     "method": "OnClient_UpdateBuddyRelationType",
+     "types": [
+      "Client"
+     ],
+     "line": 313
+    },
+    {
+     "method": "OnMaster_LogIn",
+     "types": [
+      "Master"
+     ],
+     "line": 281
+    },
+    {
+     "method": "OnServer_CommunityNotifyOverCnt",
+     "types": [
+      "Server"
+     ],
+     "line": 293
+    },
+    {
+     "method": "OnServer_UpdateBuddyRelationPosition",
+     "types": [
+      "Server"
+     ],
+     "line": 294
+    },
+    {
+     "method": "RemoveBlockList",
+     "types": [
+      "Client",
+      "Master"
+     ],
+     "line": 312
+    },
+    {
+     "method": "RemoveBlockListResult",
+     "types": [
+      "Client"
+     ],
+     "line": 311
+    },
+    {
+     "method": "RequestMaster_UpdateState",
+     "types": [
+      "Master"
+     ],
+     "line": 292
+    }
+   ]
+  },
+  "CGuild": {
+   "file": "Class/Main/Community/CGuild.lua",
+   "rpcs": [
+    {
+     "method": "AddExp_Master",
+     "types": [
+      "Master"
+     ],
+     "line": 19
+    },
+    {
+     "method": "ExpandMember",
+     "types": [
+      "Master"
+     ],
+     "line": 22
+    },
+    {
+     "method": "OnLevelUp",
+     "types": [
+      "Server",
+      "Master"
+     ],
+     "line": 21
+    },
+    {
+     "method": "OnUpdateGuildExp",
+     "types": [
+      "Server"
+     ],
+     "line": 20
+    },
+    {
+     "method": "Wraper_LogGuildKick_Server",
+     "types": [
+      "Server"
+     ],
+     "line": 23
+    },
+    {
+     "method": "Wraper_LogGuildLevelUp_Server",
+     "types": [
+      "Server"
+     ],
+     "line": 24
+    },
+    {
+     "method": "connect",
+     "types": [
+      "Server",
+      "Master"
+     ],
+     "line": 18
+    }
+   ]
+  },
+  "CJournal": {
+   "file": "Class/Main/Community/CJournal.lua",
+   "rpcs": [
+    {
+     "method": "OnGetJournalData",
+     "types": [
+      "?"
+     ],
+     "line": 38
+    },
+    {
+     "method": "OnMaster_SetJournalStatus",
+     "types": [
+      "Master"
+     ],
+     "line": 36
+    },
+    {
+     "method": "Server_GetJournalData",
+     "types": [
+      "?"
+     ],
+     "line": 37
+    }
+   ]
+  },
+  "CMailBoxEx": {
+   "file": "Class/Main/Community/CMailBoxEx.lua",
+   "rpcs": [
+    {
+     "method": "DeleteGift",
+     "types": [
+      "Server"
+     ],
+     "line": 23
+    },
+    {
+     "method": "deleteMail",
+     "types": [
+      "Server"
+     ],
+     "line": 21
+    },
+    {
+     "method": "fetchMail",
+     "types": [
+      "Server",
+      "Master"
+     ],
+     "line": 19
+    },
+    {
+     "method": "findRcpt",
+     "types": [
+      "Master"
+     ],
+     "line": 16
+    },
+    {
+     "method": "getGiftList",
+     "types": [
+      "Server",
+      "Master"
+     ],
+     "line": 22
+    },
+    {
+     "method": "onDeleteGiftMaster",
+     "types": [
+      "Master"
+     ],
+     "line": 18
+    },
+    {
+     "method": "onDeleteMailClient",
+     "types": [
+      "Client"
+     ],
+     "line": 13
+    },
+    {
+     "method": "onDeleteMailMaster",
+     "types": [
+      "Master"
+     ],
+     "line": 17
+    },
+    {
+     "method": "onFetchMail",
+     "types": [
+      "Client"
+     ],
+     "line": 10
+    },
+    {
+     "method": "onGetGiftList",
+     "types": [
+      "Client"
+     ],
+     "line": 14
+    },
+    {
+     "method": "onReturnMailResult",
+     "types": [
+      "Client"
+     ],
+     "line": 11
+    },
+    {
+     "method": "onSendMailResult",
+     "types": [
+      "Client"
+     ],
+     "line": 12
+    },
+    {
+     "method": "postMail",
+     "types": [
+      "Server",
+      "Master"
+     ],
+     "line": 15
+    },
+    {
+     "method": "returnMail",
+     "types": [
+      "Server"
+     ],
+     "line": 24
+    },
+    {
+     "method": "sendMail",
+     "types": [
+      "Server"
+     ],
+     "line": 20
+    }
+   ]
+  },
+  "GuildProxy": {
+   "file": "Class/Main/Community/GuildProxy.lua",
+   "rpcs": [
+    {
+     "method": "ClearGuildData",
+     "types": [
+      "Client",
+      "Server",
+      "Master"
+     ],
+     "line": 55
+    },
+    {
+     "method": "EstablishGuildForce",
+     "types": [
+      "Master"
+     ],
+     "line": 67
+    },
+    {
+     "method": "ForceDissolve",
+     "types": [
+      "Server",
+      "Master"
+     ],
+     "line": 68
+    },
+    {
+     "method": "GuildNameCheck",
+     "types": [
+      "Server",
+      "Master"
+     ],
+     "line": 66
+    },
+    {
+     "method": "OnClientBroadcast",
+     "types": [
+      "Client"
+     ],
+     "line": 84
+    },
+    {
+     "method": "OnGuildExpand",
+     "types": [
+      "Client"
+     ],
+     "line": 91
+    },
+    {
+     "method": "OnGuildLevelUp",
+     "types": [
+      "Client"
+     ],
+     "line": 86
+    },
+    {
+     "method": "RunScript",
+     "types": [
+      "Server"
+     ],
+     "line": 49
+    },
+    {
+     "method": "UpdateGuildExp",
+     "types": [
+      "Client"
+     ],
+     "line": 85
+    },
+    {
+     "method": "UpdateMaster",
+     "types": [
+      "Server"
+     ],
+     "line": 69
+    },
+    {
+     "method": "UpdateMemberInfo",
+     "types": [
+      "Server",
+      "Master"
+     ],
+     "line": 65
+    },
+    {
+     "method": "connect",
+     "types": [
+      "Server",
+      "Master"
+     ],
+     "line": 38
+    },
+    {
+     "method": "inviteRequestAccept",
+     "types": [
+      "Server",
+      "Master"
+     ],
+     "line": 62
+    },
+    {
+     "method": "inviteRequestDeny",
+     "types": [
+      "Server",
+      "Master"
+     ],
+     "line": 61
+    },
+    {
+     "method": "onAddMember",
+     "types": [
+      "Client",
+      "Server"
+     ],
+     "line": 73
+    },
+    {
+     "method": "onAuthorityChange",
+     "types": [
+      "Client",
+      "Server"
+     ],
+     "line": 77
+    },
+    {
+     "method": "onAutoPromote",
+     "types": [
+      "Client"
+     ],
+     "line": 81
+    },
+    {
+     "method": "onCallsignChange",
+     "types": [
+      "Client",
+      "Server"
+     ],
+     "line": 78
+    },
+    {
+     "method": "onChangeCallSign",
+     "types": [
+      "Master"
+     ],
+     "line": 52
+    },
+    {
+     "method": "onChangeGrade",
+     "types": [
+      "Server",
+      "Master"
+     ],
+     "line": 50
+    },
+    {
+     "method": "onChangeGradeAuthority",
+     "types": [
+      "Master"
+     ],
+     "line": 51
+    },
+    {
+     "method": "onChangeNotice",
+     "types": [
+      "Master"
+     ],
+     "line": 53
+    },
+    {
+     "method": "onCheckInviteRequest",
+     "types": [
+      "Client",
+      "Server"
+     ],
+     "line": 60
+    },
+    {
+     "method": "onDissolveGuild",
+     "types": [
+      "Client"
+     ],
+     "line": 76
+    },
+    {
+     "method": "onEstablishGuild_Master",
+     "types": [
+      "Master"
+     ],
+     "line": 40
+    },
+    {
+     "method": "onEstablishGuild_Server",
+     "types": [
+      "Server"
+     ],
+     "line": 39
+    },
+    {
+     "method": "onEstablishGuild_ServerResult",
+     "types": [
+      "Server"
+     ],
+     "line": 41
+    },
+    {
+     "method": "onGuildChat",
+     "types": [
+      "Client"
+     ],
+     "line": 72
+    },
+    {
+     "method": "onInvite",
+     "types": [
+      "Server",
+      "Master"
+     ],
+     "line": 44
+    },
+    {
+     "method": "onInviteAcceptFail",
+     "types": [
+      "Client"
+     ],
+     "line": 37
+    },
+    {
+     "method": "onInviteRequestAccept",
+     "types": [
+      "Client"
+     ],
+     "line": 63
+    },
+    {
+     "method": "onInviteRequestDeny",
+     "types": [
+      "Client"
+     ],
+     "line": 90
+    },
+    {
+     "method": "onInviteResult",
+     "types": [
+      "Client"
+     ],
+     "line": 45
+    },
+    {
+     "method": "onJoin",
+     "types": [
+      "Master"
+     ],
+     "line": 43
+    },
+    {
+     "method": "onKick",
+     "types": [
+      "Server",
+      "Master"
+     ],
+     "line": 46
+    },
+    {
+     "method": "onKickMember",
+     "types": [
+      "Client"
+     ],
+     "line": 88
+    },
+    {
+     "method": "onLeave",
+     "types": [
+      "Server",
+      "Master"
+     ],
+     "line": 47
+    },
+    {
+     "method": "onLeaveGuild",
+     "types": [
+      "Client"
+     ],
+     "line": 59
+    },
+    {
+     "method": "onLeaveMember",
+     "types": [
+      "Client"
+     ],
+     "line": 87
+    },
+    {
+     "method": "onMapChange",
+     "types": [
+      "Server",
+      "Master"
+     ],
+     "line": 56
+    },
+    {
+     "method": "onMapChangeResult",
+     "types": [
+      "Client"
+     ],
+     "line": 82
+    },
+    {
+     "method": "onMemberConnect",
+     "types": [
+      "Client"
+     ],
+     "line": 70
+    },
+    {
+     "method": "onMemberDisconnect",
+     "types": [
+      "Client"
+     ],
+     "line": 71
+    },
+    {
+     "method": "onNoticeChanged",
+     "types": [
+      "Client"
+     ],
+     "line": 79
+    },
+    {
+     "method": "onPromote",
+     "types": [
+      "Client"
+     ],
+     "line": 80
+    },
+    {
+     "method": "onPromoteFail",
+     "types": [
+      "Client"
+     ],
+     "line": 89
+    },
+    {
+     "method": "onRequestDissolution",
+     "types": [
+      "Master"
+     ],
+     "line": 54
+    },
+    {
+     "method": "onSetGuild",
+     "types": [
+      "Client"
+     ],
+     "line": 57
+    },
+    {
+     "method": "onSetGuildForReplicate",
+     "types": [
+      "Client"
+     ],
+     "line": 64
+    },
+    {
+     "method": "onSetGuild_Server",
+     "types": [
+      "Server"
+     ],
+     "line": 58
+    },
+    {
+     "method": "onUpdateGrade",
+     "types": [
+      "Client"
+     ],
+     "line": 74
+    },
+    {
+     "method": "onUpdateGuildState",
+     "types": [
+      "?"
+     ],
+     "line": 75
+    },
+    {
+     "method": "onUpdateMemeberInfo",
+     "types": [
+      "Client"
+     ],
+     "line": 83
+    },
+    {
+     "method": "promote",
+     "types": [
+      "Server",
+      "Master"
+     ],
+     "line": 48
+    },
+    {
+     "method": "sendChat",
+     "types": [
+      "Master"
+     ],
+     "line": 42
+    }
+   ]
+  },
+  "CAccountBank": {
+   "file": "Class/Main/Item/CAccountBank.lua",
+   "rpcs": [
+    {
+     "method": "BankSort",
+     "types": [
+      "Client",
+      "Server"
+     ],
+     "line": 21
+    }
+   ]
+  },
+  "CEquipment": {
+   "file": "Class/Main/Item/CEquipment.lua",
+   "rpcs": [
+    {
+     "method": "DecreaseDurability",
+     "types": [
+      "Server"
+     ],
+     "line": 98
+    },
+    {
+     "method": "DisableAttributeChanged",
+     "types": [
+      "Client"
+     ],
+     "line": 94
+    },
+    {
+     "method": "LuaDoModification",
+     "types": [
+      "Server",
+      "Master"
+     ],
+     "line": 100
+    },
+    {
+     "method": "NetHairColorInfo",
+     "types": [
+      "Client"
+     ],
+     "line": 90
+    },
+    {
+     "method": "NetHairInfo",
+     "types": [
+      "Client"
+     ],
+     "line": 89
+    },
+    {
+     "method": "NetOnUpdateClient",
+     "types": [
+      "Client"
+     ],
+     "line": 91
+    },
+    {
+     "method": "RedoItemModification",
+     "types": [
+      "Server"
+     ],
+     "line": 97
+    },
+    {
+     "method": "ReloadDescription",
+     "types": [
+      "Client"
+     ],
+     "line": 101
+    },
+    {
+     "method": "SetCasualOptions",
+     "types": [
+      "Server"
+     ],
+     "line": 99
+    },
+    {
+     "method": "SetOnPowerStone",
+     "types": [
+      "Server"
+     ],
+     "line": 92
+    },
+    {
+     "method": "SetOnPowerStoneResult",
+     "types": [
+      "Client"
+     ],
+     "line": 93
+    },
+    {
+     "method": "SetPowerStoneSlot",
+     "types": [
+      "Client"
+     ],
+     "line": 96
+    },
+    {
+     "method": "UpdateRepairHUD",
+     "types": [
+      "Client"
+     ],
+     "line": 95
+    }
+   ]
+  },
+  "CInventory": {
+   "file": "Class/Main/Item/CInventory.lua",
+   "rpcs": [
+    {
+     "method": "CheckAlchemyResult",
+     "types": [
+      "Server"
+     ],
+     "line": 13
+    },
+    {
+     "method": "DecreaseDurabilityItem",
+     "types": [
+      "Server"
+     ],
+     "line": 17
+    },
+    {
+     "method": "GetRepairCostItem",
+     "types": [
+      "Server"
+     ],
+     "line": 18
+    },
+    {
+     "method": "ItemSkillResult",
+     "types": [
+      "Server"
+     ],
+     "line": 10
+    },
+    {
+     "method": "OnCheckAlchemyResult",
+     "types": [
+      "Client"
+     ],
+     "line": 14
+    },
+    {
+     "method": "OnClientSetUseItemInfo",
+     "types": [
+      "Client"
+     ],
+     "line": 16
+    },
+    {
+     "method": "SetRepurchaseItem",
+     "types": [
+      "Client"
+     ],
+     "line": 15
+    },
+    {
+     "method": "onItemSkillResult",
+     "types": [
+      "Client"
+     ],
+     "line": 11
+    }
+   ]
+  },
+  "CItemContainer": {
+   "file": "Class/Main/Item/CItemContainer.lua",
+   "rpcs": [
+    {
+     "method": "AddTab",
+     "types": [
+      "Client",
+      "Server"
+     ],
+     "line": 44
+    },
+    {
+     "method": "BankSort",
+     "types": [
+      "Client",
+      "Server"
+     ],
+     "line": 42
+    },
+    {
+     "method": "NetSetSlotInfo",
+     "types": [
+      "Client"
+     ],
+     "line": 41
+    },
+    {
+     "method": "Popup_AddTabMax",
+     "types": [
+      "Client"
+     ],
+     "line": 45
+    },
+    {
+     "method": "SetSelectTab",
+     "types": [
+      "Server"
+     ],
+     "line": 43
+    }
+   ]
+  },
+  "CItemController": {
+   "file": "Class/Main/Item/CItemController.lua",
+   "rpcs": [
+    {
+     "method": "PickupMove",
+     "types": [
+      "Client"
+     ],
+     "line": 10
+    },
+    {
+     "method": "SetIgnore",
+     "types": [
+      "Client"
+     ],
+     "line": 11
+    }
+   ]
+  },
+  "CItemManager": {
+   "file": "Class/Main/Item/CItemManager.lua",
+   "rpcs": [
+    {
+     "method": "AddItemToPrivateBank",
+     "types": [
+      "Server"
+     ],
+     "line": 229
+    },
+    {
+     "method": "AddItemToPrivateBankResult",
+     "types": [
+      "Client"
+     ],
+     "line": 195
+    },
+    {
+     "method": "AttachCore",
+     "types": [
+      "Server"
+     ],
+     "line": 231
+    },
+    {
+     "method": "AttachRelic",
+     "types": [
+      "Server"
+     ],
+     "line": 230
+    },
+    {
+     "method": "AttachRelicResult",
+     "types": [
+      "Client"
+     ],
+     "line": 196
+    },
+    {
+     "method": "BeforePickupMarbleStone",
+     "types": [
+      "Client"
+     ],
+     "line": 197
+    },
+    {
+     "method": "BuyItemFromCashShopResult",
+     "types": [
+      "Client"
+     ],
+     "line": 198
+    },
+    {
+     "method": "BuyItemFromNPC",
+     "types": [
+      "Server"
+     ],
+     "line": 232
+    },
+    {
+     "method": "BuyItemFromNPCResult",
+     "types": [
+      "Client"
+     ],
+     "line": 199
+    },
+    {
+     "method": "CheckBankCommisionResult",
+     "types": [
+      "Client"
+     ],
+     "line": 200
+    },
+    {
+     "method": "DepositMoneyToPrivateBank",
+     "types": [
+      "Server"
+     ],
+     "line": 233
+    },
+    {
+     "method": "DepositMoneyToPrivateBankResult",
+     "types": [
+      "Client"
+     ],
+     "line": 201
+    },
+    {
+     "method": "Drop",
+     "types": [
+      "Server"
+     ],
+     "line": 234
+    },
+    {
+     "method": "DropMoney",
+     "types": [
+      "Server"
+     ],
+     "line": 235
+    },
+    {
+     "method": "Equip",
+     "types": [
+      "Server"
+     ],
+     "line": 236
+    },
+    {
+     "method": "EquipResult",
+     "types": [
+      "Client"
+     ],
+     "line": 202
+    },
+    {
+     "method": "HideUI",
+     "types": [
+      "Client",
+      "Server"
+     ],
+     "line": 224
+    },
+    {
+     "method": "IdentifyItemResult",
+     "types": [
+      "Client"
+     ],
+     "line": 203
+    },
+    {
+     "method": "ItemCreateSocket",
+     "types": [
+      "Server"
+     ],
+     "line": 225
+    },
+    {
+     "method": "ItemCreateSocketResult",
+     "types": [
+      "Client"
+     ],
+     "line": 187
+    },
+    {
+     "method": "ItemDestoyResult",
+     "types": [
+      "Client"
+     ],
+     "line": 205
+    },
+    {
+     "method": "ItemDisassemble",
+     "types": [
+      "Server"
+     ],
+     "line": 237
+    },
+    {
+     "method": "ItemDisassembleResult",
+     "types": [
+      "Client"
+     ],
+     "line": 206
+    },
+    {
+     "method": "ItemEffectFnCallResult",
+     "types": [
+      "Client",
+      "Server"
+     ],
+     "line": 192
+    },
+    {
+     "method": "ItemFeatureAppraisal",
+     "types": [
+      "Server"
+     ],
+     "line": 226
+    },
+    {
+     "method": "ItemFeatureAppraisalResult",
+     "types": [
+      "Client"
+     ],
+     "line": 188
+    },
+    {
+     "method": "MoveItemInContainer",
+     "types": [
+      "Server"
+     ],
+     "line": 238
+    },
+    {
+     "method": "MoveItemInContainerFail",
+     "types": [
+      "Client"
+     ],
+     "line": 207
+    },
+    {
+     "method": "NLogCashEquip",
+     "types": [
+      "Server"
+     ],
+     "line": 221
+    },
+    {
+     "method": "OnClientGetInventoryItemCountResult",
+     "types": [
+      "Client"
+     ],
+     "line": 189
+    },
+    {
+     "method": "OnClinetContainerItemResult",
+     "types": [
+      "Client"
+     ],
+     "line": 193
+    },
+    {
+     "method": "PetDetectMoneyServer",
+     "types": [
+      "Server"
+     ],
+     "line": 239
+    },
+    {
+     "method": "Pickup",
+     "types": [
+      "Server"
+     ],
+     "line": 240
+    },
+    {
+     "method": "PickupResult",
+     "types": [
+      "Client"
+     ],
+     "line": 186
+    },
+    {
+     "method": "PowerStoneDisassemble",
+     "types": [
+      "Server"
+     ],
+     "line": 241
+    },
+    {
+     "method": "PowerStoneDisassembleResult",
+     "types": [
+      "Client"
+     ],
+     "line": 208
+    },
+    {
+     "method": "RemoveItemFromPrivateBank",
+     "types": [
+      "Server"
+     ],
+     "line": 242
+    },
+    {
+     "method": "RemoveItemFromPrivateBankResult",
+     "types": [
+      "Client"
+     ],
+     "line": 209
+    },
+    {
+     "method": "RepurchaseItemFromNPC",
+     "types": [
+      "Server"
+     ],
+     "line": 243
+    },
+    {
+     "method": "RepurcsaseItemFromNPCResult",
+     "types": [
+      "Client"
+     ],
+     "line": 210
+    },
+    {
+     "method": "SelectEquipmentPageProcess",
+     "types": [
+      "Server"
+     ],
+     "line": 244
+    },
+    {
+     "method": "SelectEquipmentPageReply",
+     "types": [
+      "Client"
+     ],
+     "line": 211
+    },
+    {
+     "method": "SellItemToNPC",
+     "types": [
+      "Server"
+     ],
+     "line": 245
+    },
+    {
+     "method": "SellItemToNPCResult",
+     "types": [
+      "Client"
+     ],
+     "line": 212
+    },
+    {
+     "method": "SetEnChantResult",
+     "types": [
+      "Client"
+     ],
+     "line": 190
+    },
+    {
+     "method": "SetEnChantServer",
+     "types": [
+      "Server"
+     ],
+     "line": 227
+    },
+    {
+     "method": "SetRestoreResult",
+     "types": [
+      "Client"
+     ],
+     "line": 191
+    },
+    {
+     "method": "SetRestoreServer",
+     "types": [
+      "Server"
+     ],
+     "line": 228
+    },
+    {
+     "method": "ShowPetInputPopup",
+     "types": [
+      "Client"
+     ],
+     "line": 256
+    },
+    {
+     "method": "ShowUI",
+     "types": [
+      "Client",
+      "Server"
+     ],
+     "line": 223
+    },
+    {
+     "method": "SocketItemResult",
+     "types": [
+      "Client"
+     ],
+     "line": 220
+    },
+    {
+     "method": "TransformCube",
+     "types": [
+      "Server"
+     ],
+     "line": 246
+    },
+    {
+     "method": "TransformCubeResult",
+     "types": [
+      "Client"
+     ],
+     "line": 213
+    },
+    {
+     "method": "TransformMetal",
+     "types": [
+      "Server"
+     ],
+     "line": 247
+    },
+    {
+     "method": "TransformMetalResult",
+     "types": [
+      "Client"
+     ],
+     "line": 214
+    },
+    {
+     "method": "TransformMultiCube",
+     "types": [
+      "Server"
+     ],
+     "line": 248
+    },
+    {
+     "method": "TransformProduction",
+     "types": [
+      "Server"
+     ],
+     "line": 249
+    },
+    {
+     "method": "TransformProductionResult",
+     "types": [
+      "Client"
+     ],
+     "line": 215
+    },
+    {
+     "method": "TransformRelic",
+     "types": [
+      "Server"
+     ],
+     "line": 250
+    },
+    {
+     "method": "TransformRelicResult",
+     "types": [
+      "Client"
+     ],
+     "line": 216
+    },
+    {
+     "method": "TransmuteFortuneCube",
+     "types": [
+      "Server"
+     ],
+     "line": 251
+    },
+    {
+     "method": "TransmuteFortuneCubeResult",
+     "types": [
+      "Client"
+     ],
+     "line": 217
+    },
+    {
+     "method": "UnEquip",
+     "types": [
+      "Server"
+     ],
+     "line": 252
+    },
+    {
+     "method": "UnEquipResult",
+     "types": [
+      "Client"
+     ],
+     "line": 219
+    },
+    {
+     "method": "UnbindingItemResult",
+     "types": [
+      "Client"
+     ],
+     "line": 218
+    },
+    {
+     "method": "UseItem",
+     "types": [
+      "Server"
+     ],
+     "line": 253
+    },
+    {
+     "method": "UseItemResult",
+     "types": [
+      "Client"
+     ],
+     "line": 194
+    },
+    {
+     "method": "UseVehicleUpItem",
+     "types": [
+      "Server"
+     ],
+     "line": 254
+    },
+    {
+     "method": "VehicleSpeedUpItemResult",
+     "types": [
+      "Client"
+     ],
+     "line": 204
+    },
+    {
+     "method": "WithdrawMoneyFromPrivateBank",
+     "types": [
+      "Server"
+     ],
+     "line": 255
+    },
+    {
+     "method": "WithdrawMoneyFromPrivateBankResult",
+     "types": [
+      "Client"
+     ],
+     "line": 222
+    }
+   ]
+  },
+  "CStatusItem": {
+   "file": "Class/Main/Item/CStatusItem.lua",
+   "rpcs": [
+    {
+     "method": "ItemExpired_Client",
+     "types": [
+      "Client"
+     ],
+     "line": 36
+    },
+    {
+     "method": "NetCallSetFunc",
+     "types": [
+      "Client"
+     ],
+     "line": 34
+    },
+    {
+     "method": "RepairRequest",
+     "types": [
+      "Server"
+     ],
+     "line": 35
+    },
+    {
+     "method": "RepairResult",
+     "types": [
+      "?"
+     ],
+     "line": 31
+    },
+    {
+     "method": "c_SetBinded",
+     "types": [
+      "?"
+     ],
+     "line": 32
+    },
+    {
+     "method": "onSaveRelation",
+     "types": [
+      "Master"
+     ],
+     "line": 33
+    }
+   ]
+  },
+  "Exchanger": {
+   "file": "Class/Main/Item/Exchanger.lua",
+   "rpcs": [
+    {
+     "method": "AddItem",
+     "types": [
+      "Server"
+     ],
+     "line": 36
+    },
+    {
+     "method": "AddItemForBossCard",
+     "types": [
+      "Server"
+     ],
+     "line": 37
+    },
+    {
+     "method": "AddMoney",
+     "types": [
+      "Server"
+     ],
+     "line": 38
+    },
+    {
+     "method": "AuctionAccept",
+     "types": [
+      "Server"
+     ],
+     "line": 50
+    },
+    {
+     "method": "AuctionCancel",
+     "types": [
+      "Server"
+     ],
+     "line": 48
+    },
+    {
+     "method": "AuctionDeny",
+     "types": [
+      "Server"
+     ],
+     "line": 49
+    },
+    {
+     "method": "AuctionRequest",
+     "types": [
+      "Server"
+     ],
+     "line": 47
+    },
+    {
+     "method": "Cancel",
+     "types": [
+      "Server"
+     ],
+     "line": 39
+    },
+    {
+     "method": "HideDialog",
+     "types": [
+      "Client"
+     ],
+     "line": 29
+    },
+    {
+     "method": "NetLogError",
+     "types": [
+      "Client"
+     ],
+     "line": 27
+    },
+    {
+     "method": "Ok",
+     "types": [
+      "Server"
+     ],
+     "line": 40
+    },
+    {
+     "method": "OnCancel",
+     "types": [
+      "Client"
+     ],
+     "line": 30
+    },
+    {
+     "method": "OnClientActionRequest",
+     "types": [
+      "Client"
+     ],
+     "line": 31
+    },
+    {
+     "method": "OnClientAuctionAccept",
+     "types": [
+      "Client"
+     ],
+     "line": 23
+    },
+    {
+     "method": "OnClientAuctionDeny",
+     "types": [
+      "Client"
+     ],
+     "line": 24
+    },
+    {
+     "method": "OnFail",
+     "types": [
+      "Client"
+     ],
+     "line": 32
+    },
+    {
+     "method": "OnFailOther",
+     "types": [
+      "Client"
+     ],
+     "line": 35
+    },
+    {
+     "method": "OnRequest",
+     "types": [
+      "Client"
+     ],
+     "line": 46
+    },
+    {
+     "method": "OnRequestResult",
+     "types": [
+      "Server"
+     ],
+     "line": 41
+    },
+    {
+     "method": "OnSuccess",
+     "types": [
+      "Client"
+     ],
+     "line": 33
+    },
+    {
+     "method": "OnSuccessAuction",
+     "types": [
+      "Server"
+     ],
+     "line": 51
+    },
+    {
+     "method": "OnTraderClientAuctionAccept",
+     "types": [
+      "Client"
+     ],
+     "line": 25
+    },
+    {
+     "method": "OnTraderClientAuctionCancel",
+     "types": [
+      "Client"
+     ],
+     "line": 26
+    },
+    {
+     "method": "OnTraderClientAuctionRequest",
+     "types": [
+      "Client"
+     ],
+     "line": 34
+    },
+    {
+     "method": "RemoveItem",
+     "types": [
+      "Server"
+     ],
+     "line": 42
+    },
+    {
+     "method": "RemoveMoney",
+     "types": [
+      "Server"
+     ],
+     "line": 43
+    },
+    {
+     "method": "Request",
+     "types": [
+      "Server"
+     ],
+     "line": 44
+    },
+    {
+     "method": "RequestResult",
+     "types": [
+      "Client"
+     ],
+     "line": 28
+    },
+    {
+     "method": "Trade",
+     "types": [
+      "Server"
+     ],
+     "line": 45
+    }
+   ]
+  },
+  "PersonalStore": {
+   "file": "Class/Main/Item/PersonalStore.lua",
+   "rpcs": [
+    {
+     "method": "CloseStore",
+     "types": [
+      "Server"
+     ],
+     "line": 16
+    },
+    {
+     "method": "CloseStoreResult",
+     "types": [
+      "Client"
+     ],
+     "line": 20
+    },
+    {
+     "method": "CloseStoreTagUpdate",
+     "types": [
+      "Client"
+     ],
+     "line": 24
+    },
+    {
+     "method": "DetachItemInStore",
+     "types": [
+      "Server"
+     ],
+     "line": 29
+    },
+    {
+     "method": "EnterStore",
+     "types": [
+      "Server"
+     ],
+     "line": 17
+    },
+    {
+     "method": "ItemBuyResult",
+     "types": [
+      "Client"
+     ],
+     "line": 13
+    },
+    {
+     "method": "ItemSellResult",
+     "types": [
+      "Client"
+     ],
+     "line": 28
+    },
+    {
+     "method": "LeaveStore",
+     "types": [
+      "Server"
+     ],
+     "line": 18
+    },
+    {
+     "method": "ModifyStore",
+     "types": [
+      "Server"
+     ],
+     "line": 21
+    },
+    {
+     "method": "ModifyStoreResult",
+     "types": [
+      "Client"
+     ],
+     "line": 22
+    },
+    {
+     "method": "ModifyStoreTagUpdate",
+     "types": [
+      "Client"
+     ],
+     "line": 25
+    },
+    {
+     "method": "RequestBuyItem",
+     "types": [
+      "Server"
+     ],
+     "line": 30
+    },
+    {
+     "method": "ResultDetachItemInStore",
+     "types": [
+      "Client"
+     ],
+     "line": 23
+    },
+    {
+     "method": "StartStore",
+     "types": [
+      "Server"
+     ],
+     "line": 27
+    },
+    {
+     "method": "StartStoreResult",
+     "types": [
+      "Client"
+     ],
+     "line": 26
+    },
+    {
+     "method": "UpdateItemListForStackable",
+     "types": [
+      "Client"
+     ],
+     "line": 19
+    },
+    {
+     "method": "onClientEnterStore",
+     "types": [
+      "Client"
+     ],
+     "line": 14
+    },
+    {
+     "method": "onClientLeaveStore",
+     "types": [
+      "Client"
+     ],
+     "line": 15
+    }
+   ]
+  },
+  "Party": {
+   "file": "Class/Main/Party/Party.lua",
+   "rpcs": [
+    {
+     "method": "ClearGuildData",
+     "types": [
+      "Server",
+      "Master"
+     ],
+     "line": 51
+    },
+    {
+     "method": "DenyRequestParty",
+     "types": [
+      "Server",
+      "Master"
+     ],
+     "line": 54
+    },
+    {
+     "method": "Master_setChannelId",
+     "types": [
+      "Master"
+     ],
+     "line": 37
+    },
+    {
+     "method": "OnSetMessage",
+     "types": [
+      "Client"
+     ],
+     "line": 53
+    },
+    {
+     "method": "OnSetPartyInfo",
+     "types": [
+      "Server",
+      "Master"
+     ],
+     "line": 52
+    },
+    {
+     "method": "RequestGuildConfirm",
+     "types": [
+      "Server",
+      "Master"
+     ],
+     "line": 49
+    },
+    {
+     "method": "Server_setChannelId",
+     "types": [
+      "Server"
+     ],
+     "line": 44
+    },
+    {
+     "method": "SetPickupRuleUpdate",
+     "types": [
+      "Server"
+     ],
+     "line": 46
+    },
+    {
+     "method": "connect",
+     "types": [
+      "Server",
+      "Master"
+     ],
+     "line": 36
+    },
+    {
+     "method": "onAdd",
+     "types": [
+      "Server"
+     ],
+     "line": 38
+    },
+    {
+     "method": "onAddOfflineMember",
+     "types": [
+      "Client",
+      "Server"
+     ],
+     "line": 39
+    },
+    {
+     "method": "onChannelAdded",
+     "types": [
+      "Server"
+     ],
+     "line": 40
+    },
+    {
+     "method": "onDeleteOfflineMember",
+     "types": [
+      "Client",
+      "Server"
+     ],
+     "line": 41
+    },
+    {
+     "method": "onDisconnect",
+     "types": [
+      "Server",
+      "Master"
+     ],
+     "line": 42
+    },
+    {
+     "method": "onMemberChange",
+     "types": [
+      "Server"
+     ],
+     "line": 43
+    },
+    {
+     "method": "onPromote",
+     "types": [
+      "Client",
+      "Server"
+     ],
+     "line": 48
+    },
+    {
+     "method": "onRemove",
+     "types": [
+      "Server"
+     ],
+     "line": 47
+    },
+    {
+     "method": "onRequestGuildConfirm",
+     "types": [
+      "Server",
+      "Master"
+     ],
+     "line": 50
+    },
+    {
+     "method": "onSummon",
+     "types": [
+      "Server"
+     ],
+     "line": 55
+    },
+    {
+     "method": "setGuildEstablishing",
+     "types": [
+      "Server",
+      "Master"
+     ],
+     "line": 45
+    }
+   ]
+  },
+  "PartyList": {
+   "file": "Class/Main/Party/PartyList.lua",
+   "rpcs": [
+    {
+     "method": "RequestPartyList",
+     "types": [
+      "Server"
+     ],
+     "line": 13
+    },
+    {
+     "method": "RequestPartyListResult",
+     "types": [
+      "Client"
+     ],
+     "line": 12
+    }
+   ]
+  },
+  "PartyProxy": {
+   "file": "Class/Main/Party/PartyProxy.lua",
+   "rpcs": [
+    {
+     "method": "AddInvitationJob",
+     "types": [
+      "Client"
+     ],
+     "line": 83
+    },
+    {
+     "method": "CheckRecallStart",
+     "types": [
+      "Server"
+     ],
+     "line": 32
+    },
+    {
+     "method": "ClearGuildData",
+     "types": [
+      "Server",
+      "Master"
+     ],
+     "line": 73
+    },
+    {
+     "method": "DenyRequestParty",
+     "types": [
+      "Master"
+     ],
+     "line": 95
+    },
+    {
+     "method": "DenyRequestRecall",
+     "types": [
+      "Server",
+      "Master"
+     ],
+     "line": 88
+    },
+    {
+     "method": "Dice",
+     "types": [
+      "?"
+     ],
+     "line": 91
+    },
+    {
+     "method": "DicePickupItemResult",
+     "types": [
+      "Client"
+     ],
+     "line": 85
+    },
+    {
+     "method": "DiceResult",
+     "types": [
+      "Client"
+     ],
+     "line": 92
+    },
+    {
+     "method": "GetZoneDataForCreateParty",
+     "types": [
+      "Client"
+     ],
+     "line": 44
+    },
+    {
+     "method": "KickCheckAndMasterCall",
+     "types": [
+      "Server"
+     ],
+     "line": 81
+    },
+    {
+     "method": "LookForParty",
+     "types": [
+      "Client",
+      "Server"
+     ],
+     "line": 74
+    },
+    {
+     "method": "OnCheckRecallStart",
+     "types": [
+      "Client"
+     ],
+     "line": 33
+    },
+    {
+     "method": "OnCheckRecallStart_Server",
+     "types": [
+      "Server"
+     ],
+     "line": 34
+    },
+    {
+     "method": "OnCheckRequestJoin",
+     "types": [
+      "Client"
+     ],
+     "line": 35
+    },
+    {
+     "method": "OnClientBroadcast",
+     "types": [
+      "Client"
+     ],
+     "line": 101
+    },
+    {
+     "method": "OnGetZoneDataForCreateParty",
+     "types": [
+      "Master"
+     ],
+     "line": 45
+    },
+    {
+     "method": "OnPartyMemberCountUpdate",
+     "types": [
+      "Client",
+      "Server"
+     ],
+     "line": 47
+    },
+    {
+     "method": "OnRequestPartyInfoByIDResult",
+     "types": [
+      "Client"
+     ],
+     "line": 89
+    },
+    {
+     "method": "OnSetPartyInfo",
+     "types": [
+      "Client"
+     ],
+     "line": 110
+    },
+    {
+     "method": "OnShowInviteConfirm",
+     "types": [
+      "Client"
+     ],
+     "line": 52
+    },
+    {
+     "method": "OnShowRequestConfirm",
+     "types": [
+      "Client"
+     ],
+     "line": 53
+    },
+    {
+     "method": "OpenInviteDialog",
+     "types": [
+      "Server",
+      "Master"
+     ],
+     "line": 58
+    },
+    {
+     "method": "OpenRequestDialog",
+     "types": [
+      "Server",
+      "Master"
+     ],
+     "line": 59
+    },
+    {
+     "method": "PartyPickupResult",
+     "types": [
+      "Client"
+     ],
+     "line": 60
+    },
+    {
+     "method": "PartyRecall",
+     "types": [
+      "Server"
+     ],
+     "line": 19
+    },
+    {
+     "method": "PartyRecallCancel",
+     "types": [
+      "Server"
+     ],
+     "line": 20
+    },
+    {
+     "method": "PartySendMassage",
+     "types": [
+      "Server"
+     ],
+     "line": 96
+    },
+    {
+     "method": "ReplyCheckPartyPlayerState",
+     "types": [
+      "Client"
+     ],
+     "line": 61
+    },
+    {
+     "method": "RequestCheckPartyPlayerState",
+     "types": [
+      "Server"
+     ],
+     "line": 62
+    },
+    {
+     "method": "RequestDicePickupItem",
+     "types": [
+      "Client"
+     ],
+     "line": 63
+    },
+    {
+     "method": "RequestPartyInfoByID",
+     "types": [
+      "Server"
+     ],
+     "line": 90
+    },
+    {
+     "method": "SetPartyInfo",
+     "types": [
+      "Server",
+      "Master"
+     ],
+     "line": 84
+    },
+    {
+     "method": "SetPickupRule",
+     "types": [
+      "Server",
+      "Master"
+     ],
+     "line": 66
+    },
+    {
+     "method": "SetPickupRuleResult",
+     "types": [
+      "Client"
+     ],
+     "line": 65
+    },
+    {
+     "method": "SetRequestParty",
+     "types": [
+      "Master"
+     ],
+     "line": 69
+    },
+    {
+     "method": "SetRequestPartyMessageResult",
+     "types": [
+      "Client",
+      "Server"
+     ],
+     "line": 67
+    },
+    {
+     "method": "SetRequestPartyRequestResult",
+     "types": [
+      "Client",
+      "Server"
+     ],
+     "line": 87
+    },
+    {
+     "method": "SetRequestPartyResult",
+     "types": [
+      "Client",
+      "Server"
+     ],
+     "line": 68
+    },
+    {
+     "method": "ShowContextMenu",
+     "types": [
+      "Client"
+     ],
+     "line": 70
+    },
+    {
+     "method": "ShowContextMenuEx",
+     "types": [
+      "Client"
+     ],
+     "line": 82
+    },
+    {
+     "method": "UpdatePartyBuddyBuff",
+     "types": [
+      "Server"
+     ],
+     "line": 94
+    },
+    {
+     "method": "UpdatePartyBuddyList",
+     "types": [
+      "Master"
+     ],
+     "line": 93
+    },
+    {
+     "method": "chat",
+     "types": [
+      "Master"
+     ],
+     "line": 29
+    },
+    {
+     "method": "checkPartyState",
+     "types": [
+      "Server",
+      "Master"
+     ],
+     "line": 77
+    },
+    {
+     "method": "checkPartyStateInChat",
+     "types": [
+      "Server",
+      "Master"
+     ],
+     "line": 76
+    },
+    {
+     "method": "checkRequestJoin",
+     "types": [
+      "Server",
+      "Master"
+     ],
+     "line": 79
+    },
+    {
+     "method": "deleteInvitationsMaster",
+     "types": [
+      "Master"
+     ],
+     "line": 86
+    },
+    {
+     "method": "invite",
+     "types": [
+      "Master"
+     ],
+     "line": 27
+    },
+    {
+     "method": "inviteByPid",
+     "types": [
+      "Master"
+     ],
+     "line": 78
+    },
+    {
+     "method": "inviteCheckAndMasterCall",
+     "types": [
+      "Server"
+     ],
+     "line": 80
+    },
+    {
+     "method": "inviteRequestAccept",
+     "types": [
+      "Server",
+      "Master"
+     ],
+     "line": 21
+    },
+    {
+     "method": "inviteRequestDeny",
+     "types": [
+      "Server",
+      "Master"
+     ],
+     "line": 22
+    },
+    {
+     "method": "inviteStateDeny",
+     "types": [
+      "Server",
+      "Master"
+     ],
+     "line": 23
+    },
+    {
+     "method": "inviteWaitingCancel",
+     "types": [
+      "Server",
+      "Master"
+     ],
+     "line": 24
+    },
+    {
+     "method": "kick",
+     "types": [
+      "Server",
+      "Master"
+     ],
+     "line": 25
+    },
+    {
+     "method": "leave",
+     "types": [
+      "Server",
+      "Master"
+     ],
+     "line": 26
+    },
+    {
+     "method": "onAcceptRequestParty",
+     "types": [
+      "Server",
+      "Master"
+     ],
+     "line": 31
+    },
+    {
+     "method": "onCancelEstablishGuildByLeave",
+     "types": [
+      "Client"
+     ],
+     "line": 100
+    },
+    {
+     "method": "onClearInvitations",
+     "types": [
+      "Client",
+      "Server"
+     ],
+     "line": 36
+    },
+    {
+     "method": "onDenyRequestParty",
+     "types": [
+      "Client"
+     ],
+     "line": 37
+    },
+    {
+     "method": "onEstablishGuildConfirm",
+     "types": [
+      "Client"
+     ],
+     "line": 109
+    },
+    {
+     "method": "onEstablishGuildConfirmResult",
+     "types": [
+      "Client"
+     ],
+     "line": 97
+    },
+    {
+     "method": "onInviteAcceptEvent",
+     "types": [
+      "Client"
+     ],
+     "line": 38
+    },
+    {
+     "method": "onInviteCancelEvent",
+     "types": [
+      "Client"
+     ],
+     "line": 39
+    },
+    {
+     "method": "onInviteDenyEvent",
+     "types": [
+      "Client"
+     ],
+     "line": 40
+    },
+    {
+     "method": "onInviteRequestEvent",
+     "types": [
+      "Client"
+     ],
+     "line": 41
+    },
+    {
+     "method": "onInviteStateDenyEvent",
+     "types": [
+      "Client"
+     ],
+     "line": 42
+    },
+    {
+     "method": "onPartyChatEvent",
+     "types": [
+      "Client"
+     ],
+     "line": 108
+    },
+    {
+     "method": "onPartyConnectEvent",
+     "types": [
+      "Client"
+     ],
+     "line": 102
+    },
+    {
+     "method": "onPartyDisconnectEvent",
+     "types": [
+      "Client"
+     ],
+     "line": 103
+    },
+    {
+     "method": "onPartyFinish",
+     "types": [
+      "Client"
+     ],
+     "line": 99
+    },
+    {
+     "method": "onPartyJoinEvent",
+     "types": [
+      "Client"
+     ],
+     "line": 104
+    },
+    {
+     "method": "onPartyKickEvent",
+     "types": [
+      "Client"
+     ],
+     "line": 107
+    },
+    {
+     "method": "onPartyLeaveEvent",
+     "types": [
+      "Client"
+     ],
+     "line": 105
+    },
+    {
+     "method": "onPartyMaintainEvent",
+     "types": [
+      "Client"
+     ],
+     "line": 46
+    },
+    {
+     "method": "onPartyPromoteEvent",
+     "types": [
+      "Client"
+     ],
+     "line": 106
+    },
+    {
+     "method": "onPartyRecallCancelEvent",
+     "types": [
+      "Client"
+     ],
+     "line": 48
+    },
+    {
+     "method": "onPartyStart",
+     "types": [
+      "Client"
+     ],
+     "line": 98
+    },
+    {
+     "method": "onRecallRequestEvent",
+     "types": [
+      "Client"
+     ],
+     "line": 49
+    },
+    {
+     "method": "onRequestGuildConfirm",
+     "types": [
+      "Server",
+      "Master"
+     ],
+     "line": 50
+    },
+    {
+     "method": "onRequestJoin",
+     "types": [
+      "Client"
+     ],
+     "line": 51
+    },
+    {
+     "method": "onSummon",
+     "types": [
+      "Server"
+     ],
+     "line": 54
+    },
+    {
+     "method": "onSummonAcceptEvent",
+     "types": [
+      "Client"
+     ],
+     "line": 55
+    },
+    {
+     "method": "onSummonDenyEvent",
+     "types": [
+      "Client"
+     ],
+     "line": 56
+    },
+    {
+     "method": "onSummonRequestEvent",
+     "types": [
+      "Client"
+     ],
+     "line": 57
+    },
+    {
+     "method": "onleave",
+     "types": [
+      "Client",
+      "Server"
+     ],
+     "line": 43
+    },
+    {
+     "method": "promote",
+     "types": [
+      "Server",
+      "Master"
+     ],
+     "line": 28
+    },
+    {
+     "method": "requestJoinConfirm",
+     "types": [
+      "Server",
+      "Master"
+     ],
+     "line": 64
+    },
+    {
+     "method": "requestToLeader",
+     "types": [
+      "Server",
+      "Master"
+     ],
+     "line": 75
+    },
+    {
+     "method": "summon",
+     "types": [
+      "Master"
+     ],
+     "line": 30
+    },
+    {
+     "method": "summonRequestAccept",
+     "types": [
+      "Server",
+      "Master"
+     ],
+     "line": 71
+    },
+    {
+     "method": "summonRequestDeny",
+     "types": [
+      "Server",
+      "Master"
+     ],
+     "line": 72
+    }
+   ]
+  },
+  "PetController": {
+   "file": "Class/Main/Pet/PetController.lua",
+   "rpcs": [
+    {
+     "method": "TalkToPlayer",
+     "types": [
+      "?"
+     ],
+     "line": 32
+    },
+    {
+     "method": "onPut",
+     "types": [
+      "?"
+     ],
+     "line": 29
+    },
+    {
+     "method": "onTeleport",
+     "types": [
+      "?"
+     ],
+     "line": 30
+    },
+    {
+     "method": "remove",
+     "types": [
+      "?"
+     ],
+     "line": 28
+    },
+    {
+     "method": "teleport",
+     "types": [
+      "?"
+     ],
+     "line": 31
+    }
+   ]
+  },
+  "PetStatus": {
+   "file": "Class/Main/Pet/PetStatus.lua",
+   "rpcs": [
+    {
+     "method": "AddCoreInfoClient",
+     "types": [
+      "Client"
+     ],
+     "line": 26
+    },
+    {
+     "method": "ChangePowerValueResult",
+     "types": [
+      "Client"
+     ],
+     "line": 24
+    },
+    {
+     "method": "IncreaseRelationShipResult",
+     "types": [
+      "Client"
+     ],
+     "line": 23
+    },
+    {
+     "method": "LevelUpResult",
+     "types": [
+      "Client"
+     ],
+     "line": 25
+    },
+    {
+     "method": "RenamePetClient",
+     "types": [
+      "Client"
+     ],
+     "line": 27
+    }
+   ]
+  },
+  "Quest": {
+   "file": "Class/Main/Quest/Quest.lua",
+   "rpcs": [
+    {
+     "method": "MasterOnUpdateCheck",
+     "types": [
+      "?"
+     ],
+     "line": 26
+    },
+    {
+     "method": "ServerOnUpdataCheck",
+     "types": [
+      "?"
+     ],
+     "line": 27
+    }
+   ]
+  },
+  "QuestManager": {
+   "file": "Class/Main/Quest/QuestManager.lua",
+   "rpcs": [
+    {
+     "method": "AllClearBingoMission",
+     "types": [
+      "Server"
+     ],
+     "line": 85
+    },
+    {
+     "method": "BingoCompleteCenter",
+     "types": [
+      "Server"
+     ],
+     "line": 90
+    },
+    {
+     "method": "BingoSetTableUI",
+     "types": [
+      "Client"
+     ],
+     "line": 71
+    },
+    {
+     "method": "BingoStateNotify",
+     "types": [
+      "Client"
+     ],
+     "line": 79
+    },
+    {
+     "method": "CanStartBingo",
+     "types": [
+      "Server"
+     ],
+     "line": 36
+    },
+    {
+     "method": "CancelMission",
+     "types": [
+      "Server"
+     ],
+     "line": 62
+    },
+    {
+     "method": "CreateBingoBoard",
+     "types": [
+      "Server"
+     ],
+     "line": 69
+    },
+    {
+     "method": "CreateBingoCell",
+     "types": [
+      "Server"
+     ],
+     "line": 70
+    },
+    {
+     "method": "DeltaQuestTimestamp",
+     "types": [
+      "Client",
+      "Server"
+     ],
+     "line": 60
+    },
+    {
+     "method": "ForceClearMission",
+     "types": [
+      "Server"
+     ],
+     "line": 86
+    },
+    {
+     "method": "ForceResetWeeklyBingoData",
+     "types": [
+      "Server"
+     ],
+     "line": 87
+    },
+    {
+     "method": "ForceWeeklyBingoMission",
+     "types": [
+      "Server"
+     ],
+     "line": 88
+    },
+    {
+     "method": "InitBingoData",
+     "types": [
+      "Server"
+     ],
+     "line": 89
+    },
+    {
+     "method": "InsMissionEndClient",
+     "types": [
+      "Client"
+     ],
+     "line": 92
+    },
+    {
+     "method": "InsMissionStartClient",
+     "types": [
+      "Client"
+     ],
+     "line": 91
+    },
+    {
+     "method": "LuckyCellProc",
+     "types": [
+      "Client"
+     ],
+     "line": 73
+    },
+    {
+     "method": "MasterOnPushCheck",
+     "types": [
+      "Master"
+     ],
+     "line": 52
+    },
+    {
+     "method": "MissionCompleteResult",
+     "types": [
+      "Client"
+     ],
+     "line": 81
+    },
+    {
+     "method": "NotifyAutoQuestComplete",
+     "types": [
+      "Client"
+     ],
+     "line": 56
+    },
+    {
+     "method": "NotifyClientQuestAdd",
+     "types": [
+      "Client"
+     ],
+     "line": 39
+    },
+    {
+     "method": "NotifyClientQuestFinish",
+     "types": [
+      "Client"
+     ],
+     "line": 38
+    },
+    {
+     "method": "Notify_BingoComplete",
+     "types": [
+      "Client"
+     ],
+     "line": 80
+    },
+    {
+     "method": "OnChangeMissionQuest",
+     "types": [
+      "Server"
+     ],
+     "line": 50
+    },
+    {
+     "method": "OnClientSetQuestAlarmResult",
+     "types": [
+      "Client"
+     ],
+     "line": 46
+    },
+    {
+     "method": "OnMissionStepAlarm",
+     "types": [
+      "Server"
+     ],
+     "line": 43
+    },
+    {
+     "method": "OnNotifyUpdateMissionQuest",
+     "types": [
+      "Client"
+     ],
+     "line": 41
+    },
+    {
+     "method": "OnSelectMissionQuest",
+     "types": [
+      "Server"
+     ],
+     "line": 44
+    },
+    {
+     "method": "OnServerSetQuestAlarm",
+     "types": [
+      "Server"
+     ],
+     "line": 45
+    },
+    {
+     "method": "OnSetFirstMissionQuest",
+     "types": [
+      "Client"
+     ],
+     "line": 47
+    },
+    {
+     "method": "OnUpdateMissionStepList",
+     "types": [
+      "Client"
+     ],
+     "line": 48
+    },
+    {
+     "method": "OnUpdateStepList",
+     "types": [
+      "Client"
+     ],
+     "line": 53
+    },
+    {
+     "method": "OpenBingoBoard",
+     "types": [
+      "Client"
+     ],
+     "line": 84
+    },
+    {
+     "method": "ProcessWeeklyBgEventResult",
+     "types": [
+      "Client"
+     ],
+     "line": 83
+    },
+    {
+     "method": "RequestTimeLimitSync",
+     "types": [
+      "Server"
+     ],
+     "line": 42
+    },
+    {
+     "method": "ResetDailyLimitTime",
+     "types": [
+      "Client",
+      "Server"
+     ],
+     "line": 61
+    },
+    {
+     "method": "ResetEpisodeQuest",
+     "types": [
+      "Server"
+     ],
+     "line": 65
+    },
+    {
+     "method": "Result_SendBingReward",
+     "types": [
+      "Client"
+     ],
+     "line": 78
+    },
+    {
+     "method": "RewardProc_CRCE",
+     "types": [
+      "Server"
+     ],
+     "line": 77
+    },
+    {
+     "method": "RewardProc_CRCEResult",
+     "types": [
+      "Client"
+     ],
+     "line": 76
+    },
+    {
+     "method": "RewardProc_CenterResult",
+     "types": [
+      "Client"
+     ],
+     "line": 75
+    },
+    {
+     "method": "SendWeeklyDataClient",
+     "types": [
+      "Client"
+     ],
+     "line": 82
+    },
+    {
+     "method": "ServerOnPushCheck",
+     "types": [
+      "Server"
+     ],
+     "line": 59
+    },
+    {
+     "method": "SetEpNextQuest",
+     "types": [
+      "Client",
+      "Server"
+     ],
+     "line": 66
+    },
+    {
+     "method": "SetNewQuestAlarm",
+     "types": [
+      "Client",
+      "Server"
+     ],
+     "line": 67
+    },
+    {
+     "method": "SetQuestMonsterList",
+     "types": [
+      "?"
+     ],
+     "line": 68
+    },
+    {
+     "method": "SetQuestRequirementValue",
+     "types": [
+      "Client"
+     ],
+     "line": 94
+    },
+    {
+     "method": "SetSpecialInsMission",
+     "types": [
+      "Server"
+     ],
+     "line": 93
+    },
+    {
+     "method": "SetSyncTimeLimitUI",
+     "types": [
+      "Client"
+     ],
+     "line": 51
+    },
+    {
+     "method": "ShowBingoMissionPopup",
+     "types": [
+      "Client"
+     ],
+     "line": 74
+    },
+    {
+     "method": "UpdateCancelMission",
+     "types": [
+      "Client"
+     ],
+     "line": 72
+    },
+    {
+     "method": "UpdateWeeklyBingoDataResult",
+     "types": [
+      "Client"
+     ],
+     "line": 37
+    },
+    {
+     "method": "addMissionBonus",
+     "types": [
+      "Client",
+      "Server"
+     ],
+     "line": 49
+    },
+    {
+     "method": "addMissionBonusFromClient",
+     "types": [
+      "Server"
+     ],
+     "line": 63
+    },
+    {
+     "method": "autoSignShow",
+     "types": [
+      "Client"
+     ],
+     "line": 54
+    },
+    {
+     "method": "autoSignUpdate",
+     "types": [
+      "Client"
+     ],
+     "line": 57
+    },
+    {
+     "method": "completeAutoSignUpdate",
+     "types": [
+      "Client"
+     ],
+     "line": 58
+    },
+    {
+     "method": "completeautoSignShow",
+     "types": [
+      "Client"
+     ],
+     "line": 55
+    },
+    {
+     "method": "enableFastQuestHack",
+     "types": [
+      "Server"
+     ],
+     "line": 35
+    },
+    {
+     "method": "finishRepeatCollectionQuest",
+     "types": [
+      "Server"
+     ],
+     "line": 64
+    },
+    {
+     "method": "onTest",
+     "types": [
+      "Client"
+     ],
+     "line": 40
+    }
+   ]
+  },
+  "CSkillBook": {
+   "file": "Class/Main/Skill/CSkillBook.lua",
+   "rpcs": [
+    {
+     "method": "AttributeLevelUpEx",
+     "types": [
+      "Server"
+     ],
+     "line": 26
+    },
+    {
+     "method": "ClearSkillPoint",
+     "types": [
+      "Server"
+     ],
+     "line": 30
+    },
+    {
+     "method": "NotifySetEnable",
+     "types": [
+      "Client",
+      "Server",
+      "Master"
+     ],
+     "line": 29
+    },
+    {
+     "method": "OnClearSkillPoint",
+     "types": [
+      "Client"
+     ],
+     "line": 25
+    },
+    {
+     "method": "OnSkillLevelDown",
+     "types": [
+      "Client"
+     ],
+     "line": 24
+    },
+    {
+     "method": "OnSkillLevelUp",
+     "types": [
+      "Client"
+     ],
+     "line": 22
+    },
+    {
+     "method": "SetAttributeLevel_Master",
+     "types": [
+      "?"
+     ],
+     "line": 28
+    },
+    {
+     "method": "SkillBuy",
+     "types": [
+      "Client",
+      "Server"
+     ],
+     "line": 27
+    },
+    {
+     "method": "SkillLevelUp",
+     "types": [
+      "Server"
+     ],
+     "line": 23
+    },
+    {
+     "method": "SkillLevelUpEx",
+     "types": [
+      "Server"
+     ],
+     "line": 21
+    }
+   ]
+  },
+  "CAdminClient": {
+   "file": "ClassEx/ClientOnly/CAdminClient.lua",
+   "rpcs": [
+    {
+     "method": "OnRunAdminCommandAtClient",
+     "types": [
+      "Client"
+     ],
+     "line": 530
+    },
+    {
+     "method": "OnRunCommandResult",
+     "types": [
+      "Client"
+     ],
+     "line": 529
+    }
+   ]
+  },
+  "Component": {
+   "file": "Lib/Component.lua",
+   "rpcs": [
+    {
+     "method": "BroadcastCallRelay",
+     "types": [
+      "Client",
+      "Server",
+      "Master"
+     ],
+     "line": 25
+    },
+    {
+     "method": "OnReplicateCallClient",
+     "types": [
+      "Client",
+      "Server",
+      "Master"
+     ],
+     "line": 26
+    },
+    {
+     "method": "SetVariable",
+     "types": [
+      "Client",
+      "Server",
+      "Master"
+     ],
+     "line": 27
+    },
+    {
+     "method": "SetVariables",
+     "types": [
+      "Client",
+      "Server",
+      "Master"
+     ],
+     "line": 28
+    }
+   ]
+  },
+  "Controller": {
+   "file": "Lib/Com/Controller.lua",
+   "rpcs": [
+    {
+     "method": "ForceRollbackModifier",
+     "types": [
+      "Client",
+      "Server"
+     ],
+     "line": 19
+    }
+   ]
+  },
+  "TSkill_Magician_ChainLightning": {
+   "file": "Object/Main/Skill/Magician/TSkill_Magician_ChainLightning.lua",
+   "rpcs": [
+    {
+     "method": "OnChangeTargets",
+     "types": [
+      "?"
+     ],
+     "line": 19
+    }
+   ]
+  },
+  "TSkill_Magician_Lightning": {
+   "file": "Object/Main/Skill/Magician/TSkill_Magician_Lightning.lua",
+   "rpcs": [
+    {
+     "method": "OnChangeTarget",
+     "types": [
+      "?"
+     ],
+     "line": 24
+    }
+   ]
+  },
+  "TSkill_Magician_LightningCurse": {
+   "file": "Object/Main/Skill/Magician/TSkill_Magician_LightningCurse.lua",
+   "rpcs": [
+    {
+     "method": "OnChangeTarget",
+     "types": [
+      "?"
+     ],
+     "line": 20
+    }
+   ]
+  },
+  "TSkill_Magician_LightningSpark": {
+   "file": "Object/Main/Skill/Magician/TSkill_Magician_LightningSpark.lua",
+   "rpcs": [
+    {
+     "method": "OnChangeTarget",
+     "types": [
+      "?"
+     ],
+     "line": 28
+    }
+   ]
+  },
+  "TSkill_Magician_LightningThunderFog": {
+   "file": "Object/Main/Skill/Magician/TSkill_Magician_LightningThunderFog.lua",
+   "rpcs": [
+    {
+     "method": "OnChangeTarget",
+     "types": [
+      "?"
+     ],
+     "line": 46
+    }
+   ]
+  },
+  "TSkill_Magician_MovingLightning": {
+   "file": "Object/Main/Skill/Magician/TSkill_Magician_MovingLightning.lua",
+   "rpcs": [
+    {
+     "method": "OnChangeTargets",
+     "types": [
+      "?"
+     ],
+     "line": 44
+    }
+   ]
+  },
+  "TSkill_Magician_ContinuousLightning": {
+   "file": "Object/Main/Skill/Magician/LightningMagician/TSkill_Magician_ContinuousLightning.lua",
+   "rpcs": [
+    {
+     "method": "OnChangeTargets",
+     "types": [
+      "Server"
+     ],
+     "line": 22
+    }
+   ]
+  },
+  "TSkill_Monster_Lightning": {
+   "file": "Object/Main/Skill/Monster/TSkill_Monster_Lightning.lua",
+   "rpcs": [
+    {
+     "method": "OnChangeTargets",
+     "types": [
+      "?"
+     ],
+     "line": 40
+    }
+   ]
+  },
+  "TSkill_Monster_LightningCurse_All": {
+   "file": "Object/Main/Skill/Monster/TSkill_Monster_LightningCurse_All.lua",
+   "rpcs": [
+    {
+     "method": "OnChangeTarget",
+     "types": [
+      "?"
+     ],
+     "line": 23
+    }
+   ]
+  }
+ }
+}

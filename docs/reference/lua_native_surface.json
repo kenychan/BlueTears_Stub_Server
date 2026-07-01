@@ -1,0 +1,1280 @@
+{
+ "arrays_count": 23, 
+ "entries_count": 227, 
+ "binary": "NClient_unpacked.exe", 
+ "arrays": [
+  {
+   "array_va": "0x014ce28c", 
+   "count": 4, 
+   "entries": [
+    {
+     "va": "0x00ccf4b0", 
+     "func": null, 
+     "name": "__gc"
+    }, 
+    {
+     "va": "0x00ccf500", 
+     "func": "FUN_00ccf500", 
+     "name": "srand"
+    }, 
+    {
+     "va": "0x00ccf590", 
+     "func": "FUN_00ccf590", 
+     "name": "rand"
+    }, 
+    {
+     "va": "0x00ccf730", 
+     "func": "FUN_00ccf730", 
+     "name": "rand53"
+    }
+   ]
+  }, 
+  {
+   "array_va": "0x014ce2b4", 
+   "count": 4, 
+   "entries": [
+    {
+     "va": "0x00ccf7f0", 
+     "func": null, 
+     "name": "__gc"
+    }, 
+    {
+     "va": "0x00ccf840", 
+     "func": "FUN_00ccf840", 
+     "name": "srand"
+    }, 
+    {
+     "va": "0x00ccf8c0", 
+     "func": "FUN_00ccf8c0", 
+     "name": "rand"
+    }, 
+    {
+     "va": "0x00ccfa10", 
+     "func": "FUN_00ccfa10", 
+     "name": "rand53"
+    }
+   ]
+  }, 
+  {
+   "array_va": "0x014ce2dc", 
+   "count": 5, 
+   "entries": [
+    {
+     "va": "0x00ccf190", 
+     "func": "FUN_00ccf190", 
+     "name": "Random"
+    }, 
+    {
+     "va": "0x00ccf220", 
+     "func": "FUN_00ccf220", 
+     "name": "LCGSRand"
+    }, 
+    {
+     "va": "0x00ccf270", 
+     "func": "FUN_00ccf270", 
+     "name": "LCGRand"
+    }, 
+    {
+     "va": "0x00ccf4a0", 
+     "func": "FUN_00ccf4a0", 
+     "name": "LCG"
+    }, 
+    {
+     "va": "0x00ccf7e0", 
+     "func": "FUN_00ccf7e0", 
+     "name": "MersenneTwister"
+    }
+   ]
+  }, 
+  {
+   "array_va": "0x014ce310", 
+   "count": 7, 
+   "entries": [
+    {
+     "va": "0x00cc92f0", 
+     "func": "FUN_00cc92f0", 
+     "name": "RunLog"
+    }, 
+    {
+     "va": "0x00cc9390", 
+     "func": "FUN_00cc9390", 
+     "name": "RunLogLn"
+    }, 
+    {
+     "va": "0x00cc92f0", 
+     "func": "FUN_00cc92f0", 
+     "name": "RunLog_Service"
+    }, 
+    {
+     "va": "0x00cc9390", 
+     "func": "FUN_00cc9390", 
+     "name": "RunLogLn_Service"
+    }, 
+    {
+     "va": "0x00cc9440", 
+     "func": "FUN_00cc9440", 
+     "name": "RunLogSetOutput"
+    }, 
+    {
+     "va": "0x00cc9510", 
+     "func": null, 
+     "name": "RunLogSetOutputAll"
+    }, 
+    {
+     "va": "0x00cc9550", 
+     "func": "FUN_00cc9550", 
+     "name": "RunLogSetCategoryOption"
+    }
+   ]
+  }, 
+  {
+   "array_va": "0x014ce350", 
+   "count": 7, 
+   "entries": [
+    {
+     "va": "0x00cbddf0", 
+     "func": null, 
+     "name": "RunLog"
+    }, 
+    {
+     "va": "0x00cbddf0", 
+     "func": null, 
+     "name": "RunLogLn"
+    }, 
+    {
+     "va": "0x00cbddf0", 
+     "func": null, 
+     "name": "RunLog_Service"
+    }, 
+    {
+     "va": "0x00cbddf0", 
+     "func": null, 
+     "name": "RunLogLn_Service"
+    }, 
+    {
+     "va": "0x00cbddf0", 
+     "func": null, 
+     "name": "RunLogSetOutput"
+    }, 
+    {
+     "va": "0x00cc9510", 
+     "func": null, 
+     "name": "RunLogSetOutputAll"
+    }, 
+    {
+     "va": "0x00cbddf0", 
+     "func": null, 
+     "name": "RunLogSetCategoryOption"
+    }
+   ]
+  }, 
+  {
+   "array_va": "0x014ce390", 
+   "count": 7, 
+   "entries": [
+    {
+     "va": "0x00cbddf0", 
+     "func": null, 
+     "name": "RunLog"
+    }, 
+    {
+     "va": "0x00cbddf0", 
+     "func": null, 
+     "name": "RunLogLn"
+    }, 
+    {
+     "va": "0x00cc92f0", 
+     "func": "FUN_00cc92f0", 
+     "name": "RunLog_Service"
+    }, 
+    {
+     "va": "0x00cc9390", 
+     "func": "FUN_00cc9390", 
+     "name": "RunLogLn_Service"
+    }, 
+    {
+     "va": "0x00cc9440", 
+     "func": "FUN_00cc9440", 
+     "name": "RunLogSetOutput"
+    }, 
+    {
+     "va": "0x00cc9510", 
+     "func": null, 
+     "name": "RunLogSetOutputAll"
+    }, 
+    {
+     "va": "0x00cc9550", 
+     "func": "FUN_00cc9550", 
+     "name": "RunLogSetCategoryOption"
+    }
+   ]
+  }, 
+  {
+   "array_va": "0x014ce690", 
+   "count": 15, 
+   "entries": [
+    {
+     "va": "0x00c98590", 
+     "func": "FUN_00c98590", 
+     "name": "byte"
+    }, 
+    {
+     "va": "0x00c98790", 
+     "func": "FUN_00c98790", 
+     "name": "char"
+    }, 
+    {
+     "va": "0x00c989d0", 
+     "func": "FUN_00c989d0", 
+     "name": "dump"
+    }, 
+    {
+     "va": "0x00c99870", 
+     "func": "FUN_00c99870", 
+     "name": "find"
+    }, 
+    {
+     "va": "0x00c9a530", 
+     "func": "FUN_00c9a530", 
+     "name": "format"
+    }, 
+    {
+     "va": "0x00c99b90", 
+     "func": null, 
+     "name": "gfind"
+    }, 
+    {
+     "va": "0x00c99a50", 
+     "func": "FUN_00c99a50", 
+     "name": "gmatch"
+    }, 
+    {
+     "va": "0x00c99e20", 
+     "func": "FUN_00c99e20", 
+     "name": "gsub"
+    }, 
+    {
+     "va": "0x00c97e40", 
+     "func": "FUN_00c97e40", 
+     "name": "len"
+    }, 
+    {
+     "va": "0x00c98140", 
+     "func": "FUN_00c98140", 
+     "name": "lower"
+    }, 
+    {
+     "va": "0x00c99890", 
+     "func": "FUN_00c99890", 
+     "name": "match"
+    }, 
+    {
+     "va": "0x00c98480", 
+     "func": "FUN_00c98480", 
+     "name": "rep"
+    }, 
+    {
+     "va": "0x00c97fe0", 
+     "func": "FUN_00c97fe0", 
+     "name": "reverse"
+    }, 
+    {
+     "va": "0x00c97eb0", 
+     "func": "FUN_00c97eb0", 
+     "name": "sub"
+    }, 
+    {
+     "va": "0x00c982e0", 
+     "func": "FUN_00c982e0", 
+     "name": "upper"
+    }
+   ]
+  }, 
+  {
+   "array_va": "0x014ce710", 
+   "count": 28, 
+   "entries": [
+    {
+     "va": "0x00c972a0", 
+     "func": "FUN_00c972a0", 
+     "name": "abs"
+    }, 
+    {
+     "va": "0x00c974a0", 
+     "func": "FUN_00c974a0", 
+     "name": "acos"
+    }, 
+    {
+     "va": "0x00c97460", 
+     "func": "FUN_00c97460", 
+     "name": "asin"
+    }, 
+    {
+     "va": "0x00c97520", 
+     "func": "FUN_00c97520", 
+     "name": "atan2"
+    }, 
+    {
+     "va": "0x00c974e0", 
+     "func": "FUN_00c974e0", 
+     "name": "atan"
+    }, 
+    {
+     "va": "0x00c97570", 
+     "func": "FUN_00c97570", 
+     "name": "ceil"
+    }, 
+    {
+     "va": "0x00c973a0", 
+     "func": "FUN_00c973a0", 
+     "name": "cosh"
+    }, 
+    {
+     "va": "0x00c97360", 
+     "func": "FUN_00c97360", 
+     "name": "cos"
+    }, 
+    {
+     "va": "0x00c977f0", 
+     "func": "FUN_00c977f0", 
+     "name": "deg"
+    }, 
+    {
+     "va": "0x00c977b0", 
+     "func": "FUN_00c977b0", 
+     "name": "exp"
+    }, 
+    {
+     "va": "0x00c975b0", 
+     "func": "FUN_00c975b0", 
+     "name": "floor"
+    }, 
+    {
+     "va": "0x00c975f0", 
+     "func": "FUN_00c975f0", 
+     "name": "fmod"
+    }, 
+    {
+     "va": "0x00c97870", 
+     "func": "FUN_00c97870", 
+     "name": "frexp"
+    }, 
+    {
+     "va": "0x00c978d0", 
+     "func": "FUN_00c978d0", 
+     "name": "ldexp"
+    }, 
+    {
+     "va": "0x00c97770", 
+     "func": "FUN_00c97770", 
+     "name": "log10"
+    }, 
+    {
+     "va": "0x00c97730", 
+     "func": "FUN_00c97730", 
+     "name": "log"
+    }, 
+    {
+     "va": "0x00c97aa0", 
+     "func": "FUN_00c97aa0", 
+     "name": "max"
+    }, 
+    {
+     "va": "0x00c97950", 
+     "func": "FUN_00c97950", 
+     "name": "min"
+    }, 
+    {
+     "va": "0x00c97640", 
+     "func": "FUN_00c97640", 
+     "name": "modf"
+    }, 
+    {
+     "va": "0x00c976e0", 
+     "func": "FUN_00c976e0", 
+     "name": "pow"
+    }, 
+    {
+     "va": "0x00c97830", 
+     "func": "FUN_00c97830", 
+     "name": "rad"
+    }, 
+    {
+     "va": "0x00c97bf0", 
+     "func": "FUN_00c97bf0", 
+     "name": "random"
+    }, 
+    {
+     "va": "0x00c97d40", 
+     "func": "FUN_00c97d40", 
+     "name": "randomseed"
+    }, 
+    {
+     "va": "0x00c97320", 
+     "func": "FUN_00c97320", 
+     "name": "sinh"
+    }, 
+    {
+     "va": "0x00c972e0", 
+     "func": "FUN_00c972e0", 
+     "name": "sin"
+    }, 
+    {
+     "va": "0x00c976a0", 
+     "func": "FUN_00c976a0", 
+     "name": "sqrt"
+    }, 
+    {
+     "va": "0x00c97420", 
+     "func": "FUN_00c97420", 
+     "name": "tanh"
+    }, 
+    {
+     "va": "0x00c973e0", 
+     "func": "FUN_00c973e0", 
+     "name": "tan"
+    }
+   ]
+  }, 
+  {
+   "array_va": "0x014ce7f8", 
+   "count": 14, 
+   "entries": [
+    {
+     "va": "0x00c96d00", 
+     "func": "FUN_00c96d00", 
+     "name": "debug"
+    }, 
+    {
+     "va": "0x00c95ec0", 
+     "func": "FUN_00c95ec0", 
+     "name": "getfenv"
+    }, 
+    {
+     "va": "0x00c96ba0", 
+     "func": "FUN_00c96ba0", 
+     "name": "gethook"
+    }, 
+    {
+     "va": "0x00c960a0", 
+     "func": "FUN_00c960a0", 
+     "name": "getinfo"
+    }, 
+    {
+     "va": "0x00c96420", 
+     "func": "FUN_00c96420", 
+     "name": "getlocal"
+    }, 
+    {
+     "va": "0x00c95db0", 
+     "func": null, 
+     "name": "getregistry"
+    }, 
+    {
+     "va": "0x00c95de0", 
+     "func": "FUN_00c95de0", 
+     "name": "getmetatable"
+    }, 
+    {
+     "va": "0x00c96730", 
+     "func": "FUN_00c96730", 
+     "name": "getupvalue"
+    }, 
+    {
+     "va": "0x00c95ee0", 
+     "func": "FUN_00c95ee0", 
+     "name": "setfenv"
+    }, 
+    {
+     "va": "0x00c969b0", 
+     "func": "FUN_00c969b0", 
+     "name": "sethook"
+    }, 
+    {
+     "va": "0x00c96530", 
+     "func": "FUN_00c96530", 
+     "name": "setlocal"
+    }, 
+    {
+     "va": "0x00c95e30", 
+     "func": "FUN_00c95e30", 
+     "name": "setmetatable"
+    }, 
+    {
+     "va": "0x00c96750", 
+     "func": "FUN_00c96750", 
+     "name": "setupvalue"
+    }, 
+    {
+     "va": "0x00c96f10", 
+     "func": "FUN_00c96f10", 
+     "name": "traceback"
+    }
+   ]
+  }, 
+  {
+   "array_va": "0x014ce898", 
+   "count": 5, 
+   "entries": [
+    {
+     "va": "0x00c94530", 
+     "func": null, 
+     "name": "on"
+    }, 
+    {
+     "va": "0x00c94550", 
+     "func": null, 
+     "name": "off"
+    }, 
+    {
+     "va": "0x00c94560", 
+     "func": "FUN_00c94560", 
+     "name": "debug"
+    }, 
+    {
+     "va": "0x00c945f0", 
+     "func": "FUN_00c945f0", 
+     "name": "compile"
+    }, 
+    {
+     "va": "0x00c94810", 
+     "func": null, 
+     "name": "compilesub"
+    }
+   ]
+  }, 
+  {
+   "array_va": "0x014ce8c8", 
+   "count": 8, 
+   "entries": [
+    {
+     "va": "0x00c95070", 
+     "func": "FUN_00c95070", 
+     "name": "stats"
+    }, 
+    {
+     "va": "0x00c95290", 
+     "func": "FUN_00c95290", 
+     "name": "bytecode"
+    }, 
+    {
+     "va": "0x00c954e0", 
+     "func": "FUN_00c954e0", 
+     "name": "const"
+    }, 
+    {
+     "va": "0x00c955b0", 
+     "func": "FUN_00c955b0", 
+     "name": "upvalue"
+    }, 
+    {
+     "va": "0x00c95680", 
+     "func": "FUN_00c95680", 
+     "name": "closurenup"
+    }, 
+    {
+     "va": "0x00c95870", 
+     "func": "FUN_00c95870", 
+     "name": "mcode"
+    }, 
+    {
+     "va": "0x00c959a0", 
+     "func": "FUN_00c959a0", 
+     "name": "jsubmcode"
+    }, 
+    {
+     "va": "0x00c95a60", 
+     "func": "FUN_00c95a60", 
+     "name": "stackptr"
+    }
+   ]
+  }, 
+  {
+   "array_va": "0x014ce948", 
+   "count": 13, 
+   "entries": [
+    {
+     "va": "0x00c940b0", 
+     "func": null, 
+     "name": "attributes"
+    }, 
+    {
+     "va": "0x00c92d00", 
+     "func": "FUN_00c92d00", 
+     "name": "chdir"
+    }, 
+    {
+     "va": "0x00c92dd0", 
+     "func": null, 
+     "name": "currentdir"
+    }, 
+    {
+     "va": "0x00c93840", 
+     "func": "FUN_00c93840", 
+     "name": "dir"
+    }, 
+    {
+     "va": "0x00c93520", 
+     "func": null, 
+     "name": "link"
+    }, 
+    {
+     "va": "0x00c93290", 
+     "func": "FUN_00c93290", 
+     "name": "lock"
+    }, 
+    {
+     "va": "0x00c93530", 
+     "func": "FUN_00c93530", 
+     "name": "mkdir"
+    }, 
+    {
+     "va": "0x00c93600", 
+     "func": "FUN_00c93600", 
+     "name": "rmdir"
+    }, 
+    {
+     "va": "0x00c940d0", 
+     "func": null, 
+     "name": "symlinkattributes"
+    }, 
+    {
+     "va": "0x00c93240", 
+     "func": "FUN_00c93240", 
+     "name": "setmode"
+    }, 
+    {
+     "va": "0x00c93b00", 
+     "func": "FUN_00c93b00", 
+     "name": "touch"
+    }, 
+    {
+     "va": "0x00c93410", 
+     "func": null, 
+     "name": "unlock"
+    }, 
+    {
+     "va": "0x00c92f40", 
+     "func": null, 
+     "name": "lock_dir"
+    }
+   ]
+  }, 
+  {
+   "array_va": "0x014ce9b8", 
+   "count": 9, 
+   "entries": [
+    {
+     "va": "0x00c92430", 
+     "func": "FUN_00c92430", 
+     "name": "concat"
+    }, 
+    {
+     "va": "0x00c91e90", 
+     "func": null, 
+     "name": "foreach"
+    }, 
+    {
+     "va": "0x00c91d40", 
+     "func": "FUN_00c91d40", 
+     "name": "foreachi"
+    }, 
+    {
+     "va": "0x00c920c0", 
+     "func": "FUN_00c920c0", 
+     "name": "getn"
+    }, 
+    {
+     "va": "0x00c91fc0", 
+     "func": "FUN_00c91fc0", 
+     "name": "maxn"
+    }, 
+    {
+     "va": "0x00c92190", 
+     "func": "FUN_00c92190", 
+     "name": "insert"
+    }, 
+    {
+     "va": "0x00c92290", 
+     "func": null, 
+     "name": "remove"
+    }, 
+    {
+     "va": "0x00c92120", 
+     "func": "FUN_00c92120", 
+     "name": "setn"
+    }, 
+    {
+     "va": "0x00c92b30", 
+     "func": null, 
+     "name": "sort"
+    }
+   ]
+  }, 
+  {
+   "array_va": "0x014cea80", 
+   "count": 12, 
+   "entries": [
+    {
+     "va": "0x00c8fb20", 
+     "func": null, 
+     "name": "clock"
+    }, 
+    {
+     "va": "0x00c8fd60", 
+     "func": "FUN_00c8fd60", 
+     "name": "date"
+    }, 
+    {
+     "va": "0x00c90320", 
+     "func": "FUN_00c90320", 
+     "name": "difftime"
+    }, 
+    {
+     "va": "0x00c8f7b0", 
+     "func": null, 
+     "name": "execute"
+    }, 
+    {
+     "va": "0x00c90450", 
+     "func": null, 
+     "name": "exit"
+    }, 
+    {
+     "va": "0x00c8fa60", 
+     "func": "FUN_00c8fa60", 
+     "name": "getenv"
+    }, 
+    {
+     "va": "0x00c8f830", 
+     "func": "FUN_00c8f830", 
+     "name": "remove"
+    }, 
+    {
+     "va": "0x00c8f8d0", 
+     "func": "FUN_00c8f8d0", 
+     "name": "rename"
+    }, 
+    {
+     "va": "0x00c903a0", 
+     "func": "FUN_00c903a0", 
+     "name": "setlocale"
+    }, 
+    {
+     "va": "0x00c90110", 
+     "func": "FUN_00c90110", 
+     "name": "time"
+    }, 
+    {
+     "va": "0x00c8f9e0", 
+     "func": "FUN_00c8f9e0", 
+     "name": "tmpname"
+    }, 
+    {
+     "va": "0x00c8fb50", 
+     "func": "FUN_00c8fb50", 
+     "name": "fullpath"
+    }
+   ]
+  }, 
+  {
+   "array_va": "0x014ceb28", 
+   "count": 11, 
+   "entries": [
+    {
+     "va": "0x00c8df00", 
+     "func": "FUN_00c8df00", 
+     "name": "close"
+    }, 
+    {
+     "va": "0x00c8f280", 
+     "func": null, 
+     "name": "flush"
+    }, 
+    {
+     "va": "0x00c8e4b0", 
+     "func": null, 
+     "name": "input"
+    }, 
+    {
+     "va": "0x00c8e5c0", 
+     "func": "FUN_00c8e5c0", 
+     "name": "lines"
+    }, 
+    {
+     "va": "0x00c8e010", 
+     "func": "FUN_00c8e010", 
+     "name": "open"
+    }, 
+    {
+     "va": "0x00c8e4d0", 
+     "func": null, 
+     "name": "output"
+    }, 
+    {
+     "va": "0x00c8e120", 
+     "func": "FUN_00c8e120", 
+     "name": "popen"
+    }, 
+    {
+     "va": "0x00c8ed30", 
+     "func": "FUN_00c8ed30", 
+     "name": "read"
+    }, 
+    {
+     "va": "0x00c8e230", 
+     "func": null, 
+     "name": "tmpfile"
+    }, 
+    {
+     "va": "0x00c8dba0", 
+     "func": "FUN_00c8dba0", 
+     "name": "type"
+    }, 
+    {
+     "va": "0x00c8f020", 
+     "func": "FUN_00c8f020", 
+     "name": "write"
+    }
+   ]
+  }, 
+  {
+   "array_va": "0x014ceb88", 
+   "count": 9, 
+   "entries": [
+    {
+     "va": "0x00c8df00", 
+     "func": "FUN_00c8df00", 
+     "name": "close"
+    }, 
+    {
+     "va": "0x00c8f310", 
+     "func": null, 
+     "name": "flush"
+    }, 
+    {
+     "va": "0x00c8e540", 
+     "func": "FUN_00c8e540", 
+     "name": "lines"
+    }, 
+    {
+     "va": "0x00c8ed50", 
+     "func": null, 
+     "name": "read"
+    }, 
+    {
+     "va": "0x00c8f080", 
+     "func": null, 
+     "name": "seek"
+    }, 
+    {
+     "va": "0x00c8f180", 
+     "func": null, 
+     "name": "setvbuf"
+    }, 
+    {
+     "va": "0x00c8f040", 
+     "func": null, 
+     "name": "write"
+    }, 
+    {
+     "va": "0x00c8df90", 
+     "func": "FUN_00c8df90", 
+     "name": "__gc"
+    }, 
+    {
+     "va": "0x00c8dfc0", 
+     "func": "FUN_00c8dfc0", 
+     "name": "__tostring"
+    }
+   ]
+  }, 
+  {
+   "array_va": "0x014cec18", 
+   "count": 28, 
+   "entries": [
+    {
+     "va": "0x00c8c810", 
+     "func": "FUN_00c8c810", 
+     "name": "assert"
+    }, 
+    {
+     "va": "0x00c8bfb0", 
+     "func": "FUN_00c8bfb0", 
+     "name": "collectgarbage"
+    }, 
+    {
+     "va": "0x00c8c770", 
+     "func": null, 
+     "name": "dofile"
+    }, 
+    {
+     "va": "0x00c8b880", 
+     "func": "FUN_00c8b880", 
+     "name": "error"
+    }, 
+    {
+     "va": "0x00c8bf80", 
+     "func": null, 
+     "name": "gcinfo"
+    }, 
+    {
+     "va": "0x00c8bbd0", 
+     "func": "FUN_00c8bbd0", 
+     "name": "getfenv"
+    }, 
+    {
+     "va": "0x00c8b980", 
+     "func": "FUN_00c8b980", 
+     "name": "getmetatable"
+    }, 
+    {
+     "va": "0x00c8c4d0", 
+     "func": null, 
+     "name": "loadfile"
+    }, 
+    {
+     "va": "0x00c8c660", 
+     "func": "FUN_00c8c660", 
+     "name": "load"
+    }, 
+    {
+     "va": "0x00c8c410", 
+     "func": null, 
+     "name": "loadstring"
+    }, 
+    {
+     "va": "0x00c8c110", 
+     "func": null, 
+     "name": "next"
+    }, 
+    {
+     "va": "0x00c8cad0", 
+     "func": "FUN_00c8cad0", 
+     "name": "pcall"
+    }, 
+    {
+     "va": "0x00c8b570", 
+     "func": "FUN_00c8b570", 
+     "name": "print"
+    }, 
+    {
+     "va": "0x00c8bd40", 
+     "func": "FUN_00c8bd40", 
+     "name": "rawequal"
+    }, 
+    {
+     "va": "0x00c8bdf0", 
+     "func": "FUN_00c8bdf0", 
+     "name": "rawget"
+    }, 
+    {
+     "va": "0x00c8beb0", 
+     "func": "FUN_00c8beb0", 
+     "name": "rawset"
+    }, 
+    {
+     "va": "0x00c8c9f0", 
+     "func": "FUN_00c8c9f0", 
+     "name": "select"
+    }, 
+    {
+     "va": "0x00c8bc20", 
+     "func": "FUN_00c8bc20", 
+     "name": "setfenv"
+    }, 
+    {
+     "va": "0x00c8b9f0", 
+     "func": null, 
+     "name": "setmetatable"
+    }, 
+    {
+     "va": "0x00c8b6b0", 
+     "func": "FUN_00c8b6b0", 
+     "name": "tonumber"
+    }, 
+    {
+     "va": "0x00c8ce70", 
+     "func": "FUN_00c8ce70", 
+     "name": "tostring"
+    }, 
+    {
+     "va": "0x00c8c080", 
+     "func": "FUN_00c8c080", 
+     "name": "type"
+    }, 
+    {
+     "va": "0x00c8c8c0", 
+     "func": null, 
+     "name": "unpack"
+    }, 
+    {
+     "va": "0x00c8cb80", 
+     "func": "FUN_00c8cb80", 
+     "name": "xpcall"
+    }, 
+    {
+     "va": "0x00c8d0e0", 
+     "func": "FUN_00c8d0e0", 
+     "name": "getreturntype"
+    }, 
+    {
+     "va": "0x00c8d150", 
+     "func": "FUN_00c8d150", 
+     "name": "getparamtypes"
+    }, 
+    {
+     "va": "0x00c8d1a0", 
+     "func": "FUN_00c8d1a0", 
+     "name": "getsyntaxtype"
+    }, 
+    {
+     "va": "0x00c8cc90", 
+     "func": "FUN_00c8cc90", 
+     "name": "trycall"
+    }
+   ]
+  }, 
+  {
+   "array_va": "0x014ced10", 
+   "count": 7, 
+   "entries": [
+    {
+     "va": "0x00c8d6d0", 
+     "func": "FUN_00c8d6d0", 
+     "name": "create"
+    }, 
+    {
+     "va": "0x00c8d500", 
+     "func": "FUN_00c8d500", 
+     "name": "resume"
+    }, 
+    {
+     "va": "0x00c8d7f0", 
+     "func": null, 
+     "name": "running"
+    }, 
+    {
+     "va": "0x00c8d3a0", 
+     "func": null, 
+     "name": "status"
+    }, 
+    {
+     "va": "0x00c8d7a0", 
+     "func": "FUN_00c8d7a0", 
+     "name": "wrap"
+    }, 
+    {
+     "va": "0x00c8d7d0", 
+     "func": "FUN_00c8d7d0", 
+     "name": "yield"
+    }, 
+    {
+     "va": "0x00c8d660", 
+     "func": "FUN_00c8d660", 
+     "name": "cstacksize"
+    }
+   ]
+  }, 
+  {
+   "array_va": "0x014d02f8", 
+   "count": 10, 
+   "entries": [
+    {
+     "va": "0x00c91a30", 
+     "func": "FUN_00c91a30", 
+     "name": "package"
+    }, 
+    {
+     "va": "0x00c92c60", 
+     "func": "FUN_00c92c60", 
+     "name": "table"
+    }, 
+    {
+     "va": "0x00c8f550", 
+     "func": "FUN_00c8f550", 
+     "name": "io"
+    }, 
+    {
+     "va": "0x00c90480", 
+     "func": "FUN_00c90480", 
+     "name": "os"
+    }, 
+    {
+     "va": "0x00c9aa50", 
+     "func": "FUN_00c9aa50", 
+     "name": "string"
+    }, 
+    {
+     "va": "0x00c97da0", 
+     "func": "FUN_00c97da0", 
+     "name": "math"
+    }, 
+    {
+     "va": "0x00c97270", 
+     "func": "FUN_00c97270", 
+     "name": "debug"
+    }, 
+    {
+     "va": "0x00c95c40", 
+     "func": "FUN_00c95c40", 
+     "name": "jit"
+    }, 
+    {
+     "va": "0x00c9ad10", 
+     "func": null, 
+     "name": "luca"
+    }, 
+    {
+     "va": "0x00c942b0", 
+     "func": "FUN_00c942b0", 
+     "name": "lfs"
+    }
+   ]
+  }, 
+  {
+   "array_va": "0x016f43a8", 
+   "count": 3, 
+   "entries": [
+    {
+     "va": "0x0114d7b0", 
+     "func": "FUN_0114d7b0", 
+     "name": "getaddrinfo"
+    }, 
+    {
+     "va": "0x0114dac0", 
+     "func": "FUN_0114dac0", 
+     "name": "getnameinfo"
+    }, 
+    {
+     "va": "0x0114d760", 
+     "func": "FUN_0114d760", 
+     "name": "freeaddrinfo"
+    }
+   ]
+  }, 
+  {
+   "array_va": "0x016f80e8", 
+   "count": 3, 
+   "entries": [
+    {
+     "va": "0x0114d7b0", 
+     "func": "FUN_0114d7b0", 
+     "name": "getaddrinfo"
+    }, 
+    {
+     "va": "0x0114dac0", 
+     "func": "FUN_0114dac0", 
+     "name": "getnameinfo"
+    }, 
+    {
+     "va": "0x0114d760", 
+     "func": "FUN_0114d760", 
+     "name": "freeaddrinfo"
+    }
+   ]
+  }, 
+  {
+   "array_va": "0x0180f618", 
+   "count": 7, 
+   "entries": [
+    {
+     "va": "0x00cb4390", 
+     "func": null, 
+     "name": "SetBuild"
+    }, 
+    {
+     "va": "0x00cb4440", 
+     "func": null, 
+     "name": "SetBuildName"
+    }, 
+    {
+     "va": "0x00cb4500", 
+     "func": null, 
+     "name": "SetLocale"
+    }, 
+    {
+     "va": "0x00cb45b0", 
+     "func": null, 
+     "name": "SetLocaleName"
+    }, 
+    {
+     "va": "0x00cb4670", 
+     "func": null, 
+     "name": "SetCodePage"
+    }, 
+    {
+     "va": "0x00cb4720", 
+     "func": null, 
+     "name": "SetCodePageName"
+    }, 
+    {
+     "va": "0x00cb47e0", 
+     "func": null, 
+     "name": "SetCharSet"
+    }
+   ]
+  }, 
+  {
+   "array_va": "0x0180f6a0", 
+   "count": 11, 
+   "entries": [
+    {
+     "va": "0x00c93c70", 
+     "func": "FUN_00c93c70", 
+     "name": "mode"
+    }, 
+    {
+     "va": "0x00c93cd0", 
+     "func": "FUN_00c93cd0", 
+     "name": "dev"
+    }, 
+    {
+     "va": "0x00c93d00", 
+     "func": "FUN_00c93d00", 
+     "name": "ino"
+    }, 
+    {
+     "va": "0x00c93d30", 
+     "func": "FUN_00c93d30", 
+     "name": "nlink"
+    }, 
+    {
+     "va": "0x00c93d60", 
+     "func": null, 
+     "name": "uid"
+    }, 
+    {
+     "va": "0x00c93d90", 
+     "func": null, 
+     "name": "gid"
+    }, 
+    {
+     "va": "0x00c93dc0", 
+     "func": null, 
+     "name": "rdev"
+    }, 
+    {
+     "va": "0x00c93df0", 
+     "func": null, 
+     "name": "access"
+    }, 
+    {
+     "va": "0x00c93e10", 
+     "func": null, 
+     "name": "modification"
+    }, 
+    {
+     "va": "0x00c93e30", 
+     "func": null, 
+     "name": "change"
+    }, 
+    {
+     "va": "0x00c93e50", 
+     "func": null, 
+     "name": "size"
+    }
+   ]
+  }
+ ]
+}

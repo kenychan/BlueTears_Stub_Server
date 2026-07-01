@@ -1,0 +1,301 @@
+{
+ "targets": [
+  {
+   "va": "0x00952610", 
+   "string_addrs": [
+    "0x01538fd9", 
+    "0x01539038"
+   ], 
+   "fn_candidates": [
+    "0x00952610"
+   ], 
+   "name": "GetEnvironment", 
+   "status": "resolved"
+  }, 
+  {
+   "va": "0x0094ff00", 
+   "string_addrs": [
+    "0x01538e54", 
+    "0x01539091"
+   ], 
+   "fn_candidates": [
+    "0x0094ff00"
+   ], 
+   "name": "GetNObject", 
+   "status": "resolved"
+  }, 
+  {
+   "string_addrs": [
+    "0x015169b4"
+   ], 
+   "fn_candidates": [
+    "0x00697ea0", 
+    "0x00697f70"
+   ], 
+   "name": "GetUIResourceManager", 
+   "status": "ambiguous"
+  }, 
+  {
+   "va": "0x00697ea0", 
+   "string_addrs": [
+    "0x015169a0"
+   ], 
+   "fn_candidates": [
+    "0x00697ea0"
+   ], 
+   "name": "GetUIControlManager", 
+   "status": "resolved"
+  }, 
+  {
+   "string_addrs": [
+    "0x015172a4"
+   ], 
+   "fn_candidates": [
+    "0x006a3860", 
+    "0x006a3a40"
+   ], 
+   "name": "PushUIEvent", 
+   "status": "ambiguous"
+  }, 
+  {
+   "va": "0x006a3860", 
+   "string_addrs": [
+    "0x01517298"
+   ], 
+   "fn_candidates": [
+    "0x006a3860"
+   ], 
+   "name": "PopUIEvent", 
+   "status": "resolved"
+  }, 
+  {
+   "string_addrs": [
+    "0x0155baec"
+   ], 
+   "fn_candidates": [], 
+   "name": "GetLocale", 
+   "status": "no_fn_near"
+  }, 
+  {
+   "string_addrs": [
+    "0x015169cc"
+   ], 
+   "fn_candidates": [
+    "0x00697f70", 
+    "0x00698040"
+   ], 
+   "name": "D3DCOLOR", 
+   "status": "ambiguous"
+  }, 
+  {
+   "string_addrs": [
+    "0x0155c430"
+   ], 
+   "fn_candidates": [], 
+   "name": "RunLogLn", 
+   "status": "no_fn_near"
+  }, 
+  {
+   "string_addrs": [
+    "0x014beadc"
+   ], 
+   "fn_candidates": [], 
+   "name": "include", 
+   "status": "no_fn_near"
+  }, 
+  {
+   "string_addrs": [
+    "0x01535508"
+   ], 
+   "fn_candidates": [], 
+   "name": "Random", 
+   "status": "no_fn_near"
+  }, 
+  {
+   "string_addrs": [
+    "0x01556cf0"
+   ], 
+   "fn_candidates": [], 
+   "name": "IsClient", 
+   "status": "no_fn_near"
+  }, 
+  {
+   "va": "0x00c48010", 
+   "string_addrs": [
+    "0x015587e8"
+   ], 
+   "fn_candidates": [
+    "0x00c48010"
+   ], 
+   "name": "goLua_CreateObject", 
+   "status": "resolved"
+  }, 
+  {
+   "string_addrs": [
+    "0x01558810"
+   ], 
+   "fn_candidates": [
+    "0x00c483d0", 
+    "0x00c48520"
+   ], 
+   "name": "goLua_RegistObject", 
+   "status": "ambiguous"
+  }, 
+  {
+   "va": "0x00bb7630", 
+   "string_addrs": [
+    "0x01555fd4"
+   ], 
+   "fn_candidates": [
+    "0x00bb7630"
+   ], 
+   "name": "goLua_Pack", 
+   "status": "resolved"
+  }, 
+  {
+   "va": "0x00bb7e70", 
+   "string_addrs": [
+    "0x01555fe0"
+   ], 
+   "fn_candidates": [
+    "0x00bb7e70"
+   ], 
+   "name": "goLua_PackFixed", 
+   "status": "resolved"
+  }, 
+  {
+   "va": "0x00bb8220", 
+   "string_addrs": [
+    "0x01555ff0"
+   ], 
+   "fn_candidates": [
+    "0x00bb8220"
+   ], 
+   "name": "goLua_UnpackFixed", 
+   "status": "resolved"
+  }, 
+  {
+   "string_addrs": [
+    "0x015555d4"
+   ], 
+   "fn_candidates": [], 
+   "name": "goLua_setmetatable", 
+   "status": "no_fn_near"
+  }, 
+  {
+   "string_addrs": [
+    "0x01558e80"
+   ], 
+   "fn_candidates": [
+    "0x00c6ab10", 
+    "0x00c6b780"
+   ], 
+   "name": "goLua_loadfile", 
+   "status": "ambiguous"
+  }, 
+  {
+   "name": "goLua_AddObjectFunction", 
+   "status": "no_string"
+  }, 
+  {
+   "string_addrs": [
+    "0x01558ea8"
+   ], 
+   "fn_candidates": [
+    "0x00c6bc30", 
+    "0x00c6beb0"
+   ], 
+   "name": "reload_file", 
+   "status": "ambiguous"
+  }, 
+  {
+   "string_addrs": [
+    "0x01558824"
+   ], 
+   "fn_candidates": [], 
+   "name": "CreateDeferedTemplate", 
+   "status": "no_fn_near"
+  }, 
+  {
+   "name": "Template", 
+   "status": "no_string"
+  }, 
+  {
+   "string_addrs": [
+    "0x014894fc", 
+    "0x01555710"
+   ], 
+   "fn_candidates": [], 
+   "name": "Class", 
+   "status": "no_fn_near"
+  }, 
+  {
+   "name": "Com", 
+   "status": "no_string"
+  }, 
+  {
+   "name": "GetClass", 
+   "status": "no_string"
+  }, 
+  {
+   "string_addrs": [
+    "0x014c6825", 
+    "0x014c798f", 
+    "0x014c7a87", 
+    "0x014c7b2b", 
+    "0x014c7bbf", 
+    "0x014c849f", 
+    "0x014d1e59", 
+    "0x014d2106", 
+    "0x014d2468", 
+    "0x014d2749", 
+    "0x014d3669", 
+    "0x014d47da", 
+    "0x014d4ec5"
+   ], 
+   "fn_candidates": [], 
+   "name": "CreateObject", 
+   "status": "no_fn_near"
+  }, 
+  {
+   "string_addrs": [
+    "0x015575b8"
+   ], 
+   "fn_candidates": [], 
+   "name": "FindObject", 
+   "status": "no_fn_near"
+  }, 
+  {
+   "string_addrs": [
+    "0x01556d80"
+   ], 
+   "fn_candidates": [], 
+   "name": "SetLuaNetFunc", 
+   "status": "no_fn_near"
+  }, 
+  {
+   "va": "0x00bcf870", 
+   "string_addrs": [
+    "0x015565c0"
+   ], 
+   "fn_candidates": [
+    "0x00bcf870"
+   ], 
+   "name": "BackupReplicate", 
+   "status": "resolved"
+  }, 
+  {
+   "name": "GetGWorld", 
+   "status": "no_string"
+  }, 
+  {
+   "name": "GetServerWorld", 
+   "status": "no_string"
+  }, 
+  {
+   "name": "GetClientWorld", 
+   "status": "no_string"
+  }
+ ], 
+ "binary": "NClient_unpacked.exe"
+}
