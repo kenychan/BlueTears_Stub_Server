@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import os
 import sys as _sys
 import time
 from pathlib import Path
@@ -34,6 +35,7 @@ from .crypto import (                        # noqa: E402
     xor_with_stream,
 )
 from .framing import (                       # noqa: E402
+    ZlibStreamFrameEncoder,
     ZlibSyncFrameDecoder,
     build_zlib_transport_frame,
     decode_channel_signin_request,
@@ -44,6 +46,7 @@ from .packets import (                       # noqa: E402
     KEY6_CALLABLE_NAME_BY_NID,
     SESSION_DESCRIPTOR_KEY,
     apply_master_envelope,
+    build_clientworld_remotecall,
     build_native_master_channel_update,
     build_native_session_in_challenge,
     build_native_session_in_result,
@@ -121,13 +124,17 @@ async def handle_master_phase(
 
     client_recv_cursor = client_start
     client_zlib_decoder = ZlibSyncFrameDecoder()
+    # LATE-168: the server->client direction is ONE shared zlib stream (the client uses one
+    # persistent decompressobj). Every frame — the login batch AND every later reply — must
+    # continue this SAME stream, or the client's inflate ends and rejects the next frame.
+    server_zlib_encoder = ZlibStreamFrameEncoder()
 
     # The clean E1/E2 login: TClient(control) + faithful TAccount(4-Com) + login RPCs + empty roster
     # -> Client_FinishLoadingCharacter[true,0] -> ShowJobClassSelection. All lower packets in ONE frame.
     packets = master_timing_packets("ordered-db-mage-select-enter", account_name=account_name)
     inner_burst = b"".join(packets)
     burst = apply_master_envelope(inner_burst, master_envelope)
-    zlib_frame = build_zlib_transport_frame(burst)
+    zlib_frame = server_zlib_encoder.frame(burst)
     try:
         await crypto.send(zlib_frame)
     except (ConnectionResetError, BrokenPipeError, OSError) as exc:
@@ -143,9 +150,11 @@ async def handle_master_phase(
 
     answered_srql = False
     answered_finish = False
+    answered_checkname = False
+    answered_create = False
 
     async def send_master_inner(label: str, response: bytes) -> None:
-        frame = build_zlib_transport_frame(apply_master_envelope(response, master_envelope))
+        frame = server_zlib_encoder.frame(apply_master_envelope(response, master_envelope))
         LOG.info("[%s] responding %s inner_len=%d lower_packets=%s", peer, label, len(response),
                  [{"opcode": op, "body": b.hex(" ")} for op, b in parse_lower_packets(response)])
         await crypto.send(frame)
@@ -190,11 +199,48 @@ async def handle_master_phase(
                     if (prefix["callable_key"] == native_nid("OnServerGetSRQL")
                             and prefix["self_key"] == native_nid("Player") and not answered_srql):
                         dispatch_pid = prefix["object_id"] or prefix["from_pid"]
-                        await send_master_inner(
-                            "Player.OnClientGetSRQLResult (empty SRQL, now)",
-                            build_onclientgetsrqlresult_downcall(dispatch_pid),
-                        )
+                        if os.environ.get("BT_SEND_SRQL_LEGACY") == "1":
+                            # LATE-167: the SRQL reply's empty-{}-table arg fails the client's native
+                            # validity gate 0x0115bfd0 -> ca4070 report -> session shutdown -> close.
+                            # DEFAULT = suppress (the new clean base — channel holds into create).
+                            # This flag re-sends the malformed reply ONLY to diagnose the gate.
+                            await send_master_inner(
+                                "Player.OnClientGetSRQLResult (empty SRQL) [LEGACY malformed]",
+                                build_onclientgetsrqlresult_downcall(dispatch_pid),
+                            )
+                        else:
+                            LOG.info("[%s] OnServerGetSRQL observed; SRQL reply SUPPRESSED "
+                                     "(clean base — malformed {}-arg trips validity gate 0x0115bfd0)", peer)
                         answered_srql = True
+                    if (prefix["callable_key"] == native_nid("checkCharacterName")
+                            and not answered_checkname):
+                        # LATE-168: the client drives its OWN faithful create flow. Answer
+                        # checkCharacterName -> checkCharacterNameResult(result=SCS_OK=1, reason=0)
+                        # on CharacterManager. Scalar args (like the WORKING signInClientResult
+                        # [1,1,1]) pass the validity gate; only the SRQL {}-table arg failed.
+                        dispatch_pid = prefix["object_id"] or prefix["from_pid"]
+                        await send_master_inner(
+                            "CharacterManager.checkCharacterNameResult (SCS_OK=0)",
+                            build_clientworld_remotecall(
+                                dispatch_pid, "checkCharacterNameResult", [0, 0],
+                                object_id=prefix["object_id"],
+                            ),
+                        )
+                        answered_checkname = True
+                    if (prefix["callable_key"] == native_nid("createCharacter")
+                            and not answered_create):
+                        # LATE-168: createCharacter -> createCharacterResult(SCS_OK=1, reason=0).
+                        # serverCreateCharacterResult(oid)+GWorld:FindObject(oid):BackupReplicate
+                        # (the actual char delivery) is the NEXT layer once these results land.
+                        dispatch_pid = prefix["object_id"] or prefix["from_pid"]
+                        await send_master_inner(
+                            "CharacterManager.createCharacterResult (SCS_OK=0)",
+                            build_clientworld_remotecall(
+                                dispatch_pid, "createCharacterResult", [0, 0],
+                                object_id=prefix["object_id"],
+                            ),
+                        )
+                        answered_create = True
                     if (prefix["callable_key"] == native_nid("Server_FinishLoadingCharacter")
                             and prefix["self_key"] == SESSION_DESCRIPTOR_KEY and not answered_finish):
                         LOG.info("[%s] observed Session.Server_FinishLoadingCharacter; no echo", peer)

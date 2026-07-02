@@ -103,3 +103,58 @@ Next milestone target:
 - E3: pin the replication WIRE ENVELOPE by differential trace of the client's own
   working replication, then emit it via host M-REPL/M-CODEC on the clean E1/E2 login so
   the client builds+registers the char locally (bff990+647860) -> ROW.
+
+## 2026-07-02 - Faithful Character-Creation Works (CREATE LANE) + the ~100-session post-login wall was a ONE zlib TRANSPORT bug
+
+Status: achieved on the faithful modular host (`server/run_server.py`), unmodified
+client, no injection. User-confirmed live on screen: "it created and shows the char
+manager but its just empty... this def the right lane, use it as new base."
+
+What moved (the game wall visibly moved):
+- The client now runs its OWN character-creation flow against our server: after login it
+  reaches the create screen, sends `checkCharacterName` + `createCharacter` (client key6
+  on `self=CharacterManager 0x6c12c692`), we answer `checkCharacterNameResult` /
+  `createCharacterResult(result=0=SCS_OK, reason=0)`, the client's Lua handlers run
+  (`character manager>> ...Result | 0 | 0`), fires `Master_CheckCharacterNameResult SCS_OK`
+  + `Master_CreateCharacterResult SCS_OK`, and DISPLAYS the char-select / CharacterManager
+  screen (empty roster; "select char first" on Start). No disconnect, no error.
+
+THE ROOT CAUSE of the long post-login wall (this is the big one):
+- Every prior run disconnected right after login with `World_Disconnected`. Cause: the
+  server->client direction is ONE shared zlib stream (the client uses a single persistent
+  `zlib.decompressobj`, mirrored by `ZlibSyncFrameDecoder`). The old
+  `build_zlib_transport_frame` did an INDEPENDENT `zlib.compress()` per frame -- a complete
+  stream (BFINAL + Adler32) that ENDS the client's inflate after the login batch. So EVERY
+  2nd+ post-login frame (SRQL, create ACKs, and char delivery) decoded to 0 bytes ->
+  len-mismatch -> the client's native packet-validity gate `0x0115bfd0` rejects it ->
+  `ca4070` report -> `0115de60` session shutdown -> socket close. NOTHING post-login could
+  ever land. That is why ~100 sessions of char-delivery attempts all failed at the wire.
+- FIX: `ZlibStreamFrameEncoder` -- one persistent `zlib.compressobj()` per connection,
+  `Z_SYNC_FLUSH` per frame; the login batch and every later reply share it. Proven offline
+  (one-shot 2nd frame -> 0 bytes; streamed -> both decode) and live (replies now dispatch
+  into the client's Lua; channel holds).
+
+Result-code detail:
+- SCS_OK is `0`, not 1. Native `FUser::onCreateCharacterResult` (FUN_010b42f0) /
+  `onCheckCharacterNameResult` (FUN_010b4660): `switch(result){0->SCS_OK; default->ERR_FAILED;
+  8->ERR_DUPLICATED_PLAYERNAME; 9->ERR_CREATEPLAYER_BADNAME; 10->ERR_CREATEPLAYER_NOOWNERSHIP}`.
+
+New clean base (default, no flags):
+- SRQL reply SUPPRESSED (its empty-`{}`-table arg trips gate `0x0115bfd0`; re-send for
+  diagnosis via `BT_SEND_SRQL_LEGACY=1`), continuous-stream encoder, create ACKs answered.
+
+Primary recipe / artifacts:
+- Run: `py Res/run_master_ladder.py --mode ordered-db-mage-select-enter --admin-command
+  launch_original_stub --server-script server/run_server.py` (fresh original client).
+- Files: `server/src/net/framing.py` (`ZlibStreamFrameEncoder`) + `server/src/net/connection.py`
+  (shared encoder for batch + replies; checkCharacterName/createCharacter answers; SRQL default-suppress).
+- Evidence: `evidence/late168_create_lane/server_create_scs_ok.log` (server side: create RPCs
+  in + SCS_OK=0 ACKs out, no EOF) + `ch1_create_scs_ok.txt` (client Lua: SCS_OK + char-select).
+
+Next milestone target:
+- Deliver the created char so the roster is non-empty: after `createCharacterResult(SCS_OK)`
+  the client runs `CharacterCreated -> UIIntro:UpdateCharacter -> getAllPlayers` (empty ->
+  back to char-select). Send `serverCreateCharacterResult(oid, SCS_OK, info)` ->
+  client `GWorld:FindObject(oid):BackupReplicate(true)` (`CharacterManager.lua:80-89`) ->
+  `getAllPlayers` -> `AddCharacter` -> ROW. If "can't find created character!", the char must
+  be resident in the client's GWorld at `oid` first (replication envelope / MTLC).

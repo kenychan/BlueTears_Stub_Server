@@ -1,4 +1,5 @@
 # Project Rules
+Short: the clean milestone mirror: breakthrough-reproducing artifacts ONLY (host/stub code, hooks + build script + built DLL + hash, curated logs, recipes — no dumps/caches/client assets), self-contained per milestone (sync ALL current tools, never leave a stale one), `MILESTONES.md` APPEND-ONLY (never rewrite old entries). 
 
 1. This repository is the clean milestone mirror, not the scratch RE lab.
 2. Do not copy original game client files or full game assets into this repo.

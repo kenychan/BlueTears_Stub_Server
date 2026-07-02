@@ -41,6 +41,25 @@ def build_zlib_transport_frame(clear: bytes) -> bytes:
     return len(clear).to_bytes(4, "little") + len(compressed).to_bytes(4, "little") + compressed
 
 
+class ZlibStreamFrameEncoder:
+    """Encode server->client type-4 zlib frames that share ONE zlib stream — the send-side
+    mirror of ZlibSyncFrameDecoder. LATE-168 root cause: the client inflates the whole
+    server->client direction with a single persistent decompressobj, so every frame after the
+    first must CONTINUE the same deflate stream (Z_SYNC_FLUSH). An independent zlib.compress()
+    per frame (build_zlib_transport_frame) ends the stream (BFINAL + Adler32); the client's
+    decompressobj then yields nothing for the next frame -> len-mismatch -> the native validity
+    gate 0x0115bfd0 rejects it -> ca4070 -> session shutdown. Proven offline: with one-shot
+    compress the 2nd frame decodes to 0 bytes; with this encoder both frames decode. This is why
+    NO post-login server->client reply (SRQL, create-results, char delivery) ever landed."""
+
+    def __init__(self) -> None:
+        self._obj = zlib.compressobj()
+
+    def frame(self, clear: bytes) -> bytes:
+        comp = self._obj.compress(clear) + self._obj.flush(zlib.Z_SYNC_FLUSH)
+        return len(clear).to_bytes(4, "little") + len(comp).to_bytes(4, "little") + comp
+
+
 def parse_zlib_transport_frames(clear: bytes) -> list[tuple[int, bytes, list[tuple[int, bytes]]]]:
     frames: list[tuple[int, bytes, list[tuple[int, bytes]]]] = []
     off = 0

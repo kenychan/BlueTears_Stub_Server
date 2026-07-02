@@ -1,0 +1,12 @@
+[System] >>> GMSEvent... 19.159, Master_SignInResult, SCS_OK, 0
+[System] >>> GMSEvent... 19.161, GSS_Disconnected, SCS_OK, 0
+[System] >>> GMSEvent... 19.178, Channel_LogInResult, SCS_OK, 0
+[System] >>> GMSEvent... 20.295, Master_FinishLoadingCharacter, SCS_OK, 0
+[LUALOG] UIIntro:ShowJobClassSelection!!!!!!!!!!!!!!!
+[System] >>> GMSEvent... 25.999, Master_CheckCharacterName, , 0
+[System] >>> GMSEvent... 26, Master_CreateCharacter, , 0
+[PRINT] character manager>> checkCharacterNameResult  | 0 | 0
+[System] >>> GMSEvent... 26.017, Master_CheckCharacterNameResult, SCS_OK, 0
+[PRINT] character manager>> createCharacterResult  | 0 | 0
+[System] >>> GMSEvent... 26.017, Master_CreateCharacterResult, SCS_OK, 0
+[LUALOG] UIIntro:ShowJobClassSelection!!!!!!!!!!!!!!!
